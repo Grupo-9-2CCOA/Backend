@@ -32,6 +32,8 @@ public class Pedido {
     public Pedido() {
     }
 
+
+
     public Pedido(Integer id, String produto, String descricao, Integer valor, LocalDate dataModificacao, LocalDate dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.id = id;
         this.produto = produto;
