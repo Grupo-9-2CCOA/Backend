@@ -1,6 +1,7 @@
 package school.sptech.projeto_extensao.service;
 
 import org.springframework.stereotype.Service;
+import school.sptech.projeto_extensao.dto.PedidoMapper;
 import school.sptech.projeto_extensao.dto.PedidoRequestDto;
 import school.sptech.projeto_extensao.model.Pedido;
 import school.sptech.projeto_extensao.repository.PedidoRepository;
@@ -17,8 +18,7 @@ public class PedidoService {
         return service.save(pedido);
     }
 
-    public Pedido editar(PedidoRequestDto pedido){
-//        incompleto
-        return null;
+    public Pedido editar(Integer id, PedidoRequestDto pedido){
+        return service.save(PedidoMapper.toEntity(id, pedido));
     }
 }

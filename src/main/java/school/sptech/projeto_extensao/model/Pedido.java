@@ -47,6 +47,18 @@ public class Pedido {
         this.endereco = endereco;
     }
 
+    public Pedido(String produto, String descricao, Integer valor, LocalDate dataModificacao, LocalDate dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+        this.produto = produto;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.dataModificacao = dataModificacao;
+        this.dataPedido = dataPedido;
+        this.entrega = entrega;
+        this.pagamento = pagamento;
+        this.cliente = cliente;
+        this.endereco = endereco;
+    }
+
     public Integer getId() {
         return id;
     }
