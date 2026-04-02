@@ -1,7 +1,6 @@
 package school.sptech.projeto_extensao.controller;
 
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.projeto_extensao.dto.ClienteMapper;
@@ -49,5 +48,26 @@ public class ClienteController {
 
         ClienteResponseDto resposta = ClienteMapper.toDto(clienteCadastrado);
         return ResponseEntity.status(201).body(resposta);
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> inativarCliente(
+            @PathVariable Integer id
+    ){
+        Boolean resposta = clienteService.deletar(id);
+
+        if(resposta == false){
+            return ResponseEntity.status(400).build();
+        }
+        return ResponseEntity.status(200).build();
+    }
+
+    @PutMapping
+    public ResponseEntity<ClienteResponseDto> atualizar(
+            @RequestBody @Valid ClienteRequestDto cliente,
+            @PathVariable Integer id
+    ){
+        ClienteMapper.toDto(clienteService.atualizar(id, ClienteMapper.toEntity(cliente)));
+        return ResponseEntity.status(200).build();
     }
 }

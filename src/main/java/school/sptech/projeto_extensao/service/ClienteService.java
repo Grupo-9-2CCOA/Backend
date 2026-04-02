@@ -27,4 +27,25 @@ public class ClienteService {
     public Cliente cadastrar(Cliente cliente){
         return clienteRepository.save(cliente);
     }
+
+    public Boolean deletar(Integer id){
+        Cliente cliente = findById(id);
+        if(cliente == null)
+        cliente.setAtivo(false);
+        return true;
+    }
+
+    public Cliente atualizar(Integer id, Cliente cliente) {
+        if (!clienteRepository.existsById(id)) {
+            throw new EntidadeNaoEncontradaException("Cliente não encontrado".formatted(id));
+        }
+
+        Cliente cliente1 = clienteRepository.findById(id).get();
+        cliente1.setNome(cliente.getNome());
+        cliente1.setTelefone(cliente.getTelefone());
+        cliente1.setCpf(cliente.getCpf());
+        cliente1.setAtivo(cliente.isAtivo());
+
+        return clienteRepository.save(cliente1);
+    }
 }
