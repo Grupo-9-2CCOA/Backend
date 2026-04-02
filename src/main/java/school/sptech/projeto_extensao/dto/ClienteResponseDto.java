@@ -1,25 +1,16 @@
-package school.sptech.projeto_extensao.model;
+package school.sptech.projeto_extensao.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-@Entity
-public class Cliente {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ClienteResponseDto {
     private Integer id;
-
     private String nome;
     private String cpf;
     private String telefone;
     private Boolean ativo;
 
-    public Cliente() {
+    public ClienteResponseDto() {
     }
 
-    public Cliente(Integer id, String nome, String cpf, String telefone, Boolean ativo) {
+    public ClienteResponseDto(Integer id, String nome, String cpf, String telefone, Boolean ativo) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
@@ -59,7 +50,7 @@ public class Cliente {
         this.telefone = telefone;
     }
 
-    public Boolean isAtivo() {
+    public Boolean getAtivo() {
         return ativo;
     }
 
