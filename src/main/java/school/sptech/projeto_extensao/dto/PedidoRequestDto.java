@@ -7,28 +7,32 @@ import school.sptech.projeto_extensao.model.Entrega;
 import school.sptech.projeto_extensao.model.Pagamento;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class PedidoRequestDto {
     private String produto;
     private String descricao;
     private Integer valor;
-    private LocalDate dataModificacao;
-    private LocalDate dataPedido;
+    private Boolean isAtivo;
+    private LocalDateTime dataPedido;
+    private LocalDateTime dataModificacao;
+    private LocalDateTime dataCriacao;
     private Entrega entrega;
     private Pagamento pagamento;
     private Cliente cliente;
-
     private Endereco endereco;
 
     public PedidoRequestDto() {
     }
 
-    public PedidoRequestDto(String produto, String descricao, Integer valor, LocalDate dataModificacao, LocalDate dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public PedidoRequestDto(String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
-        this.dataModificacao = dataModificacao;
+        this.isAtivo = isAtivo;
         this.dataPedido = dataPedido;
+        this.dataModificacao = dataModificacao;
+        this.dataCriacao = dataCriacao;
         this.entrega = entrega;
         this.pagamento = pagamento;
         this.cliente = cliente;
@@ -59,20 +63,28 @@ public class PedidoRequestDto {
         this.valor = valor;
     }
 
-    public LocalDate getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDate dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
-
-    public LocalDate getDataPedido() {
+    public LocalDateTime getDataPedido() {
         return dataPedido;
     }
 
-    public void setDataPedido(LocalDate dataPedido) {
+    public void setDataPedido(LocalDateTime dataPedido) {
         this.dataPedido = dataPedido;
+    }
+
+    public LocalDateTime getDataModificacao() {
+        return dataModificacao;
+    }
+
+    public void setDataModificacao(LocalDateTime dataModificacao) {
+        this.dataModificacao = dataModificacao;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
     public Entrega getEntrega() {
@@ -105,5 +117,13 @@ public class PedidoRequestDto {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public Boolean getAtivo() {
+        return isAtivo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        isAtivo = ativo;
     }
 }
