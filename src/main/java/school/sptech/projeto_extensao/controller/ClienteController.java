@@ -66,13 +66,13 @@ public class ClienteController {
         return ResponseEntity.status(200).build();
     }
 
-//    //Atualizar Cliente
-//    @PutMapping
-//    public ResponseEntity<ClienteResponseDto> atualizar(
-//            @RequestBody @Valid ClienteRequestDto cliente,
-//            @PathVariable Integer id
-//    ){
-//        ClienteMapper.toDto(clienteService.atualizar(id, ClienteMapper.toEntity(cliente)));
-//        return ResponseEntity.status(200).build();
-//    }
+    //Atualizar Cliente
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteResponseDto> atualizar(
+            @RequestBody @Valid ClienteRequestDto cliente,
+            @PathVariable Integer id
+    ){
+        ClienteResponseDto resposta = ClienteMapper.toDto(clienteService.atualizar(id, ClienteMapper.toEntity(cliente)));
+        return ResponseEntity.status(200).body(resposta);
+    }
 }
