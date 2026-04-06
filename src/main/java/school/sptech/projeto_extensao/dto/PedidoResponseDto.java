@@ -1,61 +1,32 @@
-package school.sptech.projeto_extensao.model;
+package school.sptech.projeto_extensao.dto;
 
-import jakarta.persistence.*;
+import school.sptech.projeto_extensao.model.Cliente;
+import school.sptech.projeto_extensao.model.Endereco;
+import school.sptech.projeto_extensao.model.Entrega;
+import school.sptech.projeto_extensao.model.Pagamento;
 
 import java.time.LocalDateTime;
 
-@Entity
-public class Pedido {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+public class PedidoResponseDto {
     private String produto;
     private String descricao;
     private Integer valor;
     private Boolean isAtivo;
     private LocalDateTime dataPedido;
-    private LocalDateTime dataModificacao;
-    private LocalDateTime dataCriacao;
-
-    @ManyToOne
     private Entrega entrega;
-
-    @ManyToOne
     private Pagamento pagamento;
-
-    @ManyToOne
     private Cliente cliente;
-
-    @ManyToOne
     private Endereco endereco;
 
-    public Pedido() {
+    public PedidoResponseDto() {
     }
 
-    public Pedido(Integer id, String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
-        this.id = id;
+    public PedidoResponseDto(String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
         this.isAtivo = isAtivo;
         this.dataPedido = dataPedido;
-        this.dataModificacao = dataModificacao;
-        this.dataCriacao = dataCriacao;
-        this.entrega = entrega;
-        this.pagamento = pagamento;
-        this.cliente = cliente;
-        this.endereco = endereco;
-    }
-
-    public Pedido(String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
-        this.produto = produto;
-        this.descricao = descricao;
-        this.valor = valor;
-        this.isAtivo = isAtivo;
-        this.dataPedido = dataPedido;
-        this.dataModificacao = dataModificacao;
-        this.dataCriacao = dataCriacao;
         this.entrega = entrega;
         this.pagamento = pagamento;
         this.cliente = cliente;
@@ -68,14 +39,6 @@ public class Pedido {
 
     public void setAtivo(Boolean ativo) {
         isAtivo = ativo;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getProduto() {
@@ -108,22 +71,6 @@ public class Pedido {
 
     public void setDataPedido(LocalDateTime dataPedido) {
         this.dataPedido = dataPedido;
-    }
-
-    public LocalDateTime getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDateTime dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
     }
 
     public Entrega getEntrega() {
