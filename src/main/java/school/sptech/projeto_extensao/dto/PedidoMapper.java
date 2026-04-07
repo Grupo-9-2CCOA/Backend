@@ -10,6 +10,7 @@ public class PedidoMapper {
                 dto.getDescricao(),
                 dto.getValor(),
                 dto.getAtivo(),
+                dto.getReagendado(),
                 dto.getDataPedido(),
                 dto.getDataModificacao(),
                 dto.getDataCriacao(),

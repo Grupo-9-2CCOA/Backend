@@ -14,6 +14,7 @@ public class PedidoRequestDto {
     private String descricao;
     private Integer valor;
     private Boolean isAtivo;
+    private Boolean isReagendado;
     private LocalDateTime dataPedido;
     private LocalDateTime dataModificacao;
     private LocalDateTime dataCriacao;
@@ -25,11 +26,13 @@ public class PedidoRequestDto {
     public PedidoRequestDto() {
     }
 
-    public PedidoRequestDto(String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public PedidoRequestDto(String produto, String descricao, Integer valor, Boolean isAtivo, Boolean isReagendado,
+                            LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
         this.isAtivo = isAtivo;
+        this.isReagendado = isReagendado;
         this.dataPedido = dataPedido;
         this.dataModificacao = dataModificacao;
         this.dataCriacao = dataCriacao;
@@ -125,5 +128,13 @@ public class PedidoRequestDto {
 
     public void setAtivo(Boolean ativo) {
         isAtivo = ativo;
+    }
+
+    public Boolean getReagendado() {
+        return isReagendado;
+    }
+
+    public void setReagendado(Boolean reagendado) {
+        isReagendado = reagendado;
     }
 }
