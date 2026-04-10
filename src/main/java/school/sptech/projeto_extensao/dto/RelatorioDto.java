@@ -1,18 +1,37 @@
 package school.sptech.projeto_extensao.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Schema(description = "Dados do relatório geral de vendas do período")
 public class RelatorioDto {
+    @Schema(description = "Total de pedidos no período", example = "6")
     private Integer qtdPedidos;
+
+    @Schema(description = "Diferença de pedidos em relação ao período anterior", example = "2")
     private Integer diferencaQtdPedidos;
+
+    @Schema(description = "Total de pedidos cancelados no período", example = "1")
     private Integer pedidosCancelados;
+
+    @Schema(description = "Diferença de cancelamentos em relação ao período anterior", example = "0")
     private Integer diferencaCanceladas;
+
+    @Schema(description = "Total de pedidos reagendados no período", example = "1")
     private Integer pedidosReagendados;
+
+    @Schema(description = "Diferença de reagendamentos em relação ao período anterior", example = "0")
     private Integer diferencaReagendadas;
+
+    @Schema(description = "Total de clientes fidelizados (mais de 1 compra) que compraram no período", example = "4")
     private Integer clientesFidelizados;
+
+    @Schema(description = "Total de clientes novos (primeira compra) no período", example = "1")
     private Integer clientesNovos;
 
+    @Schema(description = "Lista dos 15 pedidos mais recentes do período")
     private ArrayList<PedidoRelatorioDto> pedidos;
 
     public RelatorioDto(Integer qtdPedidos, Integer diferencaQtdPedidos, Integer pedidosCancelados, Integer diferencaCanceladas,

@@ -1,9 +1,19 @@
 package school.sptech.projeto_extensao.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Dados resumidos de um cliente")
 public class ClienteDto {
+    @Schema(description = "ID do cliente", example = "1")
     private Integer id;
+
+    @Schema(description = "Nome do cliente", example = "Ana Silva")
     private String nome;
+
+    @Schema(description = "Telefone do cliente", example = "11999990001")
     private String telefone;
+
+    @Schema(description = "CPF do cliente", example = "11111111111")
     private String cpf;
 
     public ClienteDto(Integer id, String nome, String telefone, String cpf) {
