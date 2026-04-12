@@ -19,6 +19,7 @@ import school.sptech.projeto_extensao.dto.AdminLoginDto;
 import school.sptech.projeto_extensao.dto.AdminMapper;
 import school.sptech.projeto_extensao.dto.AdminSessaoDto;
 import school.sptech.projeto_extensao.dto.AdminTokenDto;
+import school.sptech.projeto_extensao.dto.AdminTrocarSenhaDto;
 import school.sptech.projeto_extensao.model.Admin;
 import school.sptech.projeto_extensao.service.AdminService;
 
@@ -78,6 +79,13 @@ public class AdminController {
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/trocar-senha")
+    @SecurityRequirement(name = "Bearer")
+    public ResponseEntity<Void> trocarSenha(@RequestBody @Valid AdminTrocarSenhaDto adminTrocarSenhaDto) {
+        this.adminService.trocarSenha(adminTrocarSenhaDto.getSenha());
         return ResponseEntity.noContent().build();
     }
 

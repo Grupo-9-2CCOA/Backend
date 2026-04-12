@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import school.sptech.projeto_extensao.model.Admin;
 
 import java.util.Collection;
+import java.util.List;
 
 public class AdminDetalhesDto implements UserDetails {
 
@@ -21,7 +22,7 @@ public class AdminDetalhesDto implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of();
     }
 
     @Override

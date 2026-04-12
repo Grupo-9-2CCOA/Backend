@@ -26,6 +26,7 @@ public class AdminMapper {
         adminTokenDto.setId(admin.getId());
         adminTokenDto.setUsuario(admin.getUsuario());
         adminTokenDto.setToken(token);
+        adminTokenDto.setPrecisaTrocarSenha(admin.getPrecisaTrocarSenha());
 
         return adminTokenDto;
     }
@@ -35,6 +36,7 @@ public class AdminMapper {
 
         dto.setId(tokenDto.getId());
         dto.setUsuario(tokenDto.getUsuario());
+        dto.setPrecisaTrocarSenha(tokenDto.getPrecisaTrocarSenha());
 
         return dto;
     }

@@ -4,6 +4,7 @@ public class AdminSessaoDto {
 
     private Integer id;
     private String usuario;
+    private Boolean precisaTrocarSenha;
 
     public Integer getId() {
         return id;
@@ -19,5 +20,13 @@ public class AdminSessaoDto {
 
     public void setUsuario(String usuario) {
         this.usuario = usuario;
+    }
+
+    public Boolean getPrecisaTrocarSenha() {
+        return precisaTrocarSenha;
+    }
+
+    public void setPrecisaTrocarSenha(Boolean precisaTrocarSenha) {
+        this.precisaTrocarSenha = precisaTrocarSenha;
     }
 }

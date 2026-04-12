@@ -14,6 +14,7 @@ public class Admin {
 
     private String usuario;
     private String senha;
+    private Boolean precisaTrocarSenha = false;
 
     public Admin() {
     }
@@ -46,5 +47,13 @@ public class Admin {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public Boolean getPrecisaTrocarSenha() {
+        return precisaTrocarSenha;
+    }
+
+    public void setPrecisaTrocarSenha(Boolean precisaTrocarSenha) {
+        this.precisaTrocarSenha = precisaTrocarSenha;
     }
 }

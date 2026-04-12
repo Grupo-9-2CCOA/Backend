@@ -36,6 +36,7 @@ public class AdminService {
 
         String senhaCriptografada = passwordEncoder.encode(novoAdmin.getSenha());
         novoAdmin.setSenha(senhaCriptografada);
+        novoAdmin.setPrecisaTrocarSenha(false);
 
         this.adminRepository.save(novoAdmin);
     }
@@ -58,6 +59,25 @@ public class AdminService {
         final String token = gerenciadorTokenJwt.generateToken(authentication);
 
         return AdminMapper.of(adminAutenticado, token);
+    }
+
+    public void trocarSenha(String novaSenha) {
+        Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
+
+        if (autenticacao == null || autenticacao.getName() == null) {
+            throw new ResponseStatusException(401, "Usuário não autenticado", null);
+        }
+
+        Admin admin = adminRepository.findByUsuario(autenticacao.getName())
+                .orElseThrow(() -> new ResponseStatusException(404, "Usuário do admin não cadastrado", null));
+
+        if (Boolean.FALSE.equals(admin.getPrecisaTrocarSenha())) {
+            throw new ResponseStatusException(400, "A senha já foi alterada", null);
+        }
+
+        admin.setSenha(passwordEncoder.encode(novaSenha));
+        admin.setPrecisaTrocarSenha(false);
+        adminRepository.save(admin);
     }
 
     public List<AdminListarDto> listarTodos() {
