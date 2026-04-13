@@ -21,6 +21,7 @@ public class Admin {
 
     @Schema(description = "Senha de acesso do administrador", example = "1234", accessMode = Schema.AccessMode.WRITE_ONLY)
     private String senha;
+    private Boolean precisaTrocarSenha = false;
 
     public Admin() {
     }
@@ -53,5 +54,13 @@ public class Admin {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public Boolean getPrecisaTrocarSenha() {
+        return precisaTrocarSenha;
+    }
+
+    public void setPrecisaTrocarSenha(Boolean precisaTrocarSenha) {
+        this.precisaTrocarSenha = precisaTrocarSenha;
     }
 }
