@@ -1,45 +1,44 @@
 package school.sptech.projeto_extensao.dto;
 
-import jakarta.persistence.ManyToOne;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.model.Endereco;
 import school.sptech.projeto_extensao.model.Entrega;
 import school.sptech.projeto_extensao.model.Pagamento;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class PedidoRequestDto {
+public class PedidoResponseDto {
     private String produto;
     private String descricao;
     private Integer valor;
     private Boolean isAtivo;
-    private Boolean isReagendado;
     private LocalDateTime dataPedido;
-    private LocalDateTime dataModificacao;
-    private LocalDateTime dataCriacao;
     private Entrega entrega;
     private Pagamento pagamento;
     private Cliente cliente;
     private Endereco endereco;
 
-    public PedidoRequestDto() {
+    public PedidoResponseDto() {
     }
 
-    public PedidoRequestDto(String produto, String descricao, Integer valor, Boolean isAtivo, Boolean isReagendado,
-                            LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public PedidoResponseDto(String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
         this.isAtivo = isAtivo;
-        this.isReagendado = isReagendado;
         this.dataPedido = dataPedido;
-        this.dataModificacao = dataModificacao;
-        this.dataCriacao = dataCriacao;
         this.entrega = entrega;
         this.pagamento = pagamento;
         this.cliente = cliente;
         this.endereco = endereco;
+    }
+
+    public Boolean getAtivo() {
+        return isAtivo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        isAtivo = ativo;
     }
 
     public String getProduto() {
@@ -74,22 +73,6 @@ public class PedidoRequestDto {
         this.dataPedido = dataPedido;
     }
 
-    public LocalDateTime getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDateTime dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
-
     public Entrega getEntrega() {
         return entrega;
     }
@@ -120,21 +103,5 @@ public class PedidoRequestDto {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
-    }
-
-    public Boolean getAtivo() {
-        return isAtivo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        isAtivo = ativo;
-    }
-
-    public Boolean getReagendado() {
-        return isReagendado;
-    }
-
-    public void setReagendado(Boolean reagendado) {
-        isReagendado = reagendado;
     }
 }
