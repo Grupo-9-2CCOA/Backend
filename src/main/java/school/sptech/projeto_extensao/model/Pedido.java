@@ -14,6 +14,7 @@ public class Pedido {
     private String descricao;
     private Integer valor;
     private Boolean isAtivo;
+    private Boolean isReagendado;
     private LocalDateTime dataPedido;
     private LocalDateTime dataModificacao;
     private LocalDateTime dataCriacao;
@@ -31,6 +32,22 @@ public class Pedido {
     private Endereco endereco;
 
     public Pedido() {
+    }
+
+    public Pedido(Integer id, String produto, String descricao, Integer valor, Boolean isAtivo, Boolean isReagendado, LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+        this.id = id;
+        this.produto = produto;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.isAtivo = isAtivo;
+        this.isReagendado = isReagendado;
+        this.dataPedido = dataPedido;
+        this.dataModificacao = dataModificacao;
+        this.dataCriacao = dataCriacao;
+        this.entrega = entrega;
+        this.pagamento = pagamento;
+        this.cliente = cliente;
+        this.endereco = endereco;
     }
 
     public Pedido(Integer id, String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
@@ -156,5 +173,13 @@ public class Pedido {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
+    }
+
+    public Boolean getReagendado() {
+        return isReagendado;
+    }
+
+    public void setReagendado(Boolean reagendado) {
+        isReagendado = reagendado;
     }
 }
