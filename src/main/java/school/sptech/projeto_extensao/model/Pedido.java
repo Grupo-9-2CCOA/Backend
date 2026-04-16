@@ -1,22 +1,40 @@
 package school.sptech.projeto_extensao.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+@Schema(description = "Representa um pedido do sistema")
 @Entity
 public class Pedido {
+    @Schema(description = "ID do histórico de pedido", example = "1")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Schema(description = "Produto principal do pedido", example = "Bolo 5kg")
     private String produto;
+
+    @Schema(description = "Descrição dos produtos relacionados ao pedido", example = "1 Bolo de kg decorado da Turma da Mônica; 100 coxinhas")
     private String descricao;
-    private Integer valor;
+
+    @Schema(description = "O valor cobrado no pedido", example = "59.99")
+    private Double valor;
+
+    @Schema(description = "Booleano que informa se o pedido sofreu deleção lógica", example = "false")
     private Boolean isAtivo;
+
+    @Schema(description = "Booleano que informa se o pedido foi reagendado em algum momento", example = "false")
     private Boolean isReagendado;
+
+    @Schema(description = "Data programada para o pedido ser entregue", example = "2026-10-10")
     private LocalDateTime dataPedido;
+
+    @Schema(description = "Data em que o pedido sofreu modicação", example = "2026-03-05")
     private LocalDateTime dataModificacao;
+
+    @Schema(description = "Data em que o pedido foi criado", example = "2026-06-08")
     private LocalDateTime dataCriacao;
 
     @ManyToOne
@@ -37,8 +55,8 @@ public class Pedido {
     public Pedido() {
     }
 
-    public Pedido(Integer id, String produto, String descricao, Integer valor, Boolean isAtivo, Boolean isReagendado,
-                  LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public Pedido(Integer id, String produto, String descricao, Double valor, Boolean isAtivo, Boolean isReagendado,
+                  LocalDateTime dataPedido, LocalDateTime dataModificacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.id = id;
         this.produto = produto;
         this.descricao = descricao;
@@ -47,20 +65,18 @@ public class Pedido {
         this.isAtivo = isAtivo;
         this.dataPedido = dataPedido;
         this.dataModificacao = dataModificacao;
-        this.dataCriacao = dataCriacao;
         this.entrega = entrega;
         this.pagamento = pagamento;
         this.cliente = cliente;
         this.endereco = endereco;
     }
 
-    public Pedido(String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public Pedido(String produto, String descricao, Double valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
         this.isAtivo = isAtivo;
         this.dataPedido = dataPedido;
-        this.dataModificacao = dataModificacao;
         this.dataCriacao = dataCriacao;
         this.entrega = entrega;
         this.pagamento = pagamento;
@@ -100,11 +116,11 @@ public class Pedido {
         this.descricao = descricao;
     }
 
-    public Integer getValor() {
+    public Double getValor() {
         return valor;
     }
 
-    public void setValor(Integer valor) {
+    public void setValor(Double valor) {
         this.valor = valor;
     }
 

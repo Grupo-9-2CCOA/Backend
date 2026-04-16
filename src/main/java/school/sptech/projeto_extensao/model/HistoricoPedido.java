@@ -12,14 +12,27 @@ public class HistoricoPedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @ManyToOne
+    @Schema(description = "ID da entrega", example = "1")
     private Pedido idPedido;
+
     @ManyToOne
+    @JoinColumn(name = "id_cliente")
+    @Schema(description = "Cliente relacionado ao pedido", example = "4")
     private Cliente idCliente;
+
     @ManyToOne
+    @JoinColumn(name = "status_entrega")
+    @Schema(description = "Status da entrega na atualização", example = "2")
     private Entrega statusEntrega;
+
     @ManyToOne
+    @JoinColumn(name = "status_pagamento")
+    @Schema(description = "Status do pagamento na atualização", example = "3")
     private Pagamento statusPagamento;
+
+    @Schema(description = "Data de criação da atualização do pedido", example = "2026-04-06")
     private LocalDateTime dataCriacao;
 
     public HistoricoPedido() {
