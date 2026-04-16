@@ -1,12 +1,24 @@
 package school.sptech.projeto_extensao.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
+@Schema(description = "Representa o histórico de atualizações de um pedido")
+@Entity
 public class HistoricoPedido {
+    @Schema(description = "ID do histórico de pedido", example = "1")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @ManyToOne
     private Pedido idPedido;
+    @ManyToOne
     private Cliente idCliente;
+    @ManyToOne
     private Entrega statusEntrega;
+    @ManyToOne
     private Pagamento statusPagamento;
     private LocalDateTime dataCriacao;
 
