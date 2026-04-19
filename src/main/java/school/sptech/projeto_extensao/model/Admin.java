@@ -14,6 +14,7 @@ public class Admin {
 
     private String usuario;
     private String senha;
+    private Boolean trocaSenhaObrigatoria = true;
 
     public Admin() {
     }
@@ -22,6 +23,14 @@ public class Admin {
         this.id = id;
         this.usuario = usuario;
         this.senha = senha;
+        this.trocaSenhaObrigatoria = true;
+    }
+
+    public Admin(Integer id, String usuario, String senha, Boolean trocaSenhaObrigatoria) {
+        this.id = id;
+        this.usuario = usuario;
+        this.senha = senha;
+        this.trocaSenhaObrigatoria = trocaSenhaObrigatoria;
     }
 
     public Integer getId() {
@@ -46,5 +55,13 @@ public class Admin {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public Boolean getTrocaSenhaObrigatoria() {
+        return trocaSenhaObrigatoria;
+    }
+
+    public void setTrocaSenhaObrigatoria(Boolean trocaSenhaObrigatoria) {
+        this.trocaSenhaObrigatoria = trocaSenhaObrigatoria;
     }
 }
