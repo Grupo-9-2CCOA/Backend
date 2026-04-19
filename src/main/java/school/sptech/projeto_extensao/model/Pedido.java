@@ -1,9 +1,8 @@
 package school.sptech.projeto_extensao.model;
 
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class Pedido {
@@ -14,16 +13,22 @@ public class Pedido {
     private String produto;
     private String descricao;
     private Integer valor;
-    private LocalDate dataModificacao;
-    private LocalDate dataPedido;
+    private Boolean isAtivo;
+    private Boolean isReagendado;
+    private LocalDateTime dataPedido;
+    private LocalDateTime dataModificacao;
+    private LocalDateTime dataCriacao;
 
     @ManyToOne
+    @JoinColumn(name = "status_entrega")
     private Entrega entrega;
 
     @ManyToOne
+    @JoinColumn(name = "status_pagamento")
     private Pagamento pagamento;
 
     @ManyToOne
+    @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
     @ManyToOne
@@ -32,31 +37,43 @@ public class Pedido {
     public Pedido() {
     }
 
-
-
-    public Pedido(Integer id, String produto, String descricao, Integer valor, LocalDate dataModificacao, LocalDate dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public Pedido(Integer id, String produto, String descricao, Integer valor, Boolean isAtivo, Boolean isReagendado,
+                  LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.id = id;
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
-        this.dataModificacao = dataModificacao;
+        this.isReagendado = isReagendado;
+        this.isAtivo = isAtivo;
         this.dataPedido = dataPedido;
+        this.dataModificacao = dataModificacao;
+        this.dataCriacao = dataCriacao;
         this.entrega = entrega;
         this.pagamento = pagamento;
         this.cliente = cliente;
         this.endereco = endereco;
     }
 
-    public Pedido(String produto, String descricao, Integer valor, LocalDate dataModificacao, LocalDate dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public Pedido(String produto, String descricao, Integer valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
-        this.dataModificacao = dataModificacao;
+        this.isAtivo = isAtivo;
         this.dataPedido = dataPedido;
+        this.dataModificacao = dataModificacao;
+        this.dataCriacao = dataCriacao;
         this.entrega = entrega;
         this.pagamento = pagamento;
         this.cliente = cliente;
         this.endereco = endereco;
+    }
+
+    public Boolean getAtivo() {
+        return isAtivo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        isAtivo = ativo;
     }
 
     public Integer getId() {
@@ -91,20 +108,36 @@ public class Pedido {
         this.valor = valor;
     }
 
-    public LocalDate getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDate dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
-
-    public LocalDate getDataPedido() {
+    public LocalDateTime getDataPedido() {
         return dataPedido;
     }
 
-    public void setDataPedido(LocalDate dataPedido) {
+    public void setDataPedido(LocalDateTime dataPedido) {
         this.dataPedido = dataPedido;
+    }
+
+    public LocalDateTime getDataModificacao() {
+        return dataModificacao;
+    }
+
+    public void setDataModificacao(LocalDateTime dataModificacao) {
+        this.dataModificacao = dataModificacao;
+    }
+
+    public LocalDateTime getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public Boolean getReagendado() {
+        return isReagendado;
+    }
+
+    public void setReagendado(Boolean reagendado) {
+        isReagendado = reagendado;
+    }
+
+    public void setDataCriacao(LocalDateTime dataCriacao) {
+        this.dataCriacao = dataCriacao;
     }
 
     public Entrega getEntrega() {
