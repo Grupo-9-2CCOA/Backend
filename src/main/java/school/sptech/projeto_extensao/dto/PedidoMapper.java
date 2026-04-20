@@ -3,6 +3,7 @@ package school.sptech.projeto_extensao.dto;
 import school.sptech.projeto_extensao.model.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class PedidoMapper {
     public static Pedido toEntity(Integer id, PedidoRequestDto dto){
@@ -17,8 +18,7 @@ public class PedidoMapper {
                 dto.getAtivo(),
                 dto.getReagendado(),
                 dto.getDataPedido(),
-                dto.getDataModificacao(),
-                dto.getDataCriacao(),
+                LocalDateTime.now(),
                 dto.getEntrega(),
                 dto.getPagamento(),
                 dto.getCliente(),
@@ -36,8 +36,7 @@ public class PedidoMapper {
                 dto.getValor(),
                 dto.getAtivo(),
                 dto.getDataPedido(),
-                dto.getDataModificacao(),
-                dto.getDataCriacao(),
+                LocalDateTime.now(),
                 dto.getEntrega(),
                 dto.getPagamento(),
                 dto.getCliente(),
@@ -60,6 +59,10 @@ public class PedidoMapper {
                 pedido.getCliente(),
                 pedido.getEndereco()
         );
+    }
+
+    public static List<PedidoResponseDto> toDto(List<Pedido> pedidos){
+        return pedidos.stream().map(PedidoMapper::toDto).toList();
     }
 
     public static HistoricoPedido toHistorico(Pedido pedido){

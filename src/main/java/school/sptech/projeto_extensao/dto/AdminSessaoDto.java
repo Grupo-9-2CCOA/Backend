@@ -4,7 +4,7 @@ public class AdminSessaoDto {
 
     private Integer id;
     private String usuario;
-    private Boolean precisaTrocarSenha;
+    private Boolean trocaSenhaObrigatoria;
 
     public Integer getId() {
         return id;
@@ -22,11 +22,11 @@ public class AdminSessaoDto {
         this.usuario = usuario;
     }
 
-    public Boolean getPrecisaTrocarSenha() {
-        return precisaTrocarSenha;
+    public Boolean getTrocaSenhaObrigatoria() {
+        return trocaSenhaObrigatoria;
     }
 
-    public void setPrecisaTrocarSenha(Boolean precisaTrocarSenha) {
-        this.precisaTrocarSenha = precisaTrocarSenha;
+    public void setTrocaSenhaObrigatoria(Boolean trocaSenhaObrigatoria) {
+        this.trocaSenhaObrigatoria = trocaSenhaObrigatoria;
     }
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class PedidoRequestDto {
     private String produto;
     private String descricao;
-    private Integer valor;
+    private Double valor;
     private Boolean isAtivo;
     private Boolean isReagendado;
     private LocalDateTime dataPedido;
@@ -26,7 +26,7 @@ public class PedidoRequestDto {
     public PedidoRequestDto() {
     }
 
-    public PedidoRequestDto(String produto, String descricao, Integer valor, Boolean isAtivo, Boolean isReagendado,
+    public PedidoRequestDto(String produto, String descricao, Double valor, Boolean isAtivo, Boolean isReagendado,
                             LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.produto = produto;
         this.descricao = descricao;
@@ -58,11 +58,11 @@ public class PedidoRequestDto {
         this.descricao = descricao;
     }
 
-    public Integer getValor() {
+    public Double getValor() {
         return valor;
     }
 
-    public void setValor(Integer valor) {
+    public void setValor(Double valor) {
         this.valor = valor;
     }
 

@@ -22,15 +22,15 @@ public class PedidoService {
     }
 
     public List<Pedido> listar(){
-        return service.findAll();
+        return service.findAllByIsAtivoTrue();
     }
 
     public Pedido encontrarPorId(Integer id){
-        return service.findById(id).orElseThrow(() -> new ErroException("Pedido não encontrado"));
+        return service.findByIdAndIsAtivoTrue(id);
     }
 
     public List<Pedido> listarPorData(LocalDateTime dataInicio, LocalDateTime dataFim){
-        return service.findAllByDataPedidoBetween(dataInicio, dataFim);
+        return service.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim);
     }
 
     public Pedido cadastrar(Pedido pedido){
@@ -38,11 +38,16 @@ public class PedidoService {
     }
 
     public Pedido editar(Pedido pedido){
+        pedido.setDataModificacao(LocalDateTime.now());
         historico.save(PedidoMapper.toHistorico(pedido));
         return service.save(pedido);
     }
 
     public Integer deletar(Integer id){
-        return service.desativarPedido(id);
+        if (encontrarPorId(id) != null){
+            return service.desativarPedido(id);
+        } else {
+            return 0;
+        }
     }
 }
