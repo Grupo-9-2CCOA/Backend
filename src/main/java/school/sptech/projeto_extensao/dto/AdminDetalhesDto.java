@@ -12,10 +12,12 @@ public class AdminDetalhesDto implements UserDetails {
     private final String usuario;
 
     private final String senha;
+    private final Boolean trocaSenhaObrigatoria;
 
     public AdminDetalhesDto(Admin admin) {
         this.usuario = admin.getUsuario();
         this.senha = admin.getSenha();
+        this.trocaSenhaObrigatoria = admin.getTrocaSenhaObrigatoria();
     }
 
     public String getUsuario() {return usuario;}
@@ -23,6 +25,10 @@ public class AdminDetalhesDto implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of();
+    }
+
+    public Boolean getTrocaSenhaObrigatoria() {
+        return trocaSenhaObrigatoria;
     }
 
     @Override

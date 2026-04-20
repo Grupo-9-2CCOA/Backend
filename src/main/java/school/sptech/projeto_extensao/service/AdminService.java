@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import school.sptech.projeto_extensao.Config.GerenciadorTokenJwt;
 import school.sptech.projeto_extensao.dto.AdminListarDto;
 import school.sptech.projeto_extensao.dto.AdminMapper;
+import school.sptech.projeto_extensao.dto.AdminTrocarSenhaDto;
 import school.sptech.projeto_extensao.dto.AdminTokenDto;
 import school.sptech.projeto_extensao.model.Admin;
 import school.sptech.projeto_extensao.repository.AdminRepository;
@@ -36,7 +37,7 @@ public class AdminService {
 
         String senhaCriptografada = passwordEncoder.encode(novoAdmin.getSenha());
         novoAdmin.setSenha(senhaCriptografada);
-        novoAdmin.setPrecisaTrocarSenha(false);
+        novoAdmin.setTrocaSenhaObrigatoria(true);
 
         this.adminRepository.save(novoAdmin);
     }
@@ -61,28 +62,28 @@ public class AdminService {
         return AdminMapper.of(adminAutenticado, token);
     }
 
-    public void trocarSenha(String novaSenha) {
-        Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
-
-        if (autenticacao == null || autenticacao.getName() == null) {
-            throw new ResponseStatusException(401, "Usuário não autenticado", null);
-        }
-
-        Admin admin = adminRepository.findByUsuario(autenticacao.getName())
-                .orElseThrow(() -> new ResponseStatusException(404, "Usuário do admin não cadastrado", null));
-
-        if (Boolean.FALSE.equals(admin.getPrecisaTrocarSenha())) {
-            throw new ResponseStatusException(400, "A senha já foi alterada", null);
-        }
-
-        admin.setSenha(passwordEncoder.encode(novaSenha));
-        admin.setPrecisaTrocarSenha(false);
-        adminRepository.save(admin);
-    }
-
     public List<AdminListarDto> listarTodos() {
         List<Admin> adminsEcontrados = adminRepository.findAll();
         return adminsEcontrados.stream().map(AdminMapper::of).toList();
+    }
+
+    public void trocarSenha(AdminTrocarSenhaDto dto) {
+        String usuarioAutenticado = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Admin admin = adminRepository.findByUsuario(usuarioAutenticado)
+                .orElseThrow(() -> new ResponseStatusException(404, "Admin não encontrado", null));
+
+        if (!passwordEncoder.matches(dto.getSenhaAtual(), admin.getSenha())) {
+            throw new ResponseStatusException(401, "Senha atual inválida", null);
+        }
+
+        if (dto.getSenhaAtual().equals(dto.getNovaSenha())) {
+            throw new ResponseStatusException(400, "A nova senha deve ser diferente da senha atual", null);
+        }
+
+        admin.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
+        admin.setTrocaSenhaObrigatoria(false);
+        adminRepository.save(admin);
     }
 
 }

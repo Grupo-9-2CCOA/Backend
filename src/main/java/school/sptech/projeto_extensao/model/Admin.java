@@ -1,27 +1,20 @@
 package school.sptech.projeto_extensao.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.websocket.Decoder;
 
-@Schema(description = "Representa um administrador do sistema")
 @Entity
 public class Admin {
-
-    @Schema(description = "ID do administrador", example = "1")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Schema(description = "Nome de usuário para login", example = "admin")
     private String usuario;
-
-    @Schema(description = "Senha de acesso do administrador", example = "1234", accessMode = Schema.AccessMode.WRITE_ONLY)
     private String senha;
-    private Boolean precisaTrocarSenha = false;
+    private Boolean trocaSenhaObrigatoria = true;
 
     public Admin() {
     }
@@ -30,6 +23,14 @@ public class Admin {
         this.id = id;
         this.usuario = usuario;
         this.senha = senha;
+        this.trocaSenhaObrigatoria = true;
+    }
+
+    public Admin(Integer id, String usuario, String senha, Boolean trocaSenhaObrigatoria) {
+        this.id = id;
+        this.usuario = usuario;
+        this.senha = senha;
+        this.trocaSenhaObrigatoria = trocaSenhaObrigatoria;
     }
 
     public Integer getId() {
@@ -56,11 +57,11 @@ public class Admin {
         this.senha = senha;
     }
 
-    public Boolean getPrecisaTrocarSenha() {
-        return precisaTrocarSenha;
+    public Boolean getTrocaSenhaObrigatoria() {
+        return trocaSenhaObrigatoria;
     }
 
-    public void setPrecisaTrocarSenha(Boolean precisaTrocarSenha) {
-        this.precisaTrocarSenha = precisaTrocarSenha;
+    public void setTrocaSenhaObrigatoria(Boolean trocaSenhaObrigatoria) {
+        this.trocaSenhaObrigatoria = trocaSenhaObrigatoria;
     }
 }
