@@ -26,7 +26,7 @@ public class AdminMapper {
         adminTokenDto.setId(admin.getId());
         adminTokenDto.setUsuario(admin.getUsuario());
         adminTokenDto.setToken(token);
-        adminTokenDto.setTrocaSenhaObrigatoria(admin.getTrocaSenhaObrigatoria());
+        adminTokenDto.setTrocaSenhaObrigatoria(admin.getPrecisaTrocarSenha());
 
         return adminTokenDto;
     }

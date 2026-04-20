@@ -19,7 +19,7 @@ public class AutenticacaoService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Admin> adminOpt = adminRepository.findByUsuario(username);
+        Optional<Admin> adminOpt = adminRepository.findFirstByUsuarioOrderByIdDesc(username);
 
         if (adminOpt.isEmpty()) {
             throw new UsernameNotFoundException(String.format("Admin: %s não encontrado", username));

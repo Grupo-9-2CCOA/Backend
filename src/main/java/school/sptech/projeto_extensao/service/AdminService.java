@@ -34,6 +34,10 @@ public class AdminService {
 
     public void criar(Admin novoAdmin) {
 
+        if (adminRepository.count() > 0) {
+            throw new ResponseStatusException(409, "Já existe um admin cadastrado", null);
+        }
+
         String senhaCriptografada = passwordEncoder.encode(novoAdmin.getSenha());
         novoAdmin.setSenha(senhaCriptografada);
         novoAdmin.setPrecisaTrocarSenha(true);
@@ -49,7 +53,7 @@ public class AdminService {
         final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
         Admin adminAutenticado =
-                adminRepository.findByUsuario(admin.getUsuario())
+                adminRepository.findFirstByUsuarioOrderByIdDesc(admin.getUsuario())
                         .orElseThrow(
                                 () -> new ResponseStatusException(404, "Usuário do admin não cadastrado", null)
                         );
@@ -68,7 +72,7 @@ public class AdminService {
             throw new ResponseStatusException(401, "Usuário não autenticado", null);
         }
 
-        Admin admin = adminRepository.findByUsuario(autenticacao.getName())
+        Admin admin = adminRepository.findFirstByUsuarioOrderByIdDesc(autenticacao.getName())
                 .orElseThrow(() -> new ResponseStatusException(404, "Usuário do admin não cadastrado", null));
 
         if (Boolean.FALSE.equals(admin.getPrecisaTrocarSenha())) {
