@@ -12,13 +12,19 @@ public class AdminDetalhesDto implements UserDetails {
     private final String usuario;
 
     private final String senha;
+    private final Boolean precisaTrocarSenha;
 
     public AdminDetalhesDto(Admin admin) {
         this.usuario = admin.getUsuario();
         this.senha = admin.getSenha();
+        this.precisaTrocarSenha = admin.getPrecisaTrocarSenha();
     }
 
     public String getUsuario() {return usuario;}
+
+    public Boolean getPrecisaTrocarSenha() {
+        return precisaTrocarSenha;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

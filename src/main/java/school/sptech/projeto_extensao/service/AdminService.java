@@ -36,7 +36,7 @@ public class AdminService {
 
         String senhaCriptografada = passwordEncoder.encode(novoAdmin.getSenha());
         novoAdmin.setSenha(senhaCriptografada);
-        novoAdmin.setPrecisaTrocarSenha(false);
+        novoAdmin.setPrecisaTrocarSenha(true);
 
         this.adminRepository.save(novoAdmin);
     }

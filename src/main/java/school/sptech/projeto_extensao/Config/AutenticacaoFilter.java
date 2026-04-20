@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import school.sptech.projeto_extensao.controller.AdminController;
+import school.sptech.projeto_extensao.dto.AdminDetalhesDto;
 import school.sptech.projeto_extensao.service.AutenticacaoService;
 
 import java.io.IOException;
@@ -63,7 +64,9 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            registrarAutenticacaoNoContexto(request, username, jwtToken);
+            if (!registrarAutenticacaoNoContexto(request, response, username, jwtToken)) {
+                return;
+            }
         }
 
         filterChain.doFilter(request, response);
@@ -87,15 +90,34 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void registrarAutenticacaoNoContexto(HttpServletRequest request, String username, String jwtToken) {
+    private boolean registrarAutenticacaoNoContexto(HttpServletRequest request,
+                                                    HttpServletResponse response,
+                                                    String username,
+                                                    String jwtToken) throws IOException {
         UserDetails userDetails = autenticacaoService.loadUserByUsername(username);
 
         if (jwtTokenManager.validateToken(jwtToken, userDetails)) {
+            if (userDetails instanceof AdminDetalhesDto adminDetalhes
+                    && Boolean.TRUE.equals(adminDetalhes.getPrecisaTrocarSenha())
+                    && !isRotaPermitidaNoPrimeiroAcesso(request)) {
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Troca de senha obrigatória");
+                return false;
+            }
+
             UsernamePasswordAuthenticationToken autenticacao = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities());
 
             autenticacao.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(autenticacao);
         }
+
+        return true;
+    }
+
+    private boolean isRotaPermitidaNoPrimeiroAcesso(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        return uri.equals("/admin/trocar-senha")
+                || uri.equals("/admin/logout")
+                || uri.equals("/admin/login");
     }
 }
