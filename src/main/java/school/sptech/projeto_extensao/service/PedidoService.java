@@ -3,8 +3,8 @@ package school.sptech.projeto_extensao.service;
 import org.springframework.stereotype.Service;
 import school.sptech.projeto_extensao.Exception.ErroException;
 import school.sptech.projeto_extensao.dto.PedidoMapper;
-import school.sptech.projeto_extensao.dto.PedidoRequestDto;
 import school.sptech.projeto_extensao.model.Pedido;
+import school.sptech.projeto_extensao.repository.HistoricoPedidoRepository;
 import school.sptech.projeto_extensao.repository.PedidoRepository;
 
 import java.time.LocalDateTime;
@@ -14,20 +14,23 @@ import java.util.List;
 public class PedidoService {
     private final PedidoRepository service;
 
-    public PedidoService(PedidoRepository service) {
+    private final HistoricoPedidoRepository historico;
+
+    public PedidoService(PedidoRepository service, HistoricoPedidoRepository historico) {
         this.service = service;
+        this.historico = historico;
     }
 
     public List<Pedido> listar(){
-        return service.findAll();
+        return service.findAllByIsAtivoTrue();
     }
 
     public Pedido encontrarPorId(Integer id){
-        return service.findById(id).orElseThrow(() -> new ErroException(""));
+        return service.findByIdAndIsAtivoTrue(id);
     }
 
     public List<Pedido> listarPorData(LocalDateTime dataInicio, LocalDateTime dataFim){
-        return service.findAllByDataPedidoBetween(dataInicio, dataFim);
+        return service.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim);
     }
 
     public Pedido cadastrar(Pedido pedido){
@@ -35,10 +38,16 @@ public class PedidoService {
     }
 
     public Pedido editar(Pedido pedido){
+        pedido.setDataModificacao(LocalDateTime.now());
+        historico.save(PedidoMapper.toHistorico(pedido));
         return service.save(pedido);
     }
 
     public Integer deletar(Integer id){
-        return service.desativarPedido(id);
+        if (encontrarPorId(id) != null){
+            return service.desativarPedido(id);
+        } else {
+            return 0;
+        }
     }
 }

@@ -48,5 +48,9 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     @Query("UPDATE Pedido p SET p.isAtivo = false WHERE p.id = :id")
     int desativarPedido(@Param("id") Integer id);
 
-    List<Pedido> findAllByDataPedidoBetween(LocalDateTime dataInicio, LocalDateTime dataFim);
+    List<Pedido> findAllByIsAtivoTrueAndDataPedidoBetween(LocalDateTime dataInicio, LocalDateTime dataFim);
+
+    List<Pedido> findAllByIsAtivoTrue();
+
+    Pedido findByIdAndIsAtivoTrue(Integer id);
 }
