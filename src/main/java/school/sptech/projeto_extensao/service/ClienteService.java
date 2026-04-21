@@ -1,0 +1,51 @@
+package school.sptech.projeto_extensao.service;
+
+import org.springframework.stereotype.Service;
+import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
+import school.sptech.projeto_extensao.model.Cliente;
+import school.sptech.projeto_extensao.repository.ClienteRepository;
+
+import java.util.List;
+
+@Service
+public class ClienteService {
+    private final ClienteRepository clienteRepository;
+
+    public ClienteService(ClienteRepository clienteRepository) {
+        this.clienteRepository = clienteRepository;
+    }
+
+    public List<Cliente> listar(){
+        return clienteRepository.findAll();
+    }
+
+    public Cliente findById(Integer id){
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Cliente não encontrado".formatted(id)));
+    }
+
+    public Cliente cadastrar(Cliente cliente){
+        return clienteRepository.save(cliente);
+    }
+
+    public Boolean deletar(Integer id){
+        Cliente cliente = findById(id);
+        if(cliente == null)
+        cliente.setAtivo(false);
+        return true;
+    }
+
+    public Cliente atualizar(Integer id, Cliente cliente) {
+        if (!clienteRepository.existsById(id)) {
+            throw new EntidadeNaoEncontradaException("Cliente não encontrado".formatted(id));
+        }
+
+        Cliente cliente1 = clienteRepository.findById(id).get();
+        cliente1.setNome(cliente.getNome());
+        cliente1.setTelefone(cliente.getTelefone());
+        cliente1.setCpf(cliente.getCpf());
+        cliente1.setAtivo(cliente.isAtivo());
+
+        return clienteRepository.save(cliente1);
+    }
+}
