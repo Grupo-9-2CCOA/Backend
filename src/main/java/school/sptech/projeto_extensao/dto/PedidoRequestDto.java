@@ -16,8 +16,6 @@ public class PedidoRequestDto {
     private Boolean isAtivo;
     private Boolean isReagendado;
     private LocalDateTime dataPedido;
-    private LocalDateTime dataModificacao;
-    private LocalDateTime dataCriacao;
     private Entrega entrega;
     private Pagamento pagamento;
     private Cliente cliente;
@@ -26,16 +24,14 @@ public class PedidoRequestDto {
     public PedidoRequestDto() {
     }
 
-    public PedidoRequestDto(String produto, String descricao, Double valor, Boolean isAtivo, Boolean isReagendado,
-                            LocalDateTime dataPedido, LocalDateTime dataModificacao, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public PedidoRequestDto(String produto, String descricao, Double valor,
+                            LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
-        this.isAtivo = isAtivo;
-        this.isReagendado = isReagendado;
+        this.isAtivo = true;
+        this.isReagendado = false;
         this.dataPedido = dataPedido;
-        this.dataModificacao = dataModificacao;
-        this.dataCriacao = dataCriacao;
         this.entrega = entrega;
         this.pagamento = pagamento;
         this.cliente = cliente;
@@ -72,22 +68,6 @@ public class PedidoRequestDto {
 
     public void setDataPedido(LocalDateTime dataPedido) {
         this.dataPedido = dataPedido;
-    }
-
-    public LocalDateTime getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDateTime dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
     }
 
     public Entrega getEntrega() {

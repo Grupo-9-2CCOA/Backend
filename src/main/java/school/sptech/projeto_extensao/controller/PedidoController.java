@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.projeto_extensao.dto.PedidoMapper;
@@ -56,8 +57,10 @@ public class PedidoController {
             @ApiResponse(responseCode = "404", description = "Período Inválido", content = @Content)
     })
     @GetMapping("/listarData")
-    public ResponseEntity<List<PedidoResponseDto>> listarPorData(@RequestParam LocalDateTime dataInicio, @RequestParam LocalDateTime dataFim){
-        if (dataFim == null || dataInicio == null || dataInicio.isAfter(dataFim)){
+    public ResponseEntity<List<PedidoResponseDto>> listarPorData(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataFim){
+        if (dataInicio.isAfter(dataFim)){
             return ResponseEntity.status(404).build();
         }
         List<Pedido> pedidos = service.listarPorData(dataInicio, dataFim);
@@ -132,7 +135,7 @@ public class PedidoController {
                     content = @Content(schema = @Schema(implementation = Pedido.class))),
             @ApiResponse(responseCode = "404", description = "Pedido com id informado não encontrado", content = @Content)
     })
-    @PutMapping("/deletar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Pedido> deletar(@PathVariable Integer id){
         if (service.encontrarPorId(id) == null){
             return ResponseEntity.status(404).build();
