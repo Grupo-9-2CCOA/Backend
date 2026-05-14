@@ -1,12 +1,10 @@
 package school.sptech.projeto_extensao.dto;
 
-import jakarta.persistence.ManyToOne;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.model.Endereco;
 import school.sptech.projeto_extensao.model.Entrega;
 import school.sptech.projeto_extensao.model.Pagamento;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class PedidoRequestDto {
