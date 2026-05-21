@@ -28,10 +28,10 @@ public class ClienteService {
         return clienteRepository.save(cliente);
     }
 
-    public Boolean deletar(Integer id){
+    public Boolean deletar(Integer id) {
         Cliente cliente = findById(id);
-        if(cliente == null)
         cliente.setAtivo(false);
+        clienteRepository.save(cliente);
         return true;
     }
 
