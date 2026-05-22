@@ -5,12 +5,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import school.sptech.projeto_extensao.controller.enums.PeriodoFiltro;
 import school.sptech.projeto_extensao.dto.*;
 import school.sptech.projeto_extensao.model.*;
 import school.sptech.projeto_extensao.repository.PedidoRepository;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,6 +26,23 @@ class RelatorioServiceTest {
 
     @Mock
     private PedidoRepository pedidoRepository;
+
+
+    private PeriodoFiltroDto periodoSemana() {
+        return new PeriodoFiltroDto(OffsetDateTime.now().minusDays(7), OffsetDateTime.now());
+    }
+
+    private PeriodoFiltroDto periodoMensal() {
+        return new PeriodoFiltroDto(OffsetDateTime.now().minusMonths(1), OffsetDateTime.now());
+    }
+
+    private PeriodoFiltroDto periodoSemestral() {
+        return new PeriodoFiltroDto(OffsetDateTime.now().minusMonths(6), OffsetDateTime.now());
+    }
+
+    private PeriodoFiltroDto periodoAnual() {
+        return new PeriodoFiltroDto(OffsetDateTime.now().minusYears(1), OffsetDateTime.now());
+    }
 
 
     @Test
@@ -50,7 +67,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(1);
 
-        RelatorioDto relatorio = relatorioService.relatorioVendas(PeriodoFiltro.SEMANA);
+        RelatorioDto relatorio = relatorioService.relatorioVendas(periodoSemana());
 
         assertNotNull(relatorio);
         assertEquals(2, relatorio.getQtdPedidos());
@@ -77,7 +94,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
 
-        RelatorioDto relatorio = relatorioService.relatorioVendas(PeriodoFiltro.MENSAL);
+        RelatorioDto relatorio = relatorioService.relatorioVendas(periodoMensal());
 
         assertNotNull(relatorio);
         assertEquals(1, relatorio.getQtdPedidos());
@@ -85,10 +102,8 @@ class RelatorioServiceTest {
 
     @Test
     void deveRetornarRelatorioVendasPeriodoSemestral() {
-        ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
-
         when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
-                .thenReturn(pedidosPeriodo);
+                .thenReturn(new ArrayList<>());
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
         when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -100,7 +115,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
 
-        RelatorioDto relatorio = relatorioService.relatorioVendas(PeriodoFiltro.SEMESTRAL);
+        RelatorioDto relatorio = relatorioService.relatorioVendas(periodoSemestral());
 
         assertNotNull(relatorio);
         assertEquals(0, relatorio.getQtdPedidos());
@@ -126,7 +141,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(5);
 
-        RelatorioDto relatorio = relatorioService.relatorioVendas(PeriodoFiltro.ANUAL);
+        RelatorioDto relatorio = relatorioService.relatorioVendas(periodoAnual());
 
         assertNotNull(relatorio);
         assertEquals(20, relatorio.getQtdPedidos());
@@ -155,7 +170,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
 
-        RelatorioDto relatorio = relatorioService.relatorioVendas(PeriodoFiltro.SEMANA);
+        RelatorioDto relatorio = relatorioService.relatorioVendas(periodoSemana());
 
         assertEquals(15, relatorio.getPedidos().size());
     }
@@ -170,7 +185,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
-        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(PeriodoFiltro.SEMANA);
+        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoSemana());
 
         assertNotNull(pedidos);
         assertEquals(2, pedidos.size());
@@ -181,7 +196,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(Collections.emptyList());
 
-        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(PeriodoFiltro.MENSAL);
+        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoMensal());
 
         assertNotNull(pedidos);
         assertEquals(0, pedidos.size());
@@ -195,7 +210,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
-        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(PeriodoFiltro.MENSAL);
+        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoMensal());
 
         assertEquals(1, pedidos.size());
     }
@@ -210,7 +225,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
-        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(PeriodoFiltro.SEMESTRAL);
+        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoSemestral());
 
         assertEquals(10, pedidos.size());
     }
@@ -225,7 +240,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
-        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(PeriodoFiltro.ANUAL);
+        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoAnual());
 
         assertEquals(15, pedidos.size());
     }
@@ -240,7 +255,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosReagendados);
 
-        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(PeriodoFiltro.SEMANA);
+        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(periodoSemana());
 
         assertNotNull(pedidos);
         assertEquals(2, pedidos.size());
@@ -251,7 +266,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(Collections.emptyList());
 
-        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(PeriodoFiltro.MENSAL);
+        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(periodoMensal());
 
         assertNotNull(pedidos);
         assertEquals(0, pedidos.size());
@@ -265,7 +280,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosReagendados);
 
-        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(PeriodoFiltro.MENSAL);
+        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(periodoMensal());
 
         assertEquals(1, pedidos.size());
     }
@@ -280,7 +295,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosReagendados);
 
-        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(PeriodoFiltro.SEMESTRAL);
+        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(periodoSemestral());
 
         assertEquals(8, pedidos.size());
     }
@@ -295,7 +310,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosReagendados);
 
-        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(PeriodoFiltro.ANUAL);
+        List<PedidosReagendadosDto> pedidos = relatorioService.relatorioReagendados(periodoAnual());
 
         assertEquals(12, pedidos.size());
     }
@@ -310,7 +325,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(clientes);
 
-        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(PeriodoFiltro.SEMANA);
+        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(periodoSemana());
 
         assertNotNull(clientesRetorno);
         assertEquals(2, clientesRetorno.size());
@@ -321,7 +336,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(Collections.emptyList());
 
-        List<ClienteDto> clientes = relatorioService.relatorioClientes(PeriodoFiltro.MENSAL);
+        List<ClienteDto> clientes = relatorioService.relatorioClientes(periodoMensal());
 
         assertNotNull(clientes);
         assertEquals(0, clientes.size());
@@ -335,7 +350,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(clientes);
 
-        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(PeriodoFiltro.MENSAL);
+        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(periodoMensal());
 
         assertEquals(1, clientesRetorno.size());
     }
@@ -350,7 +365,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(clientes);
 
-        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(PeriodoFiltro.SEMESTRAL);
+        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(periodoSemestral());
 
         assertEquals(10, clientesRetorno.size());
     }
@@ -365,7 +380,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(clientes);
 
-        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(PeriodoFiltro.ANUAL);
+        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(periodoAnual());
 
         assertEquals(15, clientesRetorno.size());
     }
@@ -380,7 +395,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(clientes);
 
-        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(PeriodoFiltro.ANUAL);
+        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(periodoAnual());
 
         assertEquals(15, clientesRetorno.size());
     }
@@ -404,7 +419,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
 
-        relatorioService.relatorioVendas(PeriodoFiltro.SEMANA);
+        relatorioService.relatorioVendas(periodoSemana());
 
         verify(pedidoRepository, times(1)).findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class));
         verify(pedidoRepository, times(1)).findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
@@ -422,7 +437,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
-        relatorioService.relatorioCancelados(PeriodoFiltro.SEMANA);
+        relatorioService.relatorioCancelados(periodoSemana());
 
         verify(pedidoRepository, times(1)).findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
     }
@@ -435,7 +450,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosReagendados);
 
-        relatorioService.relatorioReagendados(PeriodoFiltro.SEMANA);
+        relatorioService.relatorioReagendados(periodoSemana());
 
         verify(pedidoRepository, times(1)).findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
     }
@@ -448,10 +463,12 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(clientes);
 
-        relatorioService.relatorioClientes(PeriodoFiltro.SEMANA);
+        relatorioService.relatorioClientes(periodoSemana());
 
         verify(pedidoRepository, times(1)).findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class));
     }
+
+
 
     @Test
     void deveValidarQueDadosNaoSaoNulosNoRelatorioVendas() {
@@ -471,7 +488,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
 
-        RelatorioDto relatorio = relatorioService.relatorioVendas(PeriodoFiltro.SEMANA);
+        RelatorioDto relatorio = relatorioService.relatorioVendas(periodoSemana());
 
         assertNotNull(relatorio);
         assertNotNull(relatorio.getPedidos());
@@ -488,7 +505,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
-        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(PeriodoFiltro.SEMANA);
+        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoSemana());
 
         assertNotNull(pedidos);
         assertFalse(pedidos.isEmpty());
@@ -503,7 +520,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.findTop15ClientesComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(clientes);
 
-        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(PeriodoFiltro.SEMANA);
+        List<ClienteDto> clientesRetorno = relatorioService.relatorioClientes(periodoSemana());
 
         assertNotNull(clientesRetorno);
         assertFalse(clientesRetorno.isEmpty());
@@ -538,7 +555,7 @@ class RelatorioServiceTest {
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(1);
 
-        RelatorioDto relatorio = relatorioService.relatorioVendas(PeriodoFiltro.SEMANA);
+        RelatorioDto relatorio = relatorioService.relatorioVendas(periodoSemana());
 
         assertEquals(5, relatorio.getQtdPedidos());
         assertEquals(2, relatorio.getDiferencaQtdPedidos());
