@@ -5,11 +5,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Schema(description = "Representa o status e informações de pagamento de um pedido")
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pagamento {
 
     @Schema(description = "ID do pagamento", example = "1")
@@ -25,45 +33,4 @@ public class Pagamento {
 
     @Schema(description = "Data da última modificação do status do pagamento", example = "2026-04-06")
     private LocalDate dataModificacao;
-    public Pagamento() {
-    }
-
-    public Pagamento(Integer id, String estado, LocalDate dataPagamento, LocalDate dataModificacao) {
-        this.id = id;
-        this.estado = estado;
-        this.dataPagamento = dataPagamento;
-        this.dataModificacao = dataModificacao;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public LocalDate getDataPagamento() {
-        return dataPagamento;
-    }
-
-    public void setDataPagamento(LocalDate dataPagamento) {
-        this.dataPagamento = dataPagamento;
-    }
-
-    public LocalDate getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDate dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
 }

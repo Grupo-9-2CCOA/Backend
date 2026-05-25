@@ -1,5 +1,7 @@
 package school.sptech.projeto_extensao.dto;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import school.sptech.projeto_extensao.model.*;
 
 import java.time.LocalDateTime;
@@ -15,8 +17,8 @@ public class PedidoMapper {
                 dto.getProduto(),
                 dto.getDescricao(),
                 dto.getValor(),
-                dto.getAtivo(),
-                dto.getReagendado(),
+                dto.getIsAtivo(),
+                dto.getIsReagendado(),
                 dto.getDataPedido(),
                 LocalDateTime.now(),
                 dto.getEntrega(),
@@ -34,7 +36,7 @@ public class PedidoMapper {
                 dto.getProduto(),
                 dto.getDescricao(),
                 dto.getValor(),
-                dto.getAtivo(),
+                dto.getIsAtivo(),
                 dto.getDataPedido(),
                 LocalDateTime.now(),
                 dto.getEntrega(),
@@ -52,7 +54,7 @@ public class PedidoMapper {
                 pedido.getProduto(),
                 pedido.getDescricao(),
                 pedido.getValor(),
-                pedido.getAtivo(),
+                pedido.getIsAtivo(),
                 pedido.getDataPedido(),
                 pedido.getEntrega(),
                 pedido.getPagamento(),
@@ -70,6 +72,7 @@ public class PedidoMapper {
             return null;
         }
         return new HistoricoPedido(
+                null,
                 pedido,
                 pedido.getCliente(),
                 pedido.getEntrega(),

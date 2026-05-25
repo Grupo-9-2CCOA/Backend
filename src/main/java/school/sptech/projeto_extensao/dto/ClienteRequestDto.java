@@ -2,7 +2,15 @@ package school.sptech.projeto_extensao.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClienteRequestDto {
     @NotBlank
     @Schema(example = "Mônica Alencar", description = "Nome do cliente")
@@ -16,36 +24,5 @@ public class ClienteRequestDto {
     @Schema(example = "91234-5678")
     private String telefone;
 
-    public ClienteRequestDto() {
-    }
-
-    public ClienteRequestDto(String nome, String cpf, String telefone) {
-        this.nome = nome;
-        this.cpf = cpf;
-        this.telefone = telefone;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
+    private EnderecoRequestDto endereco;
 }

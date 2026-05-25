@@ -2,7 +2,11 @@ package school.sptech.projeto_extensao.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class AdminCriacaoDto {
 
     @Size(min = 3, max = 10)
@@ -12,21 +16,4 @@ public class AdminCriacaoDto {
     @Size(min = 6, max = 20)
     @Schema(description = "Senha do usuário", example = "123456")
     private String senha;
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
 }

@@ -1,5 +1,7 @@
 package school.sptech.projeto_extensao.dto;
 
+import lombok.Getter;
+import lombok.Setter;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.model.Endereco;
 import school.sptech.projeto_extensao.model.Entrega;
@@ -7,6 +9,8 @@ import school.sptech.projeto_extensao.model.Pagamento;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 public class PedidoRequestDto {
     private String produto;
     private String descricao;
@@ -34,85 +38,5 @@ public class PedidoRequestDto {
         this.pagamento = pagamento;
         this.cliente = cliente;
         this.endereco = endereco;
-    }
-
-    public String getProduto() {
-        return produto;
-    }
-
-    public void setProduto(String produto) {
-        this.produto = produto;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public Double getValor() {
-        return valor;
-    }
-
-    public void setValor(Double valor) {
-        this.valor = valor;
-    }
-
-    public LocalDateTime getDataPedido() {
-        return dataPedido;
-    }
-
-    public void setDataPedido(LocalDateTime dataPedido) {
-        this.dataPedido = dataPedido;
-    }
-
-    public Entrega getEntrega() {
-        return entrega;
-    }
-
-    public void setEntrega(Entrega entrega) {
-        this.entrega = entrega;
-    }
-
-    public Pagamento getPagamento() {
-        return pagamento;
-    }
-
-    public void setPagamento(Pagamento pagamento) {
-        this.pagamento = pagamento;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public Endereco getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco) {
-        this.endereco = endereco;
-    }
-
-    public Boolean getAtivo() {
-        return isAtivo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        isAtivo = ativo;
-    }
-
-    public Boolean getReagendado() {
-        return isReagendado;
-    }
-
-    public void setReagendado(Boolean reagendado) {
-        isReagendado = reagendado;
     }
 }

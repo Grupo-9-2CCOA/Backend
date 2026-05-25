@@ -44,7 +44,7 @@ public class ClienteService {
         cliente1.setNome(cliente.getNome());
         cliente1.setTelefone(cliente.getTelefone());
         cliente1.setCpf(cliente.getCpf());
-        cliente1.setAtivo(cliente.isAtivo());
+        cliente1.setAtivo(cliente.getAtivo());
 
         return clienteRepository.save(cliente1);
     }

@@ -28,7 +28,7 @@ public class ClienteMapper {
                 model.getNome(),
                 model.getCpf(),
                 model.getTelefone(),
-                model.isAtivo()
+                model.getAtivo()
         );
 
         return dto;

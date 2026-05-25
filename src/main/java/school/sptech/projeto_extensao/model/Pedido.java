@@ -2,11 +2,17 @@ package school.sptech.projeto_extensao.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Schema(description = "Representa um pedido do sistema")
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
 public class Pedido {
     @Schema(description = "ID do histórico de pedido", example = "1")
     @Id
@@ -52,9 +58,6 @@ public class Pedido {
     @ManyToOne
     private Endereco endereco;
 
-    public Pedido() {
-    }
-
     public Pedido(Integer id, String produto, String descricao, Double valor, Boolean isAtivo, Boolean isReagendado,
                   LocalDateTime dataPedido, LocalDateTime dataModificacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
         this.id = id;
@@ -81,110 +84,6 @@ public class Pedido {
         this.entrega = entrega;
         this.pagamento = pagamento;
         this.cliente = cliente;
-        this.endereco = endereco;
-    }
-
-    public Boolean getAtivo() {
-        return isAtivo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        isAtivo = ativo;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getProduto() {
-        return produto;
-    }
-
-    public void setProduto(String produto) {
-        this.produto = produto;
-    }
-
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public Double getValor() {
-        return valor;
-    }
-
-    public void setValor(Double valor) {
-        this.valor = valor;
-    }
-
-    public LocalDateTime getDataPedido() {
-        return dataPedido;
-    }
-
-    public void setDataPedido(LocalDateTime dataPedido) {
-        this.dataPedido = dataPedido;
-    }
-
-    public LocalDateTime getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDateTime dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
-
-    public LocalDateTime getDataCriacao() {
-        return dataCriacao;
-    }
-
-    public Boolean getReagendado() {
-        return isReagendado;
-    }
-
-    public void setReagendado(Boolean reagendado) {
-        isReagendado = reagendado;
-    }
-
-    public void setDataCriacao(LocalDateTime dataCriacao) {
-        this.dataCriacao = dataCriacao;
-    }
-
-    public Entrega getEntrega() {
-        return entrega;
-    }
-
-    public void setEntrega(Entrega entrega) {
-        this.entrega = entrega;
-    }
-
-    public Pagamento getPagamento() {
-        return pagamento;
-    }
-
-    public void setPagamento(Pagamento pagamento) {
-        this.pagamento = pagamento;
-    }
-
-    public Cliente getCliente() {
-        return cliente;
-    }
-
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
-
-    public Endereco getEndereco() {
-        return endereco;
-    }
-
-    public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
 }

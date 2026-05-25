@@ -5,11 +5,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Schema(description = "Representa o status e informações de entrega de um pedido")
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Entrega {
 
     @Schema(description = "ID da entrega", example = "1")
@@ -25,45 +33,4 @@ public class Entrega {
 
     @Schema(description = "Data da última modificação do status da entrega", example = "2026-04-06")
     private LocalDate dataModificacao;
-    public Entrega() {
-    }
-
-    public Entrega(Integer id, String estado, LocalDate dataEntrega, LocalDate dataModificacao) {
-        this.id = id;
-        this.estado = estado;
-        this.dataEntrega = dataEntrega;
-        this.dataModificacao = dataModificacao;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public LocalDate getDataEntrega() {
-        return dataEntrega;
-    }
-
-    public void setDataEntrega(LocalDate dataEntrega) {
-        this.dataEntrega = dataEntrega;
-    }
-
-    public LocalDate getDataModificacao() {
-        return dataModificacao;
-    }
-
-    public void setDataModificacao(LocalDate dataModificacao) {
-        this.dataModificacao = dataModificacao;
-    }
 }
