@@ -1,4 +1,4 @@
-package school.sptech.projeto_extensao.dto;
+package school.sptech.projeto_extensao.dto.cliente;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import school.sptech.projeto_extensao.dto.EnderecoRequestDto;
 
 @Getter
 @Setter

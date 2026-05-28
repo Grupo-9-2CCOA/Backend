@@ -1,6 +1,5 @@
-package school.sptech.projeto_extensao.dto;
+package school.sptech.projeto_extensao.dto.pedido;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;

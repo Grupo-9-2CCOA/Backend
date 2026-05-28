@@ -17,8 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 import school.sptech.projeto_extensao.Config.GerenciadorTokenJwt;
-import school.sptech.projeto_extensao.dto.AdminListarDto;
-import school.sptech.projeto_extensao.dto.AdminTokenDto;
+import school.sptech.projeto_extensao.dto.admin.AdminListarDto;
+import school.sptech.projeto_extensao.dto.admin.AdminTokenDto;
 import school.sptech.projeto_extensao.model.Admin;
 import school.sptech.projeto_extensao.repository.AdminRepository;
 

@@ -8,9 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.projeto_extensao.dto.PedidoMapper;
-import school.sptech.projeto_extensao.dto.PedidoRequestDto;
-import school.sptech.projeto_extensao.dto.PedidoResponseDto;
+import school.sptech.projeto_extensao.mapper.PedidoMapper;
+import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
+import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
 import school.sptech.projeto_extensao.model.Pedido;
 import school.sptech.projeto_extensao.service.PedidoService;
 

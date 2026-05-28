@@ -17,7 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import school.sptech.projeto_extensao.controller.AdminController;
-import school.sptech.projeto_extensao.dto.AdminDetalhesDto;
+import school.sptech.projeto_extensao.dto.admin.AdminDetalhesDto;
 import school.sptech.projeto_extensao.service.AutenticacaoService;
 
 import java.io.IOException;

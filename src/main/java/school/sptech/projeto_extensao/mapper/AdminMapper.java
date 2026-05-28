@@ -1,5 +1,6 @@
-package school.sptech.projeto_extensao.dto;
+package school.sptech.projeto_extensao.mapper;
 
+import school.sptech.projeto_extensao.dto.admin.*;
 import school.sptech.projeto_extensao.model.Admin;
 
 public class AdminMapper {

@@ -2,6 +2,11 @@ package school.sptech.projeto_extensao.service;
 
 import org.springframework.stereotype.Service;
 import school.sptech.projeto_extensao.dto.*;
+import school.sptech.projeto_extensao.dto.cliente.ClienteDto;
+import school.sptech.projeto_extensao.dto.pedido.PedidoRelatorioDto;
+import school.sptech.projeto_extensao.dto.pedido.PedidosCanceladosDto;
+import school.sptech.projeto_extensao.dto.pedido.PedidosReagendadosDto;
+import school.sptech.projeto_extensao.dto.pedido.PeriodoFiltroDto;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.model.Pedido;
 import school.sptech.projeto_extensao.repository.PedidoRepository;

@@ -1,9 +1,7 @@
 package school.sptech.projeto_extensao.service;
 
-import org.springframework.scheduling.config.Task;
 import org.springframework.stereotype.Service;
-import school.sptech.projeto_extensao.Exception.ErroException;
-import school.sptech.projeto_extensao.dto.PedidoMapper;
+import school.sptech.projeto_extensao.mapper.PedidoMapper;
 import school.sptech.projeto_extensao.model.Pedido;
 import school.sptech.projeto_extensao.repository.HistoricoPedidoRepository;
 import school.sptech.projeto_extensao.repository.PedidoRepository;

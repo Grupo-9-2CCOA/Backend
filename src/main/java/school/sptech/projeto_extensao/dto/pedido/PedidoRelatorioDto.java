@@ -1,4 +1,4 @@
-package school.sptech.projeto_extensao.dto;
+package school.sptech.projeto_extensao.dto.pedido;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import school.sptech.projeto_extensao.model.Entrega;
@@ -6,32 +6,28 @@ import school.sptech.projeto_extensao.model.Pagamento;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "Dados de um pedido reagendado")
-public class PedidosReagendadosDto {
-    @Schema(description = "ID do pedido", example = "5")
+@Schema(description = "Dados resumidos de um pedido para exibição no relatório")
+public class PedidoRelatorioDto {
+    @Schema(description = "ID do pedido", example = "1")
     private Integer id;
 
-    @Schema(description = "Nome do produto", example = "Bolo de Cenoura")
+    @Schema(description = "Nome do produto", example = "Bolo de Chocolate")
     private String produto;
 
-    @Schema(description = "Status de entrega do pedido")
-    private Entrega status;
-
-    @Schema(description = "Data de criação original do pedido", example = "2026-04-06T19:41:58")
+    @Schema(description = "Data de criação do pedido", example = "2026-04-06T19:41:58")
     private LocalDateTime dataCriacao;
 
-    @Schema(description = "Nova data reagendada do pedido", example = "2026-04-10T10:00:00")
-    private LocalDateTime dataReagendada;
+    @Schema(description = "Status de entrega do pedido")
+    private Entrega entrega;
 
     @Schema(description = "Status de pagamento do pedido")
     private Pagamento pagamento;
 
-    public PedidosReagendadosDto(Integer id, String produto, Entrega status, LocalDateTime dataCriacao, LocalDateTime dataReagendada, Pagamento pagamento) {
+    public PedidoRelatorioDto(Integer id, String produto, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento) {
         this.id = id;
         this.produto = produto;
-        this.status = status;
         this.dataCriacao = dataCriacao;
-        this.dataReagendada = dataReagendada;
+        this.entrega = entrega;
         this.pagamento = pagamento;
     }
 
@@ -51,14 +47,6 @@ public class PedidosReagendadosDto {
         this.produto = produto;
     }
 
-    public Entrega getStatus() {
-        return status;
-    }
-
-    public void setStatus(Entrega status) {
-        this.status = status;
-    }
-
     public LocalDateTime getDataCriacao() {
         return dataCriacao;
     }
@@ -67,12 +55,12 @@ public class PedidosReagendadosDto {
         this.dataCriacao = dataCriacao;
     }
 
-    public LocalDateTime getDataReagendada() {
-        return dataReagendada;
+    public Entrega getEntrega() {
+        return entrega;
     }
 
-    public void setDataReagendada(LocalDateTime dataReagendada) {
-        this.dataReagendada = dataReagendada;
+    public void setEntrega(Entrega entrega) {
+        this.entrega = entrega;
     }
 
     public Pagamento getPagamento() {

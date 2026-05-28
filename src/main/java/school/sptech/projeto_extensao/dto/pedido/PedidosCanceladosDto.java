@@ -1,4 +1,4 @@
-package school.sptech.projeto_extensao.dto;
+package school.sptech.projeto_extensao.dto.pedido;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
