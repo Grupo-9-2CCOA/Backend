@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "cogent-dahlia-497421-s6",
+  "private_key_id": "101eb508df44dbc98303bdcc9fe77ad7f5f56ac1",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCc+hMemN8xzeqF\nM4B7321llAdcznbuBrU666lHqmpCqAVjt7/WskVhRXS/mbIUJLLk/uTsFctjEIUk\nrb7ZobXVu/xedfrmRHZVd8PJUxxUnkv/nPXW46UqQFFSrS/D3DOKtl9c97OZ97xG\nU+ycjubRqoJEvECvUXsm/Fgby4w3QLwWIm1T3i2CYddHPXY7hmY5cuLz+HidJq3R\nnDR+YZW/xb6fkfbzOGjmjrd8Ejdv2L72UoCdYrVc5TO9ga0PvHpth9Ti+iuCyP3Y\nIM1mDDaiUP5TR8fRBEiULEzZ8wk17dyPH6kZRFyXE6NhczPVNhZK/oiufyebiKHI\nIEm/4LhLAgMBAAECggEATDz0DjcmpxSf4sNJkl/HzL6g+MTZY+7kE9Kia0jrxKW/\nwFdcl1QLeBt4gRmPMFNGgwr8eWB4YAuE7nRnrWDpY/2hqurXyP/VDNtWvi9cIgij\nVmiPySbUb3m/RU0RVqlaavL5y7gNhSiZSvq1fq+0kH2kOOfI7py/GAcUb6Ni3O4T\nz6lU6YLEeJjovvIKjhSAyehnOV3UNI+h9EDcWKPG7aAh+QCyEE/TA7SFioWODMoq\n97bbJXLsEmI67mhVavAM9J1LoanSH5oe1oQFOzT/FbnNfnZltnjlnVUQRvdRlZn4\nn82R8WwQBvzjksGHYYxd+0JVfsL6sT0eD6saiaaIeQKBgQDQIK/hvqEQxSGckfwn\nLhLOdgBz95HmicEmpNfoxpZeZ2SqWW12Ugdnw0dfX2sbcyivmKHXd6DrTpJPTy2q\nOm/QHG8u94pr9fO0O7+S9Z4193Vyd0BZQTe5Va37xLYPqiq4l+6LCJraTWKyboPe\nwlk9JYIwbZtnLbqnKOBAbJ2utQKBgQDBFXD21l2Ef7Hl40+Y3rq52ra7xB2PVHlA\n2RTAv1AhQYdTqN1iykafEMR5kgPhaELGIrZbNWRZjFznPap/pme29onRpEKzg7HC\nFu6Lo6dSlFBkmX2GifR31lLGciVZHw6S411Gg2c7LfGN0nTeajxQazUwwv00PO/e\npGuiwU4q/wKBgQCzXXg2dLMaYMm2xZkpqutKQyfgyVtT8yQiya3JTlwIv9JhfPB5\nJ/h51DGOYA1OetB1hHT13IMyR2SQNQyFyBbUo6yuLWd941lD2rofTM4sdDcjjuJG\nCY6citqGP+EnXt+ydj1+VMwfltGYNOYw9A00RT8NvWhQY3iY1wFshC7ggQKBgAvi\nh/uJomP/gDHIViPwwcmi3tCb973U00ncktxyajpB0FSj9kyYatRrscxR4o9DXajY\nhiUDGlQwwZ8yOoZ09blbX4xZ8gkeuBhcVP6fajM5EeG/WOypHTUrKhkw+X+M29bK\ny/kFKZuI7m9uXuc53tCMaM/BkNhgT9uCf2WbRHZ9AoGBANAO/ioqELlXT+gTyAWj\nl11456x4v2F3IBQHPx2MFhH/HoQC305RE+FZhW+IQ79/lmMXHJeDVVbnpn5qo0h8\n8+jONqWcD00QUtXuCtc0LJ0R4Wuxx7D5u4j8WvGGzNXdvjZwpHzdbGtSg5V28V4G\nqk7O60ObeRRl9OBr51IKAFFm\n-----END PRIVATE KEY-----\n",
+  "client_email": "doces-com-amor@cogent-dahlia-497421-s6.iam.gserviceaccount.com",
+  "client_id": "106438479303835894699",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/doces-com-amor%40cogent-dahlia-497421-s6.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
