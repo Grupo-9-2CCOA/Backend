@@ -1,4 +1,4 @@
-package school.sptech.projeto_extensao.dto;
+package school.sptech.projeto_extensao.dto.admin;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

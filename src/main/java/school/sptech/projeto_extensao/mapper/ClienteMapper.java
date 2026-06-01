@@ -1,5 +1,7 @@
-package school.sptech.projeto_extensao.dto;
+package school.sptech.projeto_extensao.mapper;
 
+import school.sptech.projeto_extensao.dto.cliente.ClienteRequestDto;
+import school.sptech.projeto_extensao.dto.cliente.ClienteResponseDto;
 import school.sptech.projeto_extensao.model.Cliente;
 
 import java.util.List;

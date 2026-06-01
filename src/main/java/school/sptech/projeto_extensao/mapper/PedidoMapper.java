@@ -1,7 +1,7 @@
-package school.sptech.projeto_extensao.dto;
+package school.sptech.projeto_extensao.mapper;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
+import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
 import school.sptech.projeto_extensao.model.*;
 
 import java.time.LocalDateTime;

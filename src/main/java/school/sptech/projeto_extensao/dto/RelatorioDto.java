@@ -1,9 +1,9 @@
 package school.sptech.projeto_extensao.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import school.sptech.projeto_extensao.dto.pedido.PedidoRelatorioDto;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Schema(description = "Dados do relatório geral de vendas do período")
 public class RelatorioDto {

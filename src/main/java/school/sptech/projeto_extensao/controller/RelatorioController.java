@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import school.sptech.projeto_extensao.dto.*;
+import school.sptech.projeto_extensao.dto.cliente.ClienteDto;
+import school.sptech.projeto_extensao.dto.pedido.PedidosCanceladosDto;
+import school.sptech.projeto_extensao.dto.pedido.PedidosReagendadosDto;
+import school.sptech.projeto_extensao.dto.pedido.PeriodoFiltroDto;
 import school.sptech.projeto_extensao.service.RelatorioService;
 
 import java.util.List;

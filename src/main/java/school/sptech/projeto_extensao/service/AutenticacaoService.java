@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import school.sptech.projeto_extensao.dto.AdminDetalhesDto;
+import school.sptech.projeto_extensao.dto.admin.AdminDetalhesDto;
 import school.sptech.projeto_extensao.model.Admin;
 import school.sptech.projeto_extensao.repository.AdminRepository;
 

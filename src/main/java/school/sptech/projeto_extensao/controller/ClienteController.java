@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import school.sptech.projeto_extensao.dto.ClienteMapper;
-import school.sptech.projeto_extensao.dto.ClienteRequestDto;
-import school.sptech.projeto_extensao.dto.ClienteResponseDto;
+import school.sptech.projeto_extensao.mapper.ClienteMapper;
+import school.sptech.projeto_extensao.dto.cliente.ClienteRequestDto;
+import school.sptech.projeto_extensao.dto.cliente.ClienteResponseDto;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.service.ClienteService;
 
