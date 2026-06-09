@@ -86,4 +86,8 @@ public class Pedido {
         this.cliente = cliente;
         this.endereco = endereco;
     }
+
+    public Pedido() {
+
+    }
 }

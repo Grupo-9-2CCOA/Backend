@@ -125,7 +125,7 @@ class ClienteServiceTest {
         Assertions.assertEquals("Ana",         resultado.getNome());
         Assertions.assertEquals("55566677788", resultado.getCpf());
         Assertions.assertEquals("11933334444", resultado.getTelefone());
-        Assertions.assertTrue(resultado.isAtivo());
+        Assertions.assertTrue(resultado.getAtivo());
     }
 
     @Test
@@ -138,7 +138,7 @@ class ClienteServiceTest {
         Boolean resultado = service.deletar(1);
 
         Assertions.assertTrue(resultado);
-        Assertions.assertFalse(clienteMock.isAtivo());
+        Assertions.assertFalse(clienteMock.getAtivo());
     }
 
     @Test
@@ -203,6 +203,6 @@ class ClienteServiceTest {
         Assertions.assertEquals("Nome Novo",   resultado.getNome());
         Assertions.assertEquals("22222222222", resultado.getCpf());
         Assertions.assertEquals("11911111111", resultado.getTelefone());
-        Assertions.assertFalse(resultado.isAtivo());
+        Assertions.assertFalse(resultado.getAtivo());
     }
 }
