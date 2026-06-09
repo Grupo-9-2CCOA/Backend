@@ -33,4 +33,10 @@ public class Admin {
 
     @Column(name = "troca_senha_obrigatoria")
     private Boolean precisaTrocarSenha = true;
+
+    public Admin(int id, String usuario, String senha) {
+        this.id = id;
+        this.usuario = usuario;
+        this.senha = senha;
+    }
 }

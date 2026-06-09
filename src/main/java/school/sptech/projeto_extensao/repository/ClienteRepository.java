@@ -6,5 +6,5 @@ import school.sptech.projeto_extensao.model.Cliente;
 import java.util.List;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
-    List<Cliente> findAllByIsAtivoTrue();
+    List<Cliente> findAllByAtivoTrue();
 }
