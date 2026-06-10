@@ -1,5 +1,7 @@
 package school.sptech.projeto_extensao.mapper;
 
+import jakarta.validation.constraints.NotNull;
+import school.sptech.projeto_extensao.dto.EventoCalendarDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
 import school.sptech.projeto_extensao.model.*;
@@ -78,6 +80,18 @@ public class PedidoMapper {
                 pedido.getEntrega(),
                 pedido.getPagamento(),
                 LocalDateTime.now()
+        );
+    }
+
+    public static EventoCalendarDto toGoogleApi(Pedido pedido){
+        if (pedido == null){
+            return null;
+        }
+        return new EventoCalendarDto(
+                pedido.getProduto(),
+                pedido.getDescricao(),
+                pedido.getDataPedido(),
+                pedido.getDataPedido().plusHours(1)
         );
     }
 }

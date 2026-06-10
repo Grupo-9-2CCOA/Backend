@@ -29,18 +29,23 @@ public class Pedido {
     private Double valor;
 
     @Schema(description = "Booleano que informa se o pedido sofreu deleção lógica", example = "false")
+    @Column(name = "is_ativo")
     private Boolean isAtivo;
 
     @Schema(description = "Booleano que informa se o pedido foi reagendado em algum momento", example = "false")
-    private Boolean isReagendado;
+    @Column(name = "is_reagendado")
+    private Boolean isReagendado = false;
 
     @Schema(description = "Data programada para o pedido ser entregue", example = "2026-10-10")
+    @Column(name = "data_pedido")
     private LocalDateTime dataPedido;
 
     @Schema(description = "Data em que o pedido sofreu modicação", example = "2026-03-05")
+    @Column(name = "data_modificacao")
     private LocalDateTime dataModificacao;
 
     @Schema(description = "Data em que o pedido foi criado", example = "2026-06-08")
+    @Column(name = "data_criacao")
     private LocalDateTime dataCriacao;
 
     @ManyToOne

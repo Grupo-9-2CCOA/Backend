@@ -12,6 +12,7 @@ import school.sptech.projeto_extensao.mapper.PedidoMapper;
 import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
 import school.sptech.projeto_extensao.model.Pedido;
+import school.sptech.projeto_extensao.service.GoogleCalendarService;
 import school.sptech.projeto_extensao.service.PedidoService;
 
 import java.time.LocalDateTime;
@@ -24,8 +25,11 @@ public class PedidoController {
 
     public final PedidoService service;
 
-    public PedidoController(PedidoService service) {
+    public final GoogleCalendarService googleService;
+
+    public PedidoController(PedidoService service, GoogleCalendarService googleService) {
         this.service = service;
+        this.googleService = googleService;
     }
 
     @Operation(
@@ -99,12 +103,21 @@ public class PedidoController {
     })
     @PostMapping
     public ResponseEntity<PedidoResponseDto> cadastrar(@RequestBody PedidoRequestDto dto){
-        Pedido pedido = PedidoMapper.toEntity(dto);
-        if (!validarPedido(pedido)){
-            return ResponseEntity.status(404).build();
+        try {
+            Pedido pedido = PedidoMapper.toEntity(dto);
+            if (!validarPedido(pedido)){
+                return ResponseEntity.status(404).build();
+            }
+
+            String linkEvento = googleService.criarEventoNaAgenda(PedidoMapper.toGoogleApi(pedido));
+            PedidoResponseDto pedidoFeito = PedidoMapper.toDto(service.cadastrar(pedido));
+            pedidoFeito.setLinkEvento(linkEvento);
+
+            return ResponseEntity.status(201).body(pedidoFeito);
+        } catch (Exception e){
+            return ResponseEntity.status(502).build();
         }
 
-        return ResponseEntity.status(201).body(PedidoMapper.toDto(service.cadastrar(pedido)));
     }
 
     @Operation(
