@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,11 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
@@ -72,8 +73,8 @@ class AdminServiceTest {
         verify(adminRepository).save(adminCaptor.capture());
 
         Admin adminSalvo = adminCaptor.getValue();
-        Assertions.assertEquals("admin123", adminSalvo.getUsuario());
-        Assertions.assertEquals("senha-criptografada", adminSalvo.getSenha());
+        assertEquals("admin123", adminSalvo.getUsuario());
+        assertEquals("senha-criptografada", adminSalvo.getSenha());
         Assertions.assertTrue(adminSalvo.getPrecisaTrocarSenha());
         verify(passwordEncoder).encode("123456");
     }
@@ -87,12 +88,12 @@ class AdminServiceTest {
 
         when(adminRepository.count()).thenReturn(1L);
 
-        ResponseStatusException exception = Assertions.assertThrows(
+        ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
                 () -> adminService.criar(admin)
         );
 
-        Assertions.assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
+        assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
         verify(adminRepository, never()).save(any(Admin.class));
     }
 
@@ -118,9 +119,9 @@ class AdminServiceTest {
         AdminTokenDto retorno = adminService.autenticar(adminLogin);
 
         Assertions.assertNotNull(retorno);
-        Assertions.assertEquals(1, retorno.getId());
-        Assertions.assertEquals("admin123", retorno.getUsuario());
-        Assertions.assertEquals("token-abc-123", retorno.getToken());
+        assertEquals(1, retorno.getId());
+        assertEquals("admin123", retorno.getUsuario());
+        assertEquals("token-abc-123", retorno.getToken());
         Assertions.assertTrue(retorno.getTrocaSenhaObrigatoria());
 
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
@@ -141,13 +142,13 @@ class AdminServiceTest {
         when(adminRepository.findFirstByUsuarioOrderByIdDesc("admin123"))
                 .thenReturn(Optional.empty());
 
-        ResponseStatusException exception = Assertions.assertThrows(
+        ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
                 () -> adminService.autenticar(adminLogin)
         );
 
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        Assertions.assertEquals("Usuário do admin não cadastrado", exception.getReason());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Usuário do admin não cadastrado", exception.getReason());
         verify(gerenciadorTokenJwt, never()).generateToken(any(Authentication.class));
     }
 
@@ -173,7 +174,7 @@ class AdminServiceTest {
         verify(adminRepository).save(adminCaptor.capture());
 
         Admin adminSalvo = adminCaptor.getValue();
-        Assertions.assertEquals("senha-nova-criptografada", adminSalvo.getSenha());
+        assertEquals("senha-nova-criptografada", adminSalvo.getSenha());
         Assertions.assertFalse(adminSalvo.getPrecisaTrocarSenha());
         verify(passwordEncoder).encode("654321");
     }
@@ -181,13 +182,13 @@ class AdminServiceTest {
     @Test
     @DisplayName("Testar função trocarSenha se lança 401 sem autenticação")
     void testarFuncaoTrocarSenhaSeLanca401SemAutenticacao() {
-        ResponseStatusException exception = Assertions.assertThrows(
+        ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
                 () -> adminService.trocarSenha("654321")
         );
 
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
-        Assertions.assertEquals("Usuário não autenticado", exception.getReason());
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatusCode());
+        assertEquals("Usuário não autenticado", exception.getReason());
     }
 
     @Test
@@ -200,13 +201,13 @@ class AdminServiceTest {
         when(adminRepository.findFirstByUsuarioOrderByIdDesc("admin123"))
                 .thenReturn(Optional.empty());
 
-        ResponseStatusException exception = Assertions.assertThrows(
+        ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
                 () -> adminService.trocarSenha("654321")
         );
 
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
-        Assertions.assertEquals("Usuário do admin não cadastrado", exception.getReason());
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals("Usuário do admin não cadastrado", exception.getReason());
         verify(passwordEncoder, never()).encode(anyString());
         verify(adminRepository, never()).save(any(Admin.class));
     }
@@ -224,13 +225,13 @@ class AdminServiceTest {
         when(adminRepository.findFirstByUsuarioOrderByIdDesc("admin123"))
                 .thenReturn(Optional.of(admin));
 
-        ResponseStatusException exception = Assertions.assertThrows(
+        ResponseStatusException exception = assertThrows(
                 ResponseStatusException.class,
                 () -> adminService.trocarSenha("654321")
         );
 
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-        Assertions.assertEquals("A senha já foi alterada", exception.getReason());
+        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
+        assertEquals("A senha já foi alterada", exception.getReason());
         verify(passwordEncoder, never()).encode(anyString());
         verify(adminRepository, never()).save(any(Admin.class));
     }
@@ -258,11 +259,42 @@ class AdminServiceTest {
 
         List<AdminListarDto> retorno = adminService.listarTodos();
 
-        Assertions.assertEquals(2, retorno.size());
-        Assertions.assertEquals(1, retorno.get(0).getId());
-        Assertions.assertEquals("admin123", retorno.get(0).getUsuario());
-        Assertions.assertEquals(2, retorno.get(1).getId());
-        Assertions.assertEquals("admin456", retorno.get(1).getUsuario());
+        assertEquals(2, retorno.size());
+        assertEquals(1, retorno.get(0).getId());
+        assertEquals("admin123", retorno.get(0).getUsuario());
+        assertEquals(2, retorno.get(1).getId());
+        assertEquals("admin456", retorno.get(1).getUsuario());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando autenticação existe mas nome é null")
+    void trocarSenha_autenticacaoSemNome_lancaExcecao() {
+        Authentication autenticacao = mock(Authentication.class);
+        when(autenticacao.getName()).thenReturn(null);
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(autenticacao);
+        SecurityContextHolder.setContext(securityContext);
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> adminService.trocarSenha("novaSenha123")
+        );
+
+        assertEquals(401, exception.getStatusCode().value());
+    }
+
+    @Test
+    @DisplayName("Deve lançar exceção quando não há autenticação")
+    void trocarSenha_semAutenticacao_lancaExcecao() {
+        SecurityContextHolder.clearContext(); // garante autenticacao null
+
+        ResponseStatusException exception = assertThrows(
+                ResponseStatusException.class,
+                () -> adminService.trocarSenha("novaSenha123")
+        );
+
+        assertEquals(401, exception.getStatusCode().value());
     }
 }
 
