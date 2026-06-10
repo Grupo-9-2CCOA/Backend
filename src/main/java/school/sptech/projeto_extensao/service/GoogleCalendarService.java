@@ -19,7 +19,7 @@ import java.util.Date;
 
 @Service
 public class GoogleCalendarService {
-    private static final String ID_DA_AGENDA = "doces-com-amor@cogent-dahlia-497421-s6.iam.gserviceaccount.com";
+    private static final String ID_DA_AGENDA = "3db8bb13db53a3d6b5ce7c6c43795907d1d478f0ff226f066d11acc5c56b06f8@group.calendar.google.com";
     private static final String ARQUIVO_CHAVE = "/google-calendar-key.json";
 
     public String criarEventoNaAgenda(EventoCalendarDto dto) throws Exception {

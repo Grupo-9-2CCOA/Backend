@@ -1,5 +1,8 @@
 package school.sptech.projeto_extensao.dto.pedido;
 
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import school.sptech.projeto_extensao.model.Cliente;
@@ -12,11 +15,15 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class PedidoRequestDto {
+    @NotBlank
     private String produto;
+    @NotBlank
     private String descricao;
+    @Positive
     private Double valor;
     private Boolean isAtivo;
     private Boolean isReagendado;
+    @FutureOrPresent
     private LocalDateTime dataPedido;
     private Entrega entrega;
     private Pagamento pagamento;
