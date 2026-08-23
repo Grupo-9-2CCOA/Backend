@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,5 +32,8 @@ public class Cliente {
 
     @Schema(description = "Telefone de contato do cliente", example = "11999990001")
     private String telefone;
-    private Boolean ativo;
+
+    @Column(name = "is_ativo")
+    @Schema(description = "Indica se o cliente está ativo no sistema", example = "true")
+    private Boolean ativo = true;
 }

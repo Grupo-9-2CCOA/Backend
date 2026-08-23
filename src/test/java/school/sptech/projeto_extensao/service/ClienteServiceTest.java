@@ -205,4 +205,32 @@ class ClienteServiceTest {
         Assertions.assertEquals("11911111111", resultado.getTelefone());
         Assertions.assertFalse(resultado.getAtivo());
     }
+
+    @Test
+    @DisplayName("Busca por telefone quando q contém apenas dígitos")
+    void testaListarPorTelefoneQuandoSomenteDigitos() {
+        List<Cliente> listaMock = new ArrayList<>();
+        listaMock.add(new Cliente(1, "Sabrina", "29458394801", "11994827483", true));
+
+        Mockito.when(repository.findByAtivoTrueAndTelefoneContaining("11994827483")).thenReturn(listaMock);
+
+        List<Cliente> lista = service.listar("11994827483");
+
+        Assertions.assertEquals(1, lista.size());
+        Mockito.verify(repository, Mockito.times(1)).findByAtivoTrueAndTelefoneContaining("11994827483");
+    }
+
+    @Test
+    @DisplayName("Busca por nome ou telefone quando q contém texto")
+    void testaListarPorNomeOuTelefoneQuandoTexto() {
+        List<Cliente> listaMock = new ArrayList<>();
+        listaMock.add(new Cliente(2, "Carlos", "12345678900", "11987654321", true));
+
+        Mockito.when(repository.findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining("Carlos", "Carlos")).thenReturn(listaMock);
+
+        List<Cliente> lista = service.listar("Carlos");
+
+        Assertions.assertEquals(1, lista.size());
+        Mockito.verify(repository, Mockito.times(1)).findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining("Carlos", "Carlos");
+    }
 }

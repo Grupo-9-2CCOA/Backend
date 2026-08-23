@@ -31,10 +31,10 @@ public class ClienteController {
             @ApiResponse(responseCode = "204", description = "Nenhum cliente encontrado")
     })
     @GetMapping
-    public ResponseEntity<List<ClienteResponseDto>> listar(){
-        List<Cliente> clientes = clienteService.listar();
+    public ResponseEntity<List<ClienteResponseDto>> listar(@RequestParam(required = false) String q){
+        List<Cliente> clientes = clienteService.listar(q);
         if(clientes.isEmpty()){
-            return ResponseEntity.status(204).build(); // Alterado para 204 (No Content) por convenção
+            return ResponseEntity.status(204).build();
         }
         List<ClienteResponseDto> responseDto = ClienteMapper.toDto(clientes);
         return ResponseEntity.status(200).body(responseDto);
@@ -70,7 +70,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "200", description = "Cliente inativado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Erro ao processar a inativação")
     })
-    @PatchMapping("/{id}") // Sugestão: Alterado para PATCH ou DELETE por ser uma alteração parcial/status
+    @PatchMapping("/{id}")
     public ResponseEntity<Void> inativarCliente(@PathVariable Integer id){
         Boolean resposta = clienteService.deletar(id);
         if(!resposta){
