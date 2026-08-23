@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
     List<Cliente> findAllByAtivoTrue();
+
+    List<Cliente> findByAtivoTrueAndTelefoneContaining(String telefone);
+
+    List<Cliente> findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining(String nome, String telefone);
 }

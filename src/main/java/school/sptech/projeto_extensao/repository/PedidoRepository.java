@@ -52,5 +52,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
     List<Pedido> findAllByIsAtivoTrue();
 
+    List<Pedido> findByEnderecoId(Integer enderecoId);
+
     Pedido findByIdAndIsAtivoTrue(Integer id);
 }

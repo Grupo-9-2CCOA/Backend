@@ -29,6 +29,9 @@ public class Endereco {
     @Schema(description = "CEP do endereço", example = "01001000")
     private String cep;
 
+    @Schema(description = "Complemento do endereço", example = "Apartamento 101")
+    private String complemento;
+
     @Schema(description = "Cliente dono do endereço")
     @ManyToOne
     @JoinColumn(name = "id_cliente")

@@ -19,12 +19,28 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
+    public List<Cliente> listar(String q) {
+        if (q == null || q.isBlank()) {
+            return clienteRepository.findAllByAtivoTrue();
+        }
+
+        String digitsOnly = q.replaceAll("\\D", "");
+        if (!digitsOnly.isBlank() && digitsOnly.matches("\\d+")) {
+            return clienteRepository.findByAtivoTrueAndTelefoneContaining(digitsOnly);
+        } else {
+            return clienteRepository.findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining(q, q);
+        }
+    }
+
     public Cliente findById(Integer id){
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Cliente não encontrado".formatted(id)));
     }
 
     public Cliente cadastrar(Cliente cliente){
+        if (cliente.getAtivo() == null) {
+            cliente.setAtivo(true);
+        }
         return clienteRepository.save(cliente);
     }
 
