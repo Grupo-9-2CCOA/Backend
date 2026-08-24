@@ -29,12 +29,13 @@ public class PedidoRequestDto {
     private Pagamento pagamento;
     private Cliente cliente;
     private Endereco endereco;
+    private String eventoGoogleCalendarId;
 
     public PedidoRequestDto() {
     }
 
     public PedidoRequestDto(String produto, String descricao, Double valor,
-                            LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+                            LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco, String eventoGoogleCalendarId) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
@@ -45,5 +46,6 @@ public class PedidoRequestDto {
         this.pagamento = pagamento;
         this.cliente = cliente;
         this.endereco = endereco;
+        this.eventoGoogleCalendarId = eventoGoogleCalendarId;
     }
 }

@@ -1,6 +1,5 @@
 package school.sptech.projeto_extensao.mapper;
 
-import jakarta.validation.constraints.NotNull;
 import school.sptech.projeto_extensao.dto.EventoCalendarDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
@@ -26,7 +25,8 @@ public class PedidoMapper {
                 dto.getEntrega(),
                 dto.getPagamento(),
                 dto.getCliente(),
-                dto.getEndereco()
+                dto.getEndereco(),
+                dto.getEventoGoogleCalendarId()
         );
     }
 
@@ -44,7 +44,8 @@ public class PedidoMapper {
                 dto.getEntrega(),
                 dto.getPagamento(),
                 dto.getCliente(),
-                dto.getEndereco()
+                dto.getEndereco(),
+                dto.getEventoGoogleCalendarId()
         );
     }
 

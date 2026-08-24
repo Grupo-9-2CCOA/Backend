@@ -63,8 +63,11 @@ public class Pedido {
     @ManyToOne
     private Endereco endereco;
 
+    @Schema(description = "ID de evento gerado na API do Google Calendar", example = "23k4j54k232l423j42k")
+    private String eventoGoogleCalendarId;
+
     public Pedido(Integer id, String produto, String descricao, Double valor, Boolean isAtivo, Boolean isReagendado,
-                  LocalDateTime dataPedido, LocalDateTime dataModificacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+                  LocalDateTime dataPedido, LocalDateTime dataModificacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco, String eventoGoogleCalendarId) {
         this.id = id;
         this.produto = produto;
         this.descricao = descricao;
@@ -77,9 +80,10 @@ public class Pedido {
         this.pagamento = pagamento;
         this.cliente = cliente;
         this.endereco = endereco;
+        this.eventoGoogleCalendarId = eventoGoogleCalendarId;
     }
 
-    public Pedido(String produto, String descricao, Double valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public Pedido(String produto, String descricao, Double valor, Boolean isAtivo, LocalDateTime dataPedido, LocalDateTime dataCriacao, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco, String eventoGoogleCalendarId) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;
@@ -90,6 +94,7 @@ public class Pedido {
         this.pagamento = pagamento;
         this.cliente = cliente;
         this.endereco = endereco;
+        this.eventoGoogleCalendarId = eventoGoogleCalendarId;
     }
 
     public Pedido() {
