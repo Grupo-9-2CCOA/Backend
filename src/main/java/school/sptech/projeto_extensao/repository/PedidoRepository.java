@@ -54,5 +54,17 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
     List<Pedido> findByEnderecoId(Integer enderecoId);
 
+    @Query("""
+        SELECT p.id
+        FROM Pedido p
+        WHERE p.endereco.id = :enderecoId
+          AND (p.isAtivo IS NULL OR p.isAtivo = true)
+          AND (p.entrega IS NULL OR p.entrega.id <> :entregueId)
+        """)
+    List<Integer> findIdsByEnderecoIdWithEntregaNot(
+            @Param("enderecoId") Integer enderecoId,
+            @Param("entregueId") Integer entregueId
+    );
+
     Pedido findByIdAndIsAtivoTrue(Integer id);
 }
