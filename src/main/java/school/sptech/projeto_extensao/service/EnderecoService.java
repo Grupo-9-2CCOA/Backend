@@ -1,6 +1,8 @@
 package school.sptech.projeto_extensao.service;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import school.sptech.projeto_extensao.dto.EnderecoRequestDto;
 import school.sptech.projeto_extensao.dto.EnderecoResponseDto;
 import school.sptech.projeto_extensao.exception.EnderecoPedidoNaoCompletoException;
@@ -20,11 +22,16 @@ public class EnderecoService {
     private final EnderecoRepository enderecoRepository;
     private final ClienteRepository clienteRepository;
     private final PedidoRepository pedidoRepository;
+    private final PedidoConsultaService pedidoConsultaService;
 
-    public EnderecoService(EnderecoRepository enderecoRepository, ClienteRepository clienteRepository, PedidoRepository pedidoRepository) {
+    public EnderecoService(EnderecoRepository enderecoRepository,
+                          ClienteRepository clienteRepository,
+                          PedidoRepository pedidoRepository,
+                          PedidoConsultaService pedidoConsultaService) {
         this.enderecoRepository = enderecoRepository;
         this.clienteRepository = clienteRepository;
         this.pedidoRepository = pedidoRepository;
+        this.pedidoConsultaService = pedidoConsultaService;
     }
 
     public List<EnderecoResponseDto> listarPorCliente(Integer idCliente) {
@@ -83,23 +90,40 @@ public class EnderecoService {
         );
     }
 
+    @Transactional
     public void deletar(Integer id) {
         Endereco endereco = enderecoRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Endereço não encontrado"));
 
-        List<Pedido> pedidos = pedidoRepository.findByEnderecoId(id);
-        Pedido pedidoNaoCompleto = pedidos.stream()
-                .filter(pedido -> pedido.getIsAtivo() == null || pedido.getIsAtivo())
-                .filter(pedido -> pedido.getEntrega() == null || pedido.getEntrega().getEstado() == null || !"Completo".equalsIgnoreCase(pedido.getEntrega().getEstado().trim()))
-                .findFirst()
-                .orElse(null);
+        final int ENTREGUE_STATUS_ID = 3;
 
-        if (pedidoNaoCompleto != null) {
+        List<Integer> pedidoIdsIncompletos = pedidoConsultaService.buscarPedidosIncompletosPorEndereco(id);
+
+        if (pedidoIdsIncompletos != null && !pedidoIdsIncompletos.isEmpty()) {
             throw new EnderecoPedidoNaoCompletoException(
-                    "Não foi possível deletar o endereço porque existe um pedido ainda não completo para esse endereço (Pedido Nº " + pedidoNaoCompleto.getId() + ")."
+                    pedidoIdsIncompletos,
+                    "Não foi possível deletar o endereço porque existem pedidos ainda não completos para esse endereço. Pedidos: " + pedidoIdsIncompletos + "."
             );
         }
 
-        enderecoRepository.delete(endereco);
+        try {
+            enderecoRepository.delete(endereco);
+            enderecoRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            List<Integer> pedidosVinculados = pedidoConsultaService.buscarPedidosIncompletosPorEndereco(id);
+
+            if (pedidosVinculados == null || pedidosVinculados.isEmpty()) {
+                pedidosVinculados = pedidoRepository.findByEnderecoId(id).stream()
+                        .filter(pedido -> pedido.getIsAtivo() == null || pedido.getIsAtivo())
+                        .filter(pedido -> pedido.getEntrega() == null || pedido.getEntrega().getId() == null || pedido.getEntrega().getId() != ENTREGUE_STATUS_ID)
+                        .map(Pedido::getId)
+                        .toList();
+            }
+
+            throw new EnderecoPedidoNaoCompletoException(
+                    pedidosVinculados,
+                    "Não foi possível deletar o endereço porque existem pedidos ainda não completos para esse endereço. Pedidos: " + pedidosVinculados + "."
+            );
+        }
     }
 }
