@@ -52,11 +52,11 @@ class RelatorioServiceTest {
     @Test
     void deveRetornarRelatorioVendasComDadosPeriodoSemana() {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
-        pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
-        pedidosPeriodo.add(new Pedido(2, "Bolo 2", "Descrição 2", 60.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
+        pedidosPeriodo.add(new Pedido(2, "Bolo 2", "Descrição 2", 60.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         ArrayList<Pedido> pedidosComparacao = new ArrayList<>();
-        pedidosComparacao.add(new Pedido(3, "Bolo 3", "Descrição 3", 40.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosComparacao.add(new Pedido(3, "Bolo 3", "Descrição 3", 40.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
@@ -83,7 +83,7 @@ class RelatorioServiceTest {
     @Test
     void deveRetornarRelatorioVendasPeriodoMensal() {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
-        pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
@@ -129,7 +129,7 @@ class RelatorioServiceTest {
     void deveRetornarRelatorioVendasPeriodoAnual() {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
-            pedidosPeriodo.add(new Pedido(i, "Bolo " + i, "Descrição " + i, 50.0 + i, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+            pedidosPeriodo.add(new Pedido(i, "Bolo " + i, "Descrição " + i, 50.0 + i, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
         when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -158,7 +158,7 @@ class RelatorioServiceTest {
     void deveRetornarListaPedidosLimitadaA15NoRelatorioVendas() {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
-            pedidosPeriodo.add(new Pedido(i, "Bolo " + i, "Descrição " + i, 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+            pedidosPeriodo.add(new Pedido(i, "Bolo " + i, "Descrição " + i, 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
         when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -183,8 +183,8 @@ class RelatorioServiceTest {
     @Test
     void deveRetornarListaPedidosCanceladosPeriodoSemana() {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
-        pedidosCancelados.add(new Pedido(1, "Bolo Cancelado", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
-        pedidosCancelados.add(new Pedido(2, "Bolo 2 Cancelado", "Descrição 2", 60.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosCancelados.add(new Pedido(1, "Bolo Cancelado", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
+        pedidosCancelados.add(new Pedido(2, "Bolo 2 Cancelado", "Descrição 2", 60.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
@@ -209,7 +209,7 @@ class RelatorioServiceTest {
     @Test
     void deveRetornarPedidosCanceladosPeriodoMensal() {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
-        pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
@@ -223,7 +223,7 @@ class RelatorioServiceTest {
     void deveRetornarPedidosCanceladosPeriodoSemestral() {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            pedidosCancelados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+            pedidosCancelados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -238,7 +238,7 @@ class RelatorioServiceTest {
     void deveRetornarPedidosCanceladosPeriodoAnual() {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
         for (int i = 0; i < 15; i++) {
-            pedidosCancelados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+            pedidosCancelados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -253,8 +253,8 @@ class RelatorioServiceTest {
     @Test
     void deveRetornarListaPedidosReagendadosPeriodoSemana() {
         ArrayList<Pedido> pedidosReagendados = new ArrayList<>();
-        pedidosReagendados.add(new Pedido(1, "Bolo Reagendado", "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
-        pedidosReagendados.add(new Pedido(2, "Bolo 2 Reagendado", "Descrição 2", 60.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosReagendados.add(new Pedido(1, "Bolo Reagendado", "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
+        pedidosReagendados.add(new Pedido(2, "Bolo 2 Reagendado", "Descrição 2", 60.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosReagendados);
@@ -279,7 +279,7 @@ class RelatorioServiceTest {
     @Test
     void deveRetornarPedidosReagendadosPeriodoMensal() {
         ArrayList<Pedido> pedidosReagendados = new ArrayList<>();
-        pedidosReagendados.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosReagendados.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosReagendados);
@@ -293,7 +293,7 @@ class RelatorioServiceTest {
     void deveRetornarPedidosReagendadosPeriodoSemestral() {
         ArrayList<Pedido> pedidosReagendados = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
-            pedidosReagendados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+            pedidosReagendados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -308,7 +308,7 @@ class RelatorioServiceTest {
     void deveRetornarPedidosReagendadosPeriodoAnual() {
         ArrayList<Pedido> pedidosReagendados = new ArrayList<>();
         for (int i = 0; i < 12; i++) {
-            pedidosReagendados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+            pedidosReagendados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -408,7 +408,7 @@ class RelatorioServiceTest {
     @Test
     void deveVerificarChamadasDoRepositorioNoRelatorioVendas() {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
-        pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
@@ -436,7 +436,7 @@ class RelatorioServiceTest {
     @Test
     void deveVerificarChamadasDoRepositorioCancelados() {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
-        pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
@@ -449,7 +449,7 @@ class RelatorioServiceTest {
     @Test
     void deveVerificarChamadasDoRepositorioReagendados() {
         ArrayList<Pedido> pedidosReagendados = new ArrayList<>();
-        pedidosReagendados.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosReagendados.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, true, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findTop15ReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosReagendados);
@@ -477,7 +477,7 @@ class RelatorioServiceTest {
     @Test
     void deveValidarQueDadosNaoSaoNulosNoRelatorioVendas() {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
-        pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
@@ -504,7 +504,7 @@ class RelatorioServiceTest {
     @Test
     void deveValidarQuePedidosNaoSaoNulosNoCancelados() {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
-        pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+        pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
         when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
@@ -538,12 +538,12 @@ class RelatorioServiceTest {
     void deveRetornarDiferencaCorretaNoRelatorioVendas() {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            pedidosPeriodo.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+            pedidosPeriodo.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
         ArrayList<Pedido> pedidosComparacao = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
-            pedidosComparacao.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null));
+            pedidosComparacao.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
         when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
