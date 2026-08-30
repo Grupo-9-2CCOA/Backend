@@ -1,5 +1,6 @@
 package school.sptech.projeto_extensao.controller;
 
+import com.google.api.services.calendar.model.Event;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -99,25 +100,20 @@ public class PedidoController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Pedido cadastrado com sucesso",
                     content = @Content(schema = @Schema(implementation = Pedido.class))),
-            @ApiResponse(responseCode = "404", description = "Informações de Pedido inválidas", content = @Content)
+            @ApiResponse(responseCode = "400", description = "Informações de Pedido inválidas", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<PedidoResponseDto> cadastrar(@RequestBody PedidoRequestDto dto){
-        try {
-            Pedido pedido = PedidoMapper.toEntity(dto);
-            if (!validarPedido(pedido)){
-                return ResponseEntity.status(404).build();
-            }
+    public ResponseEntity<PedidoResponseDto> cadastrar(@RequestBody PedidoRequestDto dto) throws Exception {
+        Pedido pedido = PedidoMapper.toEntity(dto);
+        if (!validarPedido(pedido)) return ResponseEntity.status(400).build();
+        Event eventoCriado = googleService.criarEventoNaAgenda(PedidoMapper.toGoogleApi(pedido));
 
-            String linkEvento = googleService.criarEventoNaAgenda(PedidoMapper.toGoogleApi(pedido));
-            PedidoResponseDto pedidoFeito = PedidoMapper.toDto(service.cadastrar(pedido));
-            pedidoFeito.setLinkEvento(linkEvento);
+        var pedidoCadastrado = service.cadastrar(pedido, eventoCriado);
 
-            return ResponseEntity.status(201).body(pedidoFeito);
-        } catch (Exception e){
-            return ResponseEntity.status(502).build();
-        }
+        PedidoResponseDto pedidoFeito = PedidoMapper.toDto(pedidoCadastrado);
+        pedidoFeito.setLinkEvento(eventoCriado.getHtmlLink());
 
+        return ResponseEntity.status(201).body(pedidoFeito);
     }
 
     @Operation(
@@ -132,11 +128,10 @@ public class PedidoController {
     @PutMapping("/{id}")
     public ResponseEntity<PedidoResponseDto> atualizar(@PathVariable Integer id, @RequestBody PedidoRequestDto dto){
         Pedido pedido = PedidoMapper.toEntity(id, dto);
-        if (!validarPedido(pedido)){
-            return ResponseEntity.status(404).build();
-        }
+        if (pedido == null || !validarPedido(pedido)) return ResponseEntity.status(404).build();
 
-        return ResponseEntity.status(200).body(PedidoMapper.toDto(service.editar(pedido)));
+        var pedidoResultado = service.editar(pedido);
+        return ResponseEntity.status(200).body(PedidoMapper.toDto(pedidoResultado));
     }
 
     @Operation(
@@ -150,15 +145,11 @@ public class PedidoController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Pedido> deletar(@PathVariable Integer id){
-        if (service.encontrarPorId(id) == null){
-            return ResponseEntity.status(404).build();
-        }
-
         int deletar = service.deletar(id);
-        if (deletar > 0){
-            return ResponseEntity.status(204).build();
-        }
-        return ResponseEntity.status(400).build();
+        if (deletar > 0) return ResponseEntity.status(204).build();
+        if (deletar < 0) return ResponseEntity.status(404).build();
+
+        return ResponseEntity.status(502).build();
     }
 
     @Operation(

@@ -1,6 +1,11 @@
 package school.sptech.projeto_extensao.service;
 
+import com.google.api.services.calendar.model.Event;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import school.sptech.projeto_extensao.Exception.ErroException;
+import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
+import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
 import school.sptech.projeto_extensao.mapper.PedidoMapper;
 import school.sptech.projeto_extensao.model.Pedido;
 import school.sptech.projeto_extensao.repository.HistoricoPedidoRepository;
@@ -15,9 +20,12 @@ public class PedidoService {
 
     private final HistoricoPedidoRepository historico;
 
-    public PedidoService(PedidoRepository service, HistoricoPedidoRepository historico) {
+    private final GoogleCalendarService calendario;
+
+    public PedidoService(PedidoRepository service, HistoricoPedidoRepository historico, GoogleCalendarService calendario) {
         this.service = service;
         this.historico = historico;
+        this.calendario = calendario;
     }
 
     public List<Pedido> listar(){
@@ -32,21 +40,65 @@ public class PedidoService {
         return service.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim);
     }
 
-    public Pedido cadastrar(Pedido pedido){
-        return service.save(pedido);
+    public Pedido cadastrar(Pedido pedido, Event evento){
+        try {
+            pedido.setEventoGoogleCalendarId(evento.getId());
+
+            return service.save(pedido);
+        } catch (Exception e){
+            throw new ErroException(
+                    "Houve um erro durante a criação do Pedido."
+            );
+        }
     }
 
     public Pedido editar(Pedido pedido){
-        pedido.setDataModificacao(LocalDateTime.now());
-        historico.save(PedidoMapper.toHistorico(pedido));
-        return service.save(pedido);
+        try{
+            Pedido pedidoExistente = encontrarPorId(pedido.getId());
+            if (pedidoExistente == null) throw new EntidadeNaoEncontradaException(
+                    "Entidade não encontrada."
+            );
+
+            String eventoId = pedidoExistente.getEventoGoogleCalendarId();
+            if (eventoId != null) calendario.atualizarEvento(eventoId, PedidoMapper.toGoogleApi(pedido));
+
+            historico.save(PedidoMapper.toHistorico(pedidoExistente));
+
+            pedidoExistente.setDataPedido(pedido.getDataPedido());
+            pedidoExistente.setProduto(pedido.getProduto());
+            pedidoExistente.setCliente(pedido.getCliente());
+            pedidoExistente.setDescricao(pedido.getDescricao());
+            pedidoExistente.setEntrega(pedido.getEntrega());
+            pedidoExistente.setEndereco(pedido.getEndereco());
+            pedidoExistente.setPagamento(pedido.getPagamento());
+            pedidoExistente.setIsAtivo(pedido.getIsAtivo());
+            pedidoExistente.setValor(pedido.getValor());
+
+            pedidoExistente.setDataModificacao(LocalDateTime.now());
+            pedidoExistente.setIsReagendado(true);
+            return service.save(pedidoExistente);
+        } catch (Exception e){
+            throw new ErroException(
+                    "Houve um erro durante a edição do Pedido."
+            );
+        }
     }
 
     public Integer deletar(Integer id){
-        if (encontrarPorId(id) != null){
+        try {
+            Pedido pedido = encontrarPorId(id);
+            if (pedido == null) throw new EntidadeNaoEncontradaException(
+                    "Entidade não encontrada."
+            );
+
+            String eventoId = pedido.getEventoGoogleCalendarId();
+            if (pedido.getEventoGoogleCalendarId() != null) calendario.deletarEvento(eventoId);
+
             return service.desativarPedido(id);
-        } else {
-            return 0;
+        } catch (Exception e){
+            throw new ErroException(
+                    "Houve um erro durante a deleção do Pedido."
+            );
         }
     }
 }

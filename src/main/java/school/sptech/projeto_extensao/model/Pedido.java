@@ -20,12 +20,15 @@ public class Pedido {
     private Integer id;
 
     @Schema(description = "Produto principal do pedido", example = "Bolo 5kg")
+    @Column(name = "descricao")
     private String produto;
 
     @Schema(description = "Descrição dos produtos relacionados ao pedido", example = "1 Bolo de kg decorado da Turma da Mônica; 100 coxinhas")
+    @Column(name = "detalhes")
     private String descricao;
 
     @Schema(description = "O valor cobrado no pedido", example = "59.99")
+    @Column(name = "valor_total")
     private Double valor;
 
     @Schema(description = "Booleano que informa se o pedido sofreu deleção lógica", example = "false")
@@ -61,6 +64,7 @@ public class Pedido {
     private Cliente cliente;
 
     @ManyToOne
+    @JoinColumn(name = "id_endereco")
     private Endereco endereco;
 
     @Schema(description = "ID de evento gerado na API do Google Calendar", example = "23k4j54k232l423j42k")
