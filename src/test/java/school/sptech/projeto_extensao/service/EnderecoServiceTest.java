@@ -35,6 +35,9 @@ class EnderecoServiceTest {
     @Mock
     private PedidoRepository pedidoRepository;
 
+    @Mock
+    private PedidoConsultaService pedidoConsultaService;
+
     @InjectMocks
     private EnderecoService service;
 
@@ -172,15 +175,8 @@ class EnderecoServiceTest {
         endereco.setId(11);
         endereco.setLogradouro("Rua das Flores");
 
-        Pedido pedidoCompleto = new Pedido();
-        pedidoCompleto.setId(21);
-        pedidoCompleto.setIsAtivo(true);
-        Entrega entrega = new Entrega();
-        entrega.setEstado("Completo");
-        pedidoCompleto.setEntrega(entrega);
-
         Mockito.when(enderecoRepository.findById(11)).thenReturn(Optional.of(endereco));
-        Mockito.when(pedidoRepository.findByEnderecoId(11)).thenReturn(List.of(pedidoCompleto));
+        Mockito.when(pedidoConsultaService.buscarPedidosIncompletosPorEndereco(11)).thenReturn(List.of());
 
         Assertions.assertDoesNotThrow(() -> service.deletar(11));
         Mockito.verify(enderecoRepository, Mockito.times(1)).delete(endereco);
@@ -193,22 +189,35 @@ class EnderecoServiceTest {
         endereco.setId(12);
         endereco.setLogradouro("Rua das Flores");
 
-        Pedido pedidoEmAberto = new Pedido();
-        pedidoEmAberto.setId(55);
-        pedidoEmAberto.setIsAtivo(true);
-        Entrega entrega = new Entrega();
-        entrega.setEstado("Pendente");
-        pedidoEmAberto.setEntrega(entrega);
-
         Mockito.when(enderecoRepository.findById(12)).thenReturn(Optional.of(endereco));
-        Mockito.when(pedidoRepository.findByEnderecoId(12)).thenReturn(List.of(pedidoEmAberto));
+        Mockito.when(pedidoConsultaService.buscarPedidosIncompletosPorEndereco(12)).thenReturn(List.of(55));
 
         EnderecoPedidoNaoCompletoException excecao = Assertions.assertThrows(
                 EnderecoPedidoNaoCompletoException.class,
                 () -> service.deletar(12)
         );
 
-        Assertions.assertTrue(excecao.getMessage().contains("Pedido Nº 55"));
+        Assertions.assertTrue(excecao.getMessage().contains("Pedidos: [55]"));
+        Assertions.assertEquals(List.of(55), excecao.getPedidoIds());
+        Mockito.verify(enderecoRepository, Mockito.never()).delete(Mockito.any());
+    }
+
+    @Test
+    @DisplayName("Lança erro ao tentar deletar endereço com pedido sem entrega")
+    void deveLancarExcecaoQuandoPedidoSemEntregaBloqueiaExclusao() {
+        Endereco endereco = new Endereco();
+        endereco.setId(13);
+        endereco.setLogradouro("Rua do Centro");
+
+        Mockito.when(enderecoRepository.findById(13)).thenReturn(Optional.of(endereco));
+        Mockito.when(pedidoConsultaService.buscarPedidosIncompletosPorEndereco(13)).thenReturn(List.of(101));
+
+        EnderecoPedidoNaoCompletoException excecao = Assertions.assertThrows(
+                EnderecoPedidoNaoCompletoException.class,
+                () -> service.deletar(13)
+        );
+
+        Assertions.assertEquals(List.of(101), excecao.getPedidoIds());
         Mockito.verify(enderecoRepository, Mockito.never()).delete(Mockito.any());
     }
 
