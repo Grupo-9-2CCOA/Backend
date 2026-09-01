@@ -3,7 +3,9 @@ package school.sptech.projeto_extensao.dto.pedido;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.model.Endereco;
@@ -12,6 +14,8 @@ import school.sptech.projeto_extensao.model.Pagamento;
 
 import java.time.LocalDateTime;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class PedidoRequestDto {
@@ -30,9 +34,6 @@ public class PedidoRequestDto {
     private Cliente cliente;
     private Endereco endereco;
     private String eventoGoogleCalendarId;
-
-    public PedidoRequestDto() {
-    }
 
     public PedidoRequestDto(String produto, String descricao, Double valor,
                             LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco, String eventoGoogleCalendarId) {

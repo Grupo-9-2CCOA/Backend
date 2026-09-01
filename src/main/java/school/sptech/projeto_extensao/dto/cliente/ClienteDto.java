@@ -1,12 +1,16 @@
 package school.sptech.projeto_extensao.dto.cliente;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Schema(description = "Dados resumidos de um cliente")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ClienteDto {
     @Schema(description = "ID do cliente", example = "1")
     private Integer id;
@@ -19,11 +23,4 @@ public class ClienteDto {
 
     @Schema(description = "CPF do cliente", example = "11111111111")
     private String cpf;
-
-    public ClienteDto(Integer id, String nome, String telefone, String cpf) {
-        this.id = id;
-        this.nome = nome;
-        this.telefone = telefone;
-        this.cpf = cpf;
-    }
 }

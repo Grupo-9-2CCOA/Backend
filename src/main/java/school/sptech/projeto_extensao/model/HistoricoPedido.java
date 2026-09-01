@@ -1,5 +1,6 @@
 package school.sptech.projeto_extensao.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,6 +14,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Schema(description = "Representa uma atualização antiga de um pedido do sistema")
 @Entity
 @Getter
 @Setter

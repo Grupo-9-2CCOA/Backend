@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class Pedido {
     @Schema(description = "ID do histórico de pedido", example = "1")
@@ -99,9 +101,5 @@ public class Pedido {
         this.cliente = cliente;
         this.endereco = endereco;
         this.eventoGoogleCalendarId = eventoGoogleCalendarId;
-    }
-
-    public Pedido() {
-
     }
 }

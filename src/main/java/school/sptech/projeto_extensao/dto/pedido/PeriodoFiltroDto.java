@@ -1,10 +1,16 @@
 package school.sptech.projeto_extensao.dto.pedido;
 
 import jakarta.validation.constraints.NotNull;
-
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.time.OffsetDateTime;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class PeriodoFiltroDto {
 
     @NotNull
@@ -12,27 +18,4 @@ public class PeriodoFiltroDto {
 
     @NotNull
     private OffsetDateTime dataFim;
-
-    public PeriodoFiltroDto() {}
-
-    public PeriodoFiltroDto(OffsetDateTime dataInicio, OffsetDateTime dataFim) {
-        this.dataInicio = dataInicio;
-        this.dataFim = dataFim;
-    }
-
-    public LocalDateTime getDataInicio() {
-        return dataInicio.toLocalDateTime();
-    }
-
-    public LocalDateTime getDataFim() {
-        return dataFim.toLocalDateTime();
-    }
-
-    public void setDataInicio(OffsetDateTime dataInicio) {
-        this.dataInicio = dataInicio;
-    }
-
-    public void setDataFim(OffsetDateTime dataFim) {
-        this.dataFim = dataFim;
-    }
 }
