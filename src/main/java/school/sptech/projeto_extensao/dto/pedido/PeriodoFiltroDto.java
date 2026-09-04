@@ -2,14 +2,13 @@ package school.sptech.projeto_extensao.dto.pedido;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 @Setter
 public class PeriodoFiltroDto {
 
@@ -18,4 +17,12 @@ public class PeriodoFiltroDto {
 
     @NotNull
     private OffsetDateTime dataFim;
+
+    public LocalDateTime getDataInicio() {
+        return dataInicio.toLocalDateTime();
+    }
+
+    public LocalDateTime getDataFim() {
+        return dataFim.toLocalDateTime();
+    }
 }
