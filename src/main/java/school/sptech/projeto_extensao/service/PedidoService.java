@@ -108,6 +108,12 @@ public class PedidoService {
                     "Entidade não encontrada."
             );
 
+            boolean dataPedidoAlterada = !Objects.equals(
+                    pedidoExistente.getDataPedido(),
+                    pedido.getDataPedido()
+            );
+            boolean pedidoJaReagendado = Boolean.TRUE.equals(pedidoExistente.getIsReagendado());
+
             String eventoId = pedidoExistente.getEventoGoogleCalendarId();
             if (eventoId != null) calendario.atualizarEvento(eventoId, PedidoMapper.toGoogleApi(pedido));
 
@@ -124,7 +130,7 @@ public class PedidoService {
             pedidoExistente.setValor(pedido.getValor());
 
             pedidoExistente.setDataModificacao(LocalDateTime.now());
-            pedidoExistente.setIsReagendado(true);
+            pedidoExistente.setIsReagendado(pedidoJaReagendado || dataPedidoAlterada);
             return service.save(pedidoExistente);
         } catch (Exception e){
             throw new ErroException(
