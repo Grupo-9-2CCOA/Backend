@@ -10,13 +10,18 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import school.sptech.projeto_extensao.model.*;
+import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
+import school.sptech.projeto_extensao.exception.StatusPedidoInvalidoException;
+import school.sptech.projeto_extensao.repository.EntregaRepository;
 import school.sptech.projeto_extensao.repository.HistoricoPedidoRepository;
+import school.sptech.projeto_extensao.repository.PagamentoRepository;
 import school.sptech.projeto_extensao.repository.PedidoRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class PedidoServiceTest {
@@ -29,6 +34,12 @@ class PedidoServiceTest {
 
     @Mock
     private GoogleCalendarService calendario;
+
+    @Mock
+    private PagamentoRepository pagamentoRepository;
+
+    @Mock
+    private EntregaRepository entregaRepository;
 
     @InjectMocks
     private PedidoService service;
@@ -411,5 +422,88 @@ class PedidoServiceTest {
 
         Mockito.verify(pedido)
                 .save(pedidoTeste);
+    }
+
+    @Test
+    @DisplayName("Deve atualizar os status do pedido ativo")
+    void deveAtualizarStatusDoPedidoAtivo() {
+        Pedido pedidoTeste = new Pedido();
+        pedidoTeste.setId(1);
+        pedidoTeste.setIsAtivo(true);
+        pedidoTeste.setIsReagendado(false);
+        pedidoTeste.setPagamento(new Pagamento(1, "Pendente", null, null));
+        pedidoTeste.setEntrega(new Entrega(1, "Pendente", null, null));
+
+        Pagamento pagamentoPago = new Pagamento(2, "Pago", null, null);
+        Entrega entregaEmTransito = new Entrega(2, "Em trânsito", null, null);
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pagamentoRepository.findById(2)).thenReturn(Optional.of(pagamentoPago));
+        Mockito.when(entregaRepository.findById(2)).thenReturn(Optional.of(entregaEmTransito));
+        Mockito.when(pedido.save(pedidoTeste)).thenReturn(pedidoTeste);
+
+        Pedido resultado = service.atualizarStatus(1, 2, 2);
+
+        Assertions.assertSame(pagamentoPago, resultado.getPagamento());
+        Assertions.assertSame(entregaEmTransito, resultado.getEntrega());
+        Assertions.assertNotNull(resultado.getDataModificacao());
+        Assertions.assertFalse(resultado.getIsReagendado());
+        Mockito.verify(historico).save(Mockito.any(HistoricoPedido.class));
+        Mockito.verify(pedido).save(pedidoTeste);
+        Mockito.verifyNoInteractions(calendario);
+    }
+
+    @Test
+    @DisplayName("Não deve criar histórico quando os status não mudarem")
+    void naoDeveCriarHistoricoQuandoStatusNaoMudar() {
+        Pagamento pagamentoPendente = new Pagamento(1, "Pendente", null, null);
+        Entrega entregaPendente = new Entrega(1, "Pendente", null, null);
+        Pedido pedidoTeste = new Pedido();
+        pedidoTeste.setId(1);
+        pedidoTeste.setPagamento(pagamentoPendente);
+        pedidoTeste.setEntrega(entregaPendente);
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pagamentoRepository.findById(1)).thenReturn(Optional.of(pagamentoPendente));
+        Mockito.when(entregaRepository.findById(1)).thenReturn(Optional.of(entregaPendente));
+
+        Pedido resultado = service.atualizarStatus(1, 1, 1);
+
+        Assertions.assertSame(pedidoTeste, resultado);
+        Mockito.verifyNoInteractions(historico);
+        Mockito.verify(pedido, Mockito.never()).save(Mockito.any());
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar status cancelado na atualização rápida")
+    void deveRejeitarStatusCancelado() {
+        Pedido pedidoTeste = new Pedido();
+        pedidoTeste.setId(1);
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pagamentoRepository.findById(3))
+                .thenReturn(Optional.of(new Pagamento(3, "Cancelado", null, null)));
+        Mockito.when(entregaRepository.findById(1))
+                .thenReturn(Optional.of(new Entrega(1, "Pendente", null, null)));
+
+        Assertions.assertThrows(
+                StatusPedidoInvalidoException.class,
+                () -> service.atualizarStatus(1, 3, 1)
+        );
+
+        Mockito.verify(pedido, Mockito.never()).save(Mockito.any());
+    }
+
+    @Test
+    @DisplayName("Deve rejeitar atualização de status de pedido inativo ou inexistente")
+    void deveRejeitarStatusDePedidoInexistente() {
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(99)).thenReturn(null);
+
+        Assertions.assertThrows(
+                EntidadeNaoEncontradaException.class,
+                () -> service.atualizarStatus(99, 1, 1)
+        );
+
+        Mockito.verifyNoInteractions(pagamentoRepository, entregaRepository);
     }
 }
