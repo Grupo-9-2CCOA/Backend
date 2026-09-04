@@ -3,6 +3,7 @@ package school.sptech.projeto_extensao.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,9 +27,21 @@ public class RestExceptionHandler {
         return ResponseEntity.badRequest().body(erros);
     }
 
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, String>> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("mensagem", "Corpo da requisição inválido."));
+    }
+
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
     public ResponseEntity<Map<String, String>> handleEntidadeNaoEncontrada(EntidadeNaoEncontradaException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("mensagem", ex.getMessage()));
+    }
+
+    @ExceptionHandler(StatusPedidoInvalidoException.class)
+    public ResponseEntity<Map<String, String>> handleStatusPedidoInvalido(StatusPedidoInvalidoException ex) {
+        return ResponseEntity.badRequest()
                 .body(Map.of("mensagem", ex.getMessage()));
     }
 
