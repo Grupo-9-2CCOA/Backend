@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class PedidoResponseDto {
+    private Integer id;
     private String produto;
     private String descricao;
     private Double valor;
@@ -26,7 +27,8 @@ public class PedidoResponseDto {
     private Endereco endereco;
     private String linkEvento;
 
-    public PedidoResponseDto(String produto, String descricao, Double valor, Boolean isAtivo, LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+    public PedidoResponseDto(Integer id, String produto, String descricao, Double valor, Boolean isAtivo, LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco) {
+        this.id = id;
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;

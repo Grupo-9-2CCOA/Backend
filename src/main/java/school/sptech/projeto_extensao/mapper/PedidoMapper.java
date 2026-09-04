@@ -54,6 +54,7 @@ public class PedidoMapper {
             return null;
         }
         return new PedidoResponseDto(
+                pedido.getId(),
                 pedido.getProduto(),
                 pedido.getDescricao(),
                 pedido.getValor(),
