@@ -6,12 +6,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.projeto_extensao.mapper.PedidoMapper;
 import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
+import school.sptech.projeto_extensao.dto.pedido.PedidoStatusRequestDto;
 import school.sptech.projeto_extensao.model.Pedido;
 import school.sptech.projeto_extensao.service.GoogleCalendarService;
 import school.sptech.projeto_extensao.service.PedidoService;
@@ -132,6 +134,24 @@ public class PedidoController {
 
         var pedidoResultado = service.editar(pedido);
         return ResponseEntity.status(200).body(PedidoMapper.toDto(pedidoResultado));
+    }
+
+    @Operation(
+            summary = "Atualização dos status do Pedido",
+            description = "Atualiza somente os status de pagamento e entrega de um Pedido ativo"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status atualizados com sucesso",
+                    content = @Content(schema = @Schema(implementation = PedidoResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Status inválidos", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Pedido ou status não encontrado", content = @Content)
+    })
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<PedidoResponseDto> atualizarStatus(
+            @PathVariable Integer id,
+            @Valid @RequestBody PedidoStatusRequestDto dto) {
+        Pedido pedido = service.atualizarStatus(id, dto.getPagamentoId(), dto.getEntregaId());
+        return ResponseEntity.ok(PedidoMapper.toDto(pedido));
     }
 
     @Operation(
