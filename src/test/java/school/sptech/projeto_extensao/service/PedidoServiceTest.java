@@ -425,6 +425,69 @@ class PedidoServiceTest {
     }
 
     @Test
+    @DisplayName("Não deve marcar como reagendado quando a data permanecer igual")
+    void naoDeveMarcarComoReagendadoSemAlteracaoDeData() {
+        LocalDateTime dataPedido = LocalDateTime.now().plusDays(2);
+        Pedido pedidoExistente = new Pedido();
+        pedidoExistente.setId(1);
+        pedidoExistente.setDataPedido(dataPedido);
+        pedidoExistente.setIsReagendado(false);
+
+        Pedido alteracoes = new Pedido();
+        alteracoes.setId(1);
+        alteracoes.setDataPedido(dataPedido);
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoExistente);
+        Mockito.when(pedido.save(pedidoExistente)).thenReturn(pedidoExistente);
+
+        Pedido resultado = service.editar(alteracoes);
+
+        Assertions.assertFalse(resultado.getIsReagendado());
+    }
+
+    @Test
+    @DisplayName("Deve marcar como reagendado quando a data ou horário mudar")
+    void deveMarcarComoReagendadoComAlteracaoDeData() {
+        LocalDateTime dataOriginal = LocalDateTime.now().plusDays(2);
+        Pedido pedidoExistente = new Pedido();
+        pedidoExistente.setId(1);
+        pedidoExistente.setDataPedido(dataOriginal);
+        pedidoExistente.setIsReagendado(false);
+
+        Pedido alteracoes = new Pedido();
+        alteracoes.setId(1);
+        alteracoes.setDataPedido(dataOriginal.plusHours(1));
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoExistente);
+        Mockito.when(pedido.save(pedidoExistente)).thenReturn(pedidoExistente);
+
+        Pedido resultado = service.editar(alteracoes);
+
+        Assertions.assertTrue(resultado.getIsReagendado());
+    }
+
+    @Test
+    @DisplayName("Deve preservar a identificação de um pedido já reagendado")
+    void devePreservarPedidoJaReagendado() {
+        LocalDateTime dataPedido = LocalDateTime.now().plusDays(2);
+        Pedido pedidoExistente = new Pedido();
+        pedidoExistente.setId(1);
+        pedidoExistente.setDataPedido(dataPedido);
+        pedidoExistente.setIsReagendado(true);
+
+        Pedido alteracoes = new Pedido();
+        alteracoes.setId(1);
+        alteracoes.setDataPedido(dataPedido);
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoExistente);
+        Mockito.when(pedido.save(pedidoExistente)).thenReturn(pedidoExistente);
+
+        Pedido resultado = service.editar(alteracoes);
+
+        Assertions.assertTrue(resultado.getIsReagendado());
+    }
+
+    @Test
     @DisplayName("Deve atualizar os status do pedido ativo")
     void deveAtualizarStatusDoPedidoAtivo() {
         Pedido pedidoTeste = new Pedido();
