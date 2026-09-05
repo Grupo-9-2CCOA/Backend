@@ -222,11 +222,11 @@ class ClienteServiceTest {
     }
 
     @Test
-    @DisplayName("Persiste todos os campos atualizados corretamente")
+    @DisplayName("Persiste dados cadastrais e mantém cliente ativo")
     void testaAtualizarPersisteTodosOsCampos() {
         Cliente clienteExistente = new Cliente(1, "Nome Antigo", "11111111111", "11900000000", true);
         Cliente dadosNovos       = new Cliente(1, "Nome Novo",   "22222222222", "11911111111", false);
-        Cliente clienteSalvo     = new Cliente(1, "Nome Novo",   "22222222222", "11911111111", false);
+        Cliente clienteSalvo     = new Cliente(1, "Nome Novo",   "22222222222", "11911111111", true);
 
         Mockito.when(repository.existsById(1)).thenReturn(true);
         Mockito.when(repository.findById(1)).thenReturn(Optional.of(clienteExistente));
@@ -237,7 +237,23 @@ class ClienteServiceTest {
         Assertions.assertEquals("Nome Novo",   resultado.getNome());
         Assertions.assertEquals("22222222222", resultado.getCpf());
         Assertions.assertEquals("11911111111", resultado.getTelefone());
+        Assertions.assertTrue(resultado.getAtivo());
+    }
+
+    @Test
+    @DisplayName("Preserva cliente inativo durante atualização de dados")
+    void testaAtualizarPreservaClienteInativo() {
+        Cliente clienteExistente = new Cliente(1, "Nome Antigo", "11111111111", "11900000000", false);
+        Cliente dadosNovos = new Cliente(1, "Nome Novo", "22222222222", "11911111111", true);
+
+        Mockito.when(repository.existsById(1)).thenReturn(true);
+        Mockito.when(repository.findById(1)).thenReturn(Optional.of(clienteExistente));
+        Mockito.when(repository.save(clienteExistente)).thenReturn(clienteExistente);
+
+        Cliente resultado = service.atualizar(1, dadosNovos);
+
         Assertions.assertFalse(resultado.getAtivo());
+        Mockito.verify(repository).save(clienteExistente);
     }
 
     @Test
