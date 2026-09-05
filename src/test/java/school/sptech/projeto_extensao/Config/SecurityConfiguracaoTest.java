@@ -66,7 +66,7 @@ class SecurityConfiguracaoTest {
                 .getResponse()
                 .getCookie(AdminController.COOOKIE_NAME);
 
-        mockMvc.perform(get("/clientes").cookie(cookieJwt))
+        mockMvc.perform(get("/admin/sessao").cookie(cookieJwt))
                 .andExpect(status().isNoContent());
     }
 }
