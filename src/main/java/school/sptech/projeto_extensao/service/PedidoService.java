@@ -123,10 +123,7 @@ public class PedidoService {
             pedidoExistente.setProduto(pedido.getProduto());
             pedidoExistente.setCliente(pedido.getCliente());
             pedidoExistente.setDescricao(pedido.getDescricao());
-            pedidoExistente.setEntrega(pedido.getEntrega());
             pedidoExistente.setEndereco(pedido.getEndereco());
-            pedidoExistente.setPagamento(pedido.getPagamento());
-            pedidoExistente.setIsAtivo(pedido.getIsAtivo());
             pedidoExistente.setValor(pedido.getValor());
 
             pedidoExistente.setDataModificacao(LocalDateTime.now());

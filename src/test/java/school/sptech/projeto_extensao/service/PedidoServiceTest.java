@@ -488,6 +488,36 @@ class PedidoServiceTest {
     }
 
     @Test
+    @DisplayName("Deve preservar os status e a situação ativa durante a edição")
+    void devePreservarStatusDuranteEdicao() {
+        LocalDateTime dataPedido = LocalDateTime.now().plusDays(2);
+        Pagamento pagamentoAtual = new Pagamento(2, "Pago", null, null);
+        Entrega entregaAtual = new Entrega(2, "Em trânsito", null, null);
+        Pedido pedidoExistente = new Pedido();
+        pedidoExistente.setId(1);
+        pedidoExistente.setDataPedido(dataPedido);
+        pedidoExistente.setIsAtivo(true);
+        pedidoExistente.setPagamento(pagamentoAtual);
+        pedidoExistente.setEntrega(entregaAtual);
+
+        Pedido alteracoes = new Pedido();
+        alteracoes.setId(1);
+        alteracoes.setDataPedido(dataPedido);
+        alteracoes.setIsAtivo(false);
+        alteracoes.setPagamento(new Pagamento(1, "Pendente", null, null));
+        alteracoes.setEntrega(new Entrega(1, "Pendente", null, null));
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoExistente);
+        Mockito.when(pedido.save(pedidoExistente)).thenReturn(pedidoExistente);
+
+        Pedido resultado = service.editar(alteracoes);
+
+        Assertions.assertTrue(resultado.getIsAtivo());
+        Assertions.assertSame(pagamentoAtual, resultado.getPagamento());
+        Assertions.assertSame(entregaAtual, resultado.getEntrega());
+    }
+
+    @Test
     @DisplayName("Deve atualizar os status do pedido ativo")
     void deveAtualizarStatusDoPedidoAtivo() {
         Pedido pedidoTeste = new Pedido();
