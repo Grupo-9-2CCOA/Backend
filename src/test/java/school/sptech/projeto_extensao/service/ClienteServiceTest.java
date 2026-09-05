@@ -155,6 +155,40 @@ class ClienteServiceTest {
     }
 
     @Test
+    @DisplayName("Lista somente clientes inativos")
+    void testaListarClientesInativos() {
+        List<Cliente> inativos = List.of(new Cliente(1, "Sabrina", "29458394801", "11994827483", false));
+        Mockito.when(repository.findAllByAtivoFalse()).thenReturn(inativos);
+
+        List<Cliente> resultado = service.listarInativos();
+
+        Assertions.assertEquals(inativos, resultado);
+        Mockito.verify(repository).findAllByAtivoFalse();
+    }
+
+    @Test
+    @DisplayName("Reativa cliente existente")
+    void testaReativarClienteExistente() {
+        Cliente cliente = new Cliente(1, "Sabrina", "29458394801", "11994827483", false);
+        Mockito.when(repository.findById(1)).thenReturn(Optional.of(cliente));
+
+        Boolean resultado = service.reativar(1);
+
+        Assertions.assertTrue(resultado);
+        Assertions.assertTrue(cliente.getAtivo());
+        Mockito.verify(repository).save(cliente);
+    }
+
+    @Test
+    @DisplayName("Lança exceção ao reativar cliente inexistente")
+    void testaReativarClienteInexistente() {
+        Mockito.when(repository.findById(99)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(EntidadeNaoEncontradaException.class, () -> service.reativar(99));
+        Mockito.verify(repository, Mockito.never()).save(Mockito.any());
+    }
+
+    @Test
     @DisplayName("Atualiza e retorna cliente existente")
     void testaAtualizarClienteComSucesso() {
         Cliente clienteExistente  = new Cliente(1, "Sabrina", "29458394801", "11994827483", true);
