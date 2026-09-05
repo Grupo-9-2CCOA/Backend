@@ -82,6 +82,12 @@ public class AdminController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/sessao")
+    @SecurityRequirement(name = "Bearer")
+    public ResponseEntity<Void> verificarSessao() {
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/trocar-senha")
     @SecurityRequirement(name = "Bearer")
     public ResponseEntity<Void> trocarSenha(@RequestBody @Valid AdminTrocarSenhaDto dto) {
