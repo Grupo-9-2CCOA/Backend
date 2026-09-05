@@ -16,26 +16,34 @@ import java.util.List;
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
-    List<Pedido> findAllByDataPedidoBetweenOrderByDataCriacaoDesc(LocalDateTime dataInicio, LocalDateTime dataFim);
+    List<Pedido> findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(LocalDateTime dataInicio, LocalDateTime dataFim);
 
     List<Pedido> findAllByDataCriacaoBetween(LocalDateTime dataInicio, LocalDateTime dataFim);
 
-    @Query("SELECT COUNT(p) FROM Pedido p WHERE p.isAtivo = false AND p.dataCriacao BETWEEN :dataInicio AND :dataFim")
-    Integer countPedidosCanceladosByDataCriacaoBetween(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
+    @Query("SELECT COUNT(p) FROM Pedido p WHERE p.isAtivo = false AND p.dataModificacao BETWEEN :dataInicio AND :dataFim")
+    Integer countPedidosCanceladosByDataModificacaoBetween(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
 
     @Query("SELECT COUNT(p) FROM Pedido p WHERE p.isReagendado = true AND p.dataCriacao BETWEEN :dataInicio AND :dataFim")
     Integer countPedidosReagendadosByDataCriacaoBetween(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
 
     @Query("SELECT COUNT(DISTINCT p.cliente.id) FROM Pedido p WHERE p.dataCriacao BETWEEN :dataInicio AND :dataFim " +
-            "AND (SELECT COUNT(p2) FROM Pedido p2 WHERE p2.cliente.id = p.cliente.id) > 1")
-    Integer countClientesFidelizadosComPedidoNoPeriodo(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
+            "AND (SELECT COUNT(p2) FROM Pedido p2 WHERE p2.cliente.id = p.cliente.id) >= :minimoPedidos")
+    Integer countClientesFidelizadosComPedidoNoPeriodo(@Param("dataInicio") LocalDateTime dataInicio,
+                                                       @Param("dataFim") LocalDateTime dataFim,
+                                                       @Param("minimoPedidos") Integer minimoPedidos);
+
+    @Query("SELECT COUNT(DISTINCT p.cliente.id) FROM Pedido p WHERE p.dataCriacao BETWEEN :dataInicio AND :dataFim " +
+            "AND (SELECT COUNT(p2) FROM Pedido p2 WHERE p2.cliente.id = p.cliente.id) < :minimoPedidos")
+    Integer countClientesNaoFidelizadosComPedidoNoPeriodo(@Param("dataInicio") LocalDateTime dataInicio,
+                                                          @Param("dataFim") LocalDateTime dataFim,
+                                                          @Param("minimoPedidos") Integer minimoPedidos);
 
     @Query("SELECT COUNT(DISTINCT p.cliente.id) FROM Pedido p WHERE p.dataCriacao BETWEEN :dataInicio AND :dataFim " +
             "AND (SELECT COUNT(p2) FROM Pedido p2 WHERE p2.cliente.id = p.cliente.id) = 1")
     Integer countClientesNovosNoPeriodo(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
 
-    @Query("SELECT p FROM Pedido p WHERE p.isAtivo = false AND p.dataCriacao BETWEEN :dataInicio AND :dataFim ORDER BY p.dataCriacao DESC LIMIT 15")
-    List<Pedido> findTop15CanceladosByDataCriacaoBetween(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
+    @Query("SELECT p FROM Pedido p WHERE p.isAtivo = false AND p.dataModificacao BETWEEN :dataInicio AND :dataFim ORDER BY p.dataModificacao DESC LIMIT 15")
+    List<Pedido> findTop15CanceladosByDataModificacaoBetween(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
 
     @Query("SELECT p FROM Pedido p WHERE p.isReagendado = true AND p.dataCriacao BETWEEN :dataInicio AND :dataFim ORDER BY p.dataCriacao DESC LIMIT 15")
     List<Pedido> findTop15ReagendadosByDataCriacaoBetween(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
@@ -45,7 +53,7 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Pedido p SET p.isAtivo = false WHERE p.id = :id")
+    @Query("UPDATE Pedido p SET p.isAtivo = false, p.dataModificacao = CURRENT_TIMESTAMP WHERE p.id = :id")
     int desativarPedido(@Param("id") Integer id);
 
     List<Pedido> findAllByIsAtivoTrueAndDataPedidoBetween(LocalDateTime dataInicio, LocalDateTime dataFim);

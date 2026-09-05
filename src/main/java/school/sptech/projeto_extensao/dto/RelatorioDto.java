@@ -33,8 +33,11 @@ public class RelatorioDto {
     @Schema(description = "Diferença de reagendamentos em relação ao período anterior", example = "0")
     private Integer diferencaReagendadas;
 
-    @Schema(description = "Total de clientes fidelizados (mais de 1 compra) que compraram no período", example = "4")
+    @Schema(description = "Total de clientes que atingiram o mínimo de compras para fidelização e compraram no período", example = "4")
     private Integer clientesFidelizados;
+
+    @Schema(description = "Total de clientes não fidelizados que compraram no período", example = "2")
+    private Integer clientesNaoFidelizados;
 
     @Schema(description = "Total de clientes novos (primeira compra) no período", example = "1")
     private Integer clientesNovos;

@@ -28,23 +28,28 @@ public class RelatorioService {
     public RelatorioDto relatorioVendas(PeriodoFiltroDto periodoFiltro) {
         LocalDateTime inicioPeriodo = periodoFiltro.getDataInicio();
         LocalDateTime fimPeriodo = periodoFiltro.getDataFim();
+        Integer minimoPedidosFidelizacao = periodoFiltro.getMinimoPedidosFidelizacao();
 
         long duracaoEmSegundos = ChronoUnit.SECONDS.between(inicioPeriodo, fimPeriodo);
         LocalDateTime inicioPeriodoComparacao = inicioPeriodo.minusSeconds(duracaoEmSegundos);
+        LocalDateTime fimPeriodoComparacao = inicioPeriodo.minusNanos(1);
 
-        List<Pedido> pedidos = pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(inicioPeriodo, fimPeriodo);
-        List<Pedido> qtdPedidosComparacao = pedidoRepository.findAllByDataCriacaoBetween(inicioPeriodoComparacao, inicioPeriodo);
+        List<Pedido> pedidos = pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(inicioPeriodo, fimPeriodo);
+        List<Pedido> qtdPedidosComparacao = pedidoRepository.findAllByDataCriacaoBetween(inicioPeriodoComparacao, fimPeriodoComparacao);
         Integer diferencaQtdPedidos = pedidos.size() - qtdPedidosComparacao.size();
 
-        Integer canceladosPeriodo = pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(inicioPeriodo, fimPeriodo);
-        Integer canceladosComparacao = pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(inicioPeriodoComparacao, inicioPeriodo);
+        Integer canceladosPeriodo = pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(inicioPeriodo, fimPeriodo);
+        Integer canceladosComparacao = pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(inicioPeriodoComparacao, fimPeriodoComparacao);
         Integer diferencaCancelados = canceladosPeriodo - canceladosComparacao;
 
         Integer reagendadasPeriodo = pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(inicioPeriodo, fimPeriodo);
-        Integer reagendadasComparacao = pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(inicioPeriodoComparacao, inicioPeriodo);
+        Integer reagendadasComparacao = pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(inicioPeriodoComparacao, fimPeriodoComparacao);
         Integer diferencaReagendadas = reagendadasPeriodo - reagendadasComparacao;
 
-        Integer clientesFidelizados = pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(inicioPeriodo, fimPeriodo);
+        Integer clientesFidelizados = pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(inicioPeriodo, fimPeriodo,
+                minimoPedidosFidelizacao);
+        Integer clientesNaoFidelizados = pedidoRepository.countClientesNaoFidelizadosComPedidoNoPeriodo(inicioPeriodo, fimPeriodo,
+                minimoPedidosFidelizacao);
         Integer clientesNovos = pedidoRepository.countClientesNovosNoPeriodo(inicioPeriodo, fimPeriodo);
 
         List<Pedido> listaPedidosPreMapper = pedidos.subList(0, Math.min(15, pedidos.size()));
@@ -56,14 +61,15 @@ public class RelatorioService {
         }
 
         return new RelatorioDto(pedidos.size(), diferencaQtdPedidos, canceladosPeriodo, diferencaCancelados,
-                reagendadasPeriodo, diferencaReagendadas, clientesFidelizados, clientesNovos, listaPedidos);
+                reagendadasPeriodo, diferencaReagendadas, clientesFidelizados, clientesNaoFidelizados, clientesNovos,
+                listaPedidos);
     }
 
     public List<PedidosCanceladosDto> relatorioCancelados(PeriodoFiltroDto periodoFiltro) {
         LocalDateTime inicioPeriodo = periodoFiltro.getDataInicio();
         LocalDateTime fimPeriodo = periodoFiltro.getDataFim();
 
-        List<Pedido> pedidosCanceladosPreMapper = pedidoRepository.findTop15CanceladosByDataCriacaoBetween(inicioPeriodo, fimPeriodo);
+        List<Pedido> pedidosCanceladosPreMapper = pedidoRepository.findTop15CanceladosByDataModificacaoBetween(inicioPeriodo, fimPeriodo);
         ArrayList<PedidosCanceladosDto> pedidosCancelados = new ArrayList<>();
 
         for (Pedido p : pedidosCanceladosPreMapper) {
@@ -92,11 +98,7 @@ public class RelatorioService {
         LocalDateTime inicioPeriodo = periodoFiltro.getDataInicio();
         LocalDateTime fimPeriodo = periodoFiltro.getDataFim();
 
-        System.out.println("Inicio periodo: " + inicioPeriodo);
-        System.out.println("Fim periodo: " + fimPeriodo);
-
         List<Cliente> clientesPreMapper = pedidoRepository.findTop15ClientesComPedidoNoPeriodo(inicioPeriodo, fimPeriodo);
-        System.out.println("CLIENTES: " + clientesPreMapper);
 
         List<Cliente> clientesLimitados = clientesPreMapper.subList(0, Math.min(15, clientesPreMapper.size()));
         ArrayList<ClienteDto> clientes = new ArrayList<>();
