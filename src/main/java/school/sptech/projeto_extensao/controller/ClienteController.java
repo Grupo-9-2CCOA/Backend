@@ -40,6 +40,20 @@ public class ClienteController {
         return ResponseEntity.status(200).body(responseDto);
     }
 
+    @Operation(summary = "Lista clientes inativos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Nenhum cliente inativo encontrado")
+    })
+    @GetMapping("/inativos")
+    public ResponseEntity<List<ClienteResponseDto>> listarInativos() {
+        List<Cliente> clientes = clienteService.listarInativos();
+        if (clientes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(ClienteMapper.toDto(clientes));
+    }
+
     @Operation(summary = "Busca um cliente por ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
@@ -77,6 +91,17 @@ public class ClienteController {
             return ResponseEntity.status(400).build();
         }
         return ResponseEntity.status(200).build();
+    }
+
+    @Operation(summary = "Reativa um cliente inativo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cliente reativado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
+    })
+    @PatchMapping("/{id}/reativar")
+    public ResponseEntity<Void> reativarCliente(@PathVariable Integer id) {
+        clienteService.reativar(id);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "Atualiza os dados de um cliente")

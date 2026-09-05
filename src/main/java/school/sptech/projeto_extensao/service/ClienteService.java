@@ -32,6 +32,10 @@ public class ClienteService {
         }
     }
 
+    public List<Cliente> listarInativos() {
+        return clienteRepository.findAllByAtivoFalse();
+    }
+
     public Cliente findById(Integer id){
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Cliente não encontrado".formatted(id)));
@@ -51,6 +55,13 @@ public class ClienteService {
         return true;
     }
 
+    public Boolean reativar(Integer id) {
+        Cliente cliente = findById(id);
+        cliente.setAtivo(true);
+        clienteRepository.save(cliente);
+        return true;
+    }
+
     public Cliente atualizar(Integer id, Cliente cliente) {
         if (!clienteRepository.existsById(id)) {
             throw new EntidadeNaoEncontradaException("Cliente não encontrado".formatted(id));
@@ -60,7 +71,6 @@ public class ClienteService {
         cliente1.setNome(cliente.getNome());
         cliente1.setTelefone(cliente.getTelefone());
         cliente1.setCpf(cliente.getCpf());
-        cliente1.setAtivo(cliente.getAtivo());
 
         return clienteRepository.save(cliente1);
     }
