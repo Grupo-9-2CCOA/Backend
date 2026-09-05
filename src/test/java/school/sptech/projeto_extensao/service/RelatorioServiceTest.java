@@ -58,15 +58,15 @@ class RelatorioServiceTest {
         ArrayList<Pedido> pedidosComparacao = new ArrayList<>();
         pedidosComparacao.add(new Pedido(3, "Bolo 3", "Descrição 3", 40.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
-        when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosComparacao);
-        when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
         when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
-        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), anyInt()))
                 .thenReturn(2);
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(1);
@@ -85,15 +85,15 @@ class RelatorioServiceTest {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
         pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
-        when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
-        when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
         when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
-        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), anyInt()))
                 .thenReturn(1);
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
@@ -106,15 +106,15 @@ class RelatorioServiceTest {
 
     @Test
     void deveRetornarRelatorioVendasPeriodoSemestral() {
-        when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
-        when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
         when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
-        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), anyInt()))
                 .thenReturn(0);
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
@@ -132,15 +132,15 @@ class RelatorioServiceTest {
             pedidosPeriodo.add(new Pedido(i, "Bolo " + i, "Descrição " + i, 50.0 + i, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
-        when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
-        when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(5).thenReturn(2);
         when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(3).thenReturn(1);
-        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), anyInt()))
                 .thenReturn(10);
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(5);
@@ -161,15 +161,15 @@ class RelatorioServiceTest {
             pedidosPeriodo.add(new Pedido(i, "Bolo " + i, "Descrição " + i, 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
-        when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
-        when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
         when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
-        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), anyInt()))
                 .thenReturn(0);
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
@@ -186,7 +186,7 @@ class RelatorioServiceTest {
         pedidosCancelados.add(new Pedido(1, "Bolo Cancelado", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         pedidosCancelados.add(new Pedido(2, "Bolo 2 Cancelado", "Descrição 2", 60.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
-        when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
         List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoSemana());
@@ -197,7 +197,7 @@ class RelatorioServiceTest {
 
     @Test
     void deveRetornarListaVaziaQuandoNaoHaPedidosCancelados() {
-        when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(Collections.emptyList());
 
         List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoMensal());
@@ -211,7 +211,7 @@ class RelatorioServiceTest {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
         pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
-        when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
         List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoMensal());
@@ -226,7 +226,7 @@ class RelatorioServiceTest {
             pedidosCancelados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
-        when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
         List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoSemestral());
@@ -241,7 +241,7 @@ class RelatorioServiceTest {
             pedidosCancelados.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
-        when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
         List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoAnual());
@@ -410,26 +410,27 @@ class RelatorioServiceTest {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
         pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
-        when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
-        when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
         when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
-        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), anyInt()))
                 .thenReturn(1);
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
 
         relatorioService.relatorioVendas(periodoSemana());
 
-        verify(pedidoRepository, times(1)).findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class));
+        verify(pedidoRepository, times(1)).findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class));
         verify(pedidoRepository, times(1)).findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
-        verify(pedidoRepository, times(2)).countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
+        verify(pedidoRepository, times(2)).countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
         verify(pedidoRepository, times(2)).countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
-        verify(pedidoRepository, times(1)).countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class));
+        verify(pedidoRepository, times(1)).countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), eq(2));
+        verify(pedidoRepository, times(1)).countClientesNaoFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), eq(2));
         verify(pedidoRepository, times(1)).countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
@@ -438,12 +439,12 @@ class RelatorioServiceTest {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
         pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
-        when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
         relatorioService.relatorioCancelados(periodoSemana());
 
-        verify(pedidoRepository, times(1)).findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
+        verify(pedidoRepository, times(1)).findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class));
     }
 
     @Test
@@ -479,15 +480,15 @@ class RelatorioServiceTest {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
         pedidosPeriodo.add(new Pedido(1, "Bolo", "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
-        when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(new ArrayList<>());
-        when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
         when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0).thenReturn(0);
-        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), anyInt()))
                 .thenReturn(1);
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(0);
@@ -506,7 +507,7 @@ class RelatorioServiceTest {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
         pedidosCancelados.add(new Pedido(1, "Bolo", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
 
-        when(pedidoRepository.findTop15CanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
 
         List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodoSemana());
@@ -535,6 +536,87 @@ class RelatorioServiceTest {
     }
 
     @Test
+    void deveUsarMinimoPadraoDeDoisPedidosNoPeriodoFiltro() {
+        PeriodoFiltroDto periodo = new PeriodoFiltroDto(
+                OffsetDateTime.parse("2026-01-01T00:00:00-03:00"),
+                OffsetDateTime.parse("2026-01-31T23:59:59-03:00"));
+
+        assertEquals(2, periodo.getMinimoPedidosFidelizacao());
+    }
+
+    @Test
+    void deveRepassarMinimoCustomizadoESepararClientesFidelizadosENaoFidelizados() {
+        PeriodoFiltroDto periodo = new PeriodoFiltroDto(
+                OffsetDateTime.parse("2026-02-01T00:00:00-03:00"),
+                OffsetDateTime.parse("2026-02-11T00:00:00-03:00"),
+                4);
+        LocalDateTime inicio = periodo.getDataInicio();
+        LocalDateTime fim = periodo.getDataFim();
+        LocalDateTime inicioComparacao = inicio.minusDays(10);
+        LocalDateTime fimComparacao = inicio.minusNanos(1);
+        LocalDateTime dataCriacao = LocalDateTime.of(2026, 2, 10, 15, 30);
+        Pedido pedido = new Pedido();
+        pedido.setId(1);
+        pedido.setProduto("Bolo");
+        pedido.setDataCriacao(dataCriacao);
+
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(inicio, fim))
+                .thenReturn(List.of(pedido));
+        when(pedidoRepository.findAllByDataCriacaoBetween(inicioComparacao, fimComparacao))
+                .thenReturn(Collections.emptyList());
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(inicio, fim))
+                .thenReturn(3);
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(inicioComparacao, fimComparacao))
+                .thenReturn(1);
+        when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+                .thenReturn(0);
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(inicio, fim, 4))
+                .thenReturn(7);
+        when(pedidoRepository.countClientesNaoFidelizadosComPedidoNoPeriodo(inicio, fim, 4))
+                .thenReturn(5);
+        when(pedidoRepository.countClientesNovosNoPeriodo(inicio, fim))
+                .thenReturn(1);
+
+        RelatorioDto relatorio = relatorioService.relatorioVendas(periodo);
+
+        assertEquals(7, relatorio.getClientesFidelizados());
+        assertEquals(5, relatorio.getClientesNaoFidelizados());
+        assertEquals(3, relatorio.getPedidosCancelados());
+        assertEquals(2, relatorio.getDiferencaCanceladas());
+        assertEquals(dataCriacao, relatorio.getPedidos().get(0).getDataCriacao());
+        verify(pedidoRepository).findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(inicio, fim);
+        verify(pedidoRepository).countPedidosCanceladosByDataModificacaoBetween(inicio, fim);
+        verify(pedidoRepository).findAllByDataCriacaoBetween(inicioComparacao, fimComparacao);
+        verify(pedidoRepository).countPedidosCanceladosByDataModificacaoBetween(inicioComparacao, fimComparacao);
+        verify(pedidoRepository).countPedidosReagendadosByDataCriacaoBetween(inicioComparacao, fimComparacao);
+        verify(pedidoRepository).countClientesFidelizadosComPedidoNoPeriodo(inicio, fim, 4);
+        verify(pedidoRepository).countClientesNaoFidelizadosComPedidoNoPeriodo(inicio, fim, 4);
+    }
+
+    @Test
+    void deveBuscarEMapearCanceladosPelaDataModificacao() {
+        PeriodoFiltroDto periodo = new PeriodoFiltroDto(
+                OffsetDateTime.parse("2026-03-01T00:00:00-03:00"),
+                OffsetDateTime.parse("2026-03-31T23:59:59-03:00"));
+        LocalDateTime dataModificacao = LocalDateTime.of(2026, 3, 15, 12, 0);
+        Pedido pedidoCancelado = new Pedido();
+        pedidoCancelado.setId(9);
+        pedidoCancelado.setProduto("Torta");
+        pedidoCancelado.setDataModificacao(dataModificacao);
+
+        when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(
+                periodo.getDataInicio(), periodo.getDataFim()))
+                .thenReturn(List.of(pedidoCancelado));
+
+        List<PedidosCanceladosDto> pedidos = relatorioService.relatorioCancelados(periodo);
+
+        assertEquals(1, pedidos.size());
+        assertEquals(dataModificacao, pedidos.get(0).getDataCancelamento());
+        verify(pedidoRepository).findTop15CanceladosByDataModificacaoBetween(
+                periodo.getDataInicio(), periodo.getDataFim());
+    }
+
+    @Test
     void deveRetornarDiferencaCorretaNoRelatorioVendas() {
         ArrayList<Pedido> pedidosPeriodo = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -546,15 +628,15 @@ class RelatorioServiceTest {
             pedidosComparacao.add(new Pedido(i, "Bolo " + i, "Descrição", 50.0, true, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
         }
 
-        when(pedidoRepository.findAllByDataPedidoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.findAllByDataCriacaoBetweenOrderByDataCriacaoDesc(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosPeriodo);
         when(pedidoRepository.findAllByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosComparacao);
-        when(pedidoRepository.countPedidosCanceladosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countPedidosCanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(2).thenReturn(1);
         when(pedidoRepository.countPedidosReagendadosByDataCriacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(1).thenReturn(0);
-        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
+        when(pedidoRepository.countClientesFidelizadosComPedidoNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class), anyInt()))
                 .thenReturn(3);
         when(pedidoRepository.countClientesNovosNoPeriodo(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(1);
