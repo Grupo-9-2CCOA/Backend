@@ -1,0 +1,8 @@
+target/
+.git/
+.github/
+.idea/
+.vscode/
+*.iml
+*.log
+**/google-calendar-key.json
