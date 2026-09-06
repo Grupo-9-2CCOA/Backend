@@ -9,47 +9,53 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import school.sptech.projeto_extensao.dto.EventoCalendarDto;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 
 @Service
 public class GoogleCalendarService {
-    private static final String ID_DA_AGENDA = "3db8bb13db53a3d6b5ce7c6c43795907d1d478f0ff226f066d11acc5c56b06f8@group.calendar.google.com";
     private static final String ARQUIVO_CHAVE = "/google-calendar-key.json";
+
+    @Value("${google.calendar.id:3db8bb13db53a3d6b5ce7c6c43795907d1d478f0ff226f066d11acc5c56b06f8@group.calendar.google.com}")
+    private String idDaAgenda;
+
+    @Value("${google.calendar.credentials-path:}")
+    private String caminhoCredenciais;
 
     public Event criarEventoNaAgenda(EventoCalendarDto dto) throws Exception {
 
         Calendar service = criarCliente();
         Event evento = criarEvento(dto);
 
-        return service.events().insert(ID_DA_AGENDA, evento).execute();
+        return service.events().insert(idDaAgenda, evento).execute();
     }
 
     public Event atualizarEvento(String eventoId, EventoCalendarDto dto) throws Exception{
         Calendar service = criarCliente();
         Event evento = criarEvento(dto);
 
-        return service.events().update(ID_DA_AGENDA, eventoId, evento).execute();
+        return service.events().update(idDaAgenda, eventoId, evento).execute();
     }
 
     public void deletarEvento(String eventoId) throws Exception{
         Calendar service = criarCliente();
-        service.events().delete(ID_DA_AGENDA, eventoId).execute();
+        service.events().delete(idDaAgenda, eventoId).execute();
     }
 
     private Calendar criarCliente() throws Exception{
-        InputStream keyStream = getClass().getResourceAsStream(ARQUIVO_CHAVE);
-        if (keyStream == null) {
-            throw new IllegalStateException("Arquivo de credenciais do Google não encontrado nos resources!");
+        GoogleCredentials credentials;
+        try (InputStream keyStream = abrirCredenciais()) {
+            credentials = GoogleCredentials.fromStream(keyStream)
+                    .createScoped(Collections.singleton(CalendarScopes.CALENDAR));
         }
-
-        GoogleCredentials credentials = GoogleCredentials.fromStream(keyStream)
-                .createScoped(Collections.singleton(CalendarScopes.CALENDAR));
 
         return new Calendar.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
@@ -57,6 +63,18 @@ public class GoogleCalendarService {
                 new HttpCredentialsAdapter(credentials))
                 .setApplicationName("ProjetoExtensao")
                 .build();
+    }
+
+    private InputStream abrirCredenciais() throws Exception {
+        if (caminhoCredenciais != null && !caminhoCredenciais.isBlank()) {
+            return Files.newInputStream(Path.of(caminhoCredenciais));
+        }
+
+        InputStream keyStream = getClass().getResourceAsStream(ARQUIVO_CHAVE);
+        if (keyStream == null) {
+            throw new IllegalStateException("Credenciais do Google Calendar não encontradas");
+        }
+        return keyStream;
     }
 
     private Event criarEvento(EventoCalendarDto dto){
