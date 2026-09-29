@@ -36,4 +36,8 @@ public class Endereco {
     @ManyToOne
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
+
+    @Column(name = "is_ativo")
+    @Schema(description = "Indica se o endeereço do cliente está ativo no sistema", example = "true")
+    private Boolean ativo = true;
 }

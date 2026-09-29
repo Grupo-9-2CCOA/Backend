@@ -8,6 +8,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import school.sptech.projeto_extensao.dto.EnderecoRequestDto;
 import school.sptech.projeto_extensao.dto.EnderecoResponseDto;
 import school.sptech.projeto_extensao.exception.EnderecoPedidoNaoCompletoException;
@@ -53,24 +56,24 @@ class EnderecoServiceTest {
         endereco.setCep("01001000");
         endereco.setCliente(cliente);
 
-        Mockito.when(enderecoRepository.findByClienteId(1)).thenReturn(List.of(endereco));
+        Mockito.when(enderecoRepository.findByClienteId(1, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of(endereco)));
 
-        List<EnderecoResponseDto> resultado = service.listarPorCliente(1);
+        Page<EnderecoResponseDto> resultado = service.listarPorCliente(1, PageRequest.of(0, 10));
 
-        Assertions.assertEquals(1, resultado.size());
-        Assertions.assertEquals(10, resultado.get(0).getId());
-        Assertions.assertEquals("Rua das Flores", resultado.get(0).getLogradouro());
-        Assertions.assertEquals("123", resultado.get(0).getNumero());
-        Assertions.assertEquals("Apto 10", resultado.get(0).getComplemento());
-        Assertions.assertEquals("01001000", resultado.get(0).getCep());
+        Assertions.assertEquals(1, resultado.getContent().size());
+        Assertions.assertEquals(10, resultado.getContent().get(0).getId());
+        Assertions.assertEquals("Rua das Flores", resultado.getContent().get(0).getLogradouro());
+        Assertions.assertEquals("123", resultado.getContent().get(0).getNumero());
+        Assertions.assertEquals("Apto 10", resultado.getContent().get(0).getComplemento());
+        Assertions.assertEquals("01001000", resultado.getContent().get(0).getCep());
     }
 
     @Test
     @DisplayName("Retorna lista vazia quando não há endereços para o cliente")
     void deveRetornarListaVaziaQuandoNaoExistiremEnderecos() {
-        Mockito.when(enderecoRepository.findByClienteId(99)).thenReturn(List.of());
+        Mockito.when(enderecoRepository.findByClienteId(99, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of()));
 
-        List<EnderecoResponseDto> resultado = service.listarPorCliente(99);
+        Page<EnderecoResponseDto> resultado = service.listarPorCliente(99, PageRequest.of(0, 10));
 
         Assertions.assertTrue(resultado.isEmpty());
     }

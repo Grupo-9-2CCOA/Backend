@@ -1,6 +1,9 @@
 package school.sptech.projeto_extensao.service;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import school.sptech.projeto_extensao.dto.EnderecoRequestDto;
@@ -34,10 +37,10 @@ public class EnderecoService {
         this.pedidoConsultaService = pedidoConsultaService;
     }
 
-    public List<EnderecoResponseDto> listarPorCliente(Integer idCliente) {
-        List<Endereco> enderecos = enderecoRepository.findByClienteId(idCliente);
+    public Page<EnderecoResponseDto> listarPorCliente(Integer idCliente, Pageable pageable) {
+        Page<Endereco> enderecos = enderecoRepository.findByClienteId(idCliente, pageable);
 
-        return enderecos.stream()
+        List<EnderecoResponseDto> enderecosResponse = enderecos.stream()
                 .map(endereco -> new EnderecoResponseDto(
                         endereco.getId(),
                         endereco.getLogradouro(),
@@ -46,11 +49,13 @@ public class EnderecoService {
                         endereco.getCep()
                 ))
                 .toList();
+
+        return new PageImpl<EnderecoResponseDto>(enderecosResponse);
     }
 
     public EnderecoResponseDto cadastrar(Integer idCliente, EnderecoRequestDto dto) {
         Cliente cliente = clienteRepository.findById(idCliente)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Cliente não encontrado"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Cliente não %d encontrado".formatted(idCliente)));
 
         Endereco endereco = new Endereco();
         endereco.setLogradouro(dto.getLogradouro());
