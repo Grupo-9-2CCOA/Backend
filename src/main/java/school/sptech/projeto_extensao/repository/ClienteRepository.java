@@ -1,16 +1,18 @@
 package school.sptech.projeto_extensao.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import school.sptech.projeto_extensao.model.Cliente;
 
 import java.util.List;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Integer> {
-    List<Cliente> findAllByAtivoTrue();
+    Page<Cliente> findAllByAtivoTrue(Pageable pageable);
 
-    List<Cliente> findAllByAtivoFalse();
+    Page<Cliente> findAllByAtivoFalse(Pageable pageable);
 
-    List<Cliente> findByAtivoTrueAndTelefoneContaining(String telefone);
+    Page<Cliente> findByAtivoTrueAndTelefoneContaining(String telefone, Pageable pageable);
 
-    List<Cliente> findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining(String nome, String telefone);
+    Page<Cliente> findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining(String nome, String telefone, Pageable pageable);
 }

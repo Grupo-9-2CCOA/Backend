@@ -1,7 +1,6 @@
 package school.sptech.projeto_extensao.service;
 
 import com.google.api.services.calendar.model.Event;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import school.sptech.projeto_extensao.Exception.ErroException;

@@ -5,6 +5,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import school.sptech.projeto_extensao.mapper.ClienteMapper;
@@ -12,8 +16,6 @@ import school.sptech.projeto_extensao.dto.cliente.ClienteRequestDto;
 import school.sptech.projeto_extensao.dto.cliente.ClienteResponseDto;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.service.ClienteService;
-
-import java.util.List;
 
 @Tag(name = "Clientes", description = "Gestão de clientes do sistema")
 @RestController
@@ -31,12 +33,19 @@ public class ClienteController {
             @ApiResponse(responseCode = "204", description = "Nenhum cliente encontrado")
     })
     @GetMapping
-    public ResponseEntity<List<ClienteResponseDto>> listar(@RequestParam(required = false) String q){
-        List<Cliente> clientes = clienteService.listar(q);
+    public ResponseEntity<Page<ClienteResponseDto>> listar(
+            @RequestParam(required = false) String filtros,
+            @PageableDefault(
+                    size = 10,
+                    page = 0,
+                    direction = Sort.Direction.ASC,
+                    sort = "nome"
+            ) Pageable pageable){
+        Page<Cliente> clientes = clienteService.listar(filtros, pageable);
         if(clientes.isEmpty()){
             return ResponseEntity.status(204).build();
         }
-        List<ClienteResponseDto> responseDto = ClienteMapper.toDto(clientes);
+        Page<ClienteResponseDto> responseDto = ClienteMapper.toDto(clientes);
         return ResponseEntity.status(200).body(responseDto);
     }
 
@@ -46,8 +55,14 @@ public class ClienteController {
             @ApiResponse(responseCode = "204", description = "Nenhum cliente inativo encontrado")
     })
     @GetMapping("/inativos")
-    public ResponseEntity<List<ClienteResponseDto>> listarInativos() {
-        List<Cliente> clientes = clienteService.listarInativos();
+    public ResponseEntity<Page<ClienteResponseDto>> listarInativos(
+            @PageableDefault(
+                    size = 10,
+                    page = 0,
+                    direction = Sort.Direction.ASC,
+                    sort = "nome"
+            ) Pageable pageable) {
+        Page<Cliente> clientes = clienteService.listarInativos(pageable);
         if (clientes.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -82,7 +97,8 @@ public class ClienteController {
     @Operation(summary = "Inativa um cliente (Exclusão lógica)")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente inativado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Erro ao processar a inativação")
+            @ApiResponse(responseCode = "400", description = "Erro ao processar a inativação"),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado"),
     })
     @PatchMapping("/{id}")
     public ResponseEntity<Void> inativarCliente(@PathVariable Integer id){
@@ -96,12 +112,16 @@ public class ClienteController {
     @Operation(summary = "Reativa um cliente inativo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cliente reativado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro ao processar a inativação"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @PatchMapping("/{id}/reativar")
     public ResponseEntity<Void> reativarCliente(@PathVariable Integer id) {
-        clienteService.reativar(id);
-        return ResponseEntity.ok().build();
+        Boolean resposta = clienteService.reativar(id);
+        if(!resposta){
+            return ResponseEntity.status(400).build();
+        }
+        return ResponseEntity.status(200).build();
     }
 
     @Operation(summary = "Atualiza os dados de um cliente")

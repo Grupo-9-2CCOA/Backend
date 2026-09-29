@@ -1,11 +1,11 @@
 package school.sptech.projeto_extensao.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.repository.ClienteRepository;
-
-import java.util.List;
 
 @Service
 public class ClienteService {
@@ -15,63 +15,70 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
 
-    public List<Cliente> listar(){
-        return clienteRepository.findAll();
+    public Page<Cliente> listar(Pageable pageable){
+        return clienteRepository.findAll(pageable);
     }
 
-    public List<Cliente> listar(String q) {
-        if (q == null || q.isBlank()) {
-            return clienteRepository.findAllByAtivoTrue();
+    public Page<Cliente> listar(String filtros, Pageable pageable) {
+        if (filtros == null || filtros.isBlank()) {
+            return clienteRepository.findAllByAtivoTrue(pageable);
         }
 
-        String digitsOnly = q.replaceAll("\\D", "");
-        if (!digitsOnly.isBlank() && digitsOnly.matches("\\d+")) {
-            return clienteRepository.findByAtivoTrueAndTelefoneContaining(digitsOnly);
+        String apenasNumeros = filtros.replaceAll("\\D", "");
+        if (!apenasNumeros.isBlank() && apenasNumeros.matches("\\d+")) {
+            return clienteRepository.findByAtivoTrueAndTelefoneContaining(apenasNumeros, pageable);
         } else {
-            return clienteRepository.findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining(q, q);
+            return clienteRepository.findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining(filtros, filtros, pageable);
         }
     }
 
-    public List<Cliente> listarInativos() {
-        return clienteRepository.findAllByAtivoFalse();
+    public Page<Cliente> listarInativos(Pageable pageable) {
+        return clienteRepository.findAllByAtivoFalse(pageable);
     }
 
     public Cliente findById(Integer id){
         return clienteRepository.findById(id)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException("Cliente não encontrado".formatted(id)));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("Cliente %d não encontrado".formatted(id)));
     }
 
     public Cliente cadastrar(Cliente cliente){
-        if (cliente.getAtivo() == null) {
-            cliente.setAtivo(true);
-        }
+        cliente.setAtivo(true);
         return clienteRepository.save(cliente);
     }
 
     public Boolean deletar(Integer id) {
-        Cliente cliente = findById(id);
-        cliente.setAtivo(false);
-        clienteRepository.save(cliente);
-        return true;
+        return ativarDesativarCliente(id, false);
     }
 
     public Boolean reativar(Integer id) {
+        return ativarDesativarCliente(id, true);
+    }
+
+    public Boolean ativarDesativarCliente(Integer id, Boolean ativado){
         Cliente cliente = findById(id);
-        cliente.setAtivo(true);
-        clienteRepository.save(cliente);
-        return true;
+        if (ativado && !cliente.getAtivo()){
+            cliente.setAtivo(true);
+            clienteRepository.save(cliente);
+            return true;
+        } else if (!ativado && cliente.getAtivo()){
+            cliente.setAtivo(false);
+            clienteRepository.save(cliente);
+            return true;
+        }
+
+        return false;
     }
 
     public Cliente atualizar(Integer id, Cliente cliente) {
         if (!clienteRepository.existsById(id)) {
-            throw new EntidadeNaoEncontradaException("Cliente não encontrado".formatted(id));
+            throw new EntidadeNaoEncontradaException("Cliente %d não encontrado".formatted(id));
         }
 
-        Cliente cliente1 = clienteRepository.findById(id).get();
-        cliente1.setNome(cliente.getNome());
-        cliente1.setTelefone(cliente.getTelefone());
-        cliente1.setCpf(cliente.getCpf());
+        Cliente clienteAtualizado = clienteRepository.findById(id).get();
+        clienteAtualizado.setNome(cliente.getNome());
+        clienteAtualizado.setTelefone(cliente.getTelefone());
+        clienteAtualizado.setCpf(cliente.getCpf());
 
-        return clienteRepository.save(cliente1);
+        return clienteRepository.save(clienteAtualizado);
     }
 }

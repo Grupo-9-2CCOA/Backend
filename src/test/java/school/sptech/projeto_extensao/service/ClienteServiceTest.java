@@ -8,12 +8,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.repository.ClienteRepository;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +31,12 @@ class ClienteServiceTest {
     @Test
     @DisplayName("Retorna lista vazia quando não há clientes")
     void testaListarRetornaVazia() {
-        Mockito.when(repository.findAll()).thenReturn(Collections.emptyList());
+        Mockito.when(repository.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of()));
 
-        List<Cliente> lista = service.listar();
+        Page<Cliente> lista = service.listar(PageRequest.of(0, 10));
 
-        Assertions.assertTrue(lista.isEmpty());
-        Mockito.verify(repository, Mockito.times(1)).findAll();
+        Assertions.assertTrue(lista.getContent().isEmpty());
+        Mockito.verify(repository, Mockito.times(1)).findAll(PageRequest.of(0, 10));
     }
 
     @Test
@@ -42,15 +44,15 @@ class ClienteServiceTest {
     void testaListarRetornaDados() {
         List<Cliente> listaMock = new ArrayList<>();
         listaMock.add(new Cliente(1, "Sabrina", "29458394801", "11994827483", true));
+        Page pageMock = new PageImpl<>(listaMock);
+        Mockito.when(repository.findAll(PageRequest.of(0, 10))).thenReturn(pageMock);
 
-        Mockito.when(repository.findAll()).thenReturn(listaMock);
-
-        List<Cliente> lista = service.listar();
+        Page<Cliente> lista = service.listar(PageRequest.of(0, 10));
 
         Assertions.assertFalse(lista.isEmpty());
-        Assertions.assertEquals(1, lista.size());
-        Assertions.assertEquals("Sabrina", lista.get(0).getNome());
-        Mockito.verify(repository, Mockito.times(1)).findAll();
+        Assertions.assertEquals(1, lista.getContent().size());
+        Assertions.assertEquals("Sabrina", lista.getContent().get(0).getNome());
+        Mockito.verify(repository, Mockito.times(1)).findAll(PageRequest.of(0, 10));
     }
 
     @Test
@@ -60,13 +62,14 @@ class ClienteServiceTest {
         listaMock.add(new Cliente(1, "Sabrina", "29458394801", "11994827483", true));
         listaMock.add(new Cliente(2, "Carlos",  "12345678900", "11987654321", true));
         listaMock.add(new Cliente(3, "Mariana", "98765432100", "11911223344", true));
+        Page pageMock = new PageImpl<>(listaMock);
 
-        Mockito.when(repository.findAll()).thenReturn(listaMock);
+        Mockito.when(repository.findAll(PageRequest.of(0, 10))).thenReturn(pageMock);
 
-        List<Cliente> lista = service.listar();
+        Page<Cliente> lista = service.listar(PageRequest.of(0, 10));
 
-        Assertions.assertEquals(3, lista.size());
-        Mockito.verify(repository, Mockito.times(1)).findAll();
+        Assertions.assertEquals(3, lista.getContent().size());
+        Mockito.verify(repository, Mockito.times(1)).findAll(PageRequest.of(0, 10));
     }
 
     @Test
@@ -158,12 +161,13 @@ class ClienteServiceTest {
     @DisplayName("Lista somente clientes inativos")
     void testaListarClientesInativos() {
         List<Cliente> inativos = List.of(new Cliente(1, "Sabrina", "29458394801", "11994827483", false));
-        Mockito.when(repository.findAllByAtivoFalse()).thenReturn(inativos);
+        Page inativosPage = new PageImpl<>(inativos);
+        Mockito.when(repository.findAllByAtivoFalse(PageRequest.of(0, 10))).thenReturn(inativosPage);
 
-        List<Cliente> resultado = service.listarInativos();
+        Page<Cliente> resultado = service.listarInativos(PageRequest.of(0, 10));
 
-        Assertions.assertEquals(inativos, resultado);
-        Mockito.verify(repository).findAllByAtivoFalse();
+        Assertions.assertEquals(inativosPage.getContent(), resultado.getContent());
+        Mockito.verify(repository).findAllByAtivoFalse(PageRequest.of(0, 10));
     }
 
     @Test
@@ -257,30 +261,32 @@ class ClienteServiceTest {
     }
 
     @Test
-    @DisplayName("Busca por telefone quando q contém apenas dígitos")
+    @DisplayName("Busca por telefone quando filtros contém apenas dígitos")
     void testaListarPorTelefoneQuandoSomenteDigitos() {
         List<Cliente> listaMock = new ArrayList<>();
         listaMock.add(new Cliente(1, "Sabrina", "29458394801", "11994827483", true));
+        Page pageMock = new PageImpl<>(listaMock);
 
-        Mockito.when(repository.findByAtivoTrueAndTelefoneContaining("11994827483")).thenReturn(listaMock);
+        Mockito.when(repository.findByAtivoTrueAndTelefoneContaining("11994827483", PageRequest.of(0, 10))).thenReturn(pageMock);
 
-        List<Cliente> lista = service.listar("11994827483");
+        Page<Cliente> lista = service.listar("11994827483", PageRequest.of(0, 10));
 
-        Assertions.assertEquals(1, lista.size());
-        Mockito.verify(repository, Mockito.times(1)).findByAtivoTrueAndTelefoneContaining("11994827483");
+        Assertions.assertEquals(1, lista.getContent().size());
+        Mockito.verify(repository, Mockito.times(1)).findByAtivoTrueAndTelefoneContaining("11994827483", PageRequest.of(0, 10));
     }
 
     @Test
-    @DisplayName("Busca por nome ou telefone quando q contém texto")
+    @DisplayName("Busca por nome ou telefone quando filtros contém texto")
     void testaListarPorNomeOuTelefoneQuandoTexto() {
         List<Cliente> listaMock = new ArrayList<>();
         listaMock.add(new Cliente(2, "Carlos", "12345678900", "11987654321", true));
+        Page pageMock = new PageImpl<>(listaMock);
 
-        Mockito.when(repository.findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining("Carlos", "Carlos")).thenReturn(listaMock);
+        Mockito.when(repository.findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining("Carlos", "Carlos", PageRequest.of(0, 10))).thenReturn(pageMock);
 
-        List<Cliente> lista = service.listar("Carlos");
+        Page<Cliente> lista = service.listar("Carlos", PageRequest.of(0, 10));
 
-        Assertions.assertEquals(1, lista.size());
-        Mockito.verify(repository, Mockito.times(1)).findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining("Carlos", "Carlos");
+        Assertions.assertEquals(1, lista.getContent().size());
+        Mockito.verify(repository, Mockito.times(1)).findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining("Carlos", "Carlos", PageRequest.of(0, 10));
     }
 }
