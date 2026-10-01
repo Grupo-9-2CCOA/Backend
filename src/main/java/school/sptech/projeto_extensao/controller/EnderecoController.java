@@ -3,6 +3,7 @@ package school.sptech.projeto_extensao.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import school.sptech.projeto_extensao.dto.EnderecoRequestDto;
 import school.sptech.projeto_extensao.dto.EnderecoResponseDto;
 import school.sptech.projeto_extensao.service.EnderecoService;
 
+@Tag(name = "Endereços", description = "Gestão de endereços do sistema")
 @RestController
 @RequestMapping("/enderecos")
 public class EnderecoController {

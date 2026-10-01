@@ -3,6 +3,7 @@ package school.sptech.projeto_extensao.service;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,7 +119,7 @@ public class EnderecoService {
             List<Integer> pedidosVinculados = pedidoConsultaService.buscarPedidosIncompletosPorEndereco(id);
 
             if (pedidosVinculados == null || pedidosVinculados.isEmpty()) {
-                pedidosVinculados = pedidoRepository.findByEnderecoId(id).stream()
+                pedidosVinculados = pedidoRepository.findByEnderecoId(id, PageRequest.of(0, 10)).stream()
                         .filter(pedido -> pedido.getIsAtivo() == null || pedido.getIsAtivo())
                         .filter(pedido -> pedido.getEntrega() == null || pedido.getEntrega().getId() == null || pedido.getEntrega().getId() != ENTREGUE_STATUS_ID)
                         .map(Pedido::getId)

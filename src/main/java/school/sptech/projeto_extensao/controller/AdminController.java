@@ -1,6 +1,7 @@
 package school.sptech.projeto_extensao.controller;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import school.sptech.projeto_extensao.service.AdminService;
 import java.time.Duration;
 import java.util.List;
 
+@Tag(name = "Admins", description = "Gestão de administradores do sistema")
 @RestController
 @RequestMapping("/admin")
 public class AdminController {

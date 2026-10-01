@@ -1,6 +1,8 @@
 package school.sptech.projeto_extensao.service;
 
 import com.google.api.services.calendar.model.Event;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import school.sptech.projeto_extensao.Exception.ErroException;
@@ -16,7 +18,6 @@ import school.sptech.projeto_extensao.repository.PagamentoRepository;
 import school.sptech.projeto_extensao.repository.PedidoRepository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -40,16 +41,16 @@ public class PedidoService {
         this.entregaRepository = entregaRepository;
     }
 
-    public List<Pedido> listar(){
-        return service.findAllByIsAtivoTrue();
+    public Page<Pedido> listar(Pageable pageable){
+        return service.findAllByIsAtivoTrue(pageable);
     }
 
     public Pedido encontrarPorId(Integer id){
         return service.findByIdAndIsAtivoTrue(id);
     }
 
-    public List<Pedido> listarPorData(LocalDateTime dataInicio, LocalDateTime dataFim){
-        return service.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim);
+    public Page<Pedido> listarPorData(LocalDateTime dataInicio, LocalDateTime dataFim, Pageable pageable){
+        return service.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim, pageable);
     }
 
     @Transactional

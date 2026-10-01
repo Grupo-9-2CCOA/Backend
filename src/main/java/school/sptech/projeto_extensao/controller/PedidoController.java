@@ -6,7 +6,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +24,8 @@ import school.sptech.projeto_extensao.service.GoogleCalendarService;
 import school.sptech.projeto_extensao.service.PedidoService;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-@CrossOrigin("*")
+@Tag(name = "Pedidos", description = "Gestão de pedidos do sistema")
 @RestController
 @RequestMapping("/pedidos")
 public class PedidoController {
@@ -45,8 +49,15 @@ public class PedidoController {
             @ApiResponse(responseCode = "204", description = "Lista de pedidos vazia", content = @Content)
     })
     @GetMapping
-    public ResponseEntity<List<PedidoResponseDto>> listar(){
-        List<Pedido> pedidos = service.listar();
+    public ResponseEntity<Page<PedidoResponseDto>> listar(
+            @PageableDefault(
+                    size = 10,
+                    page = 0,
+                    direction = Sort.Direction.ASC,
+                    sort = "nome"
+            ) Pageable pageable
+    ){
+        Page<Pedido> pedidos = service.listar(pageable);
         if (pedidos.isEmpty()){
             return ResponseEntity.status(204).build();
         }
@@ -64,13 +75,19 @@ public class PedidoController {
             @ApiResponse(responseCode = "404", description = "Período Inválido", content = @Content)
     })
     @GetMapping("/listarData")
-    public ResponseEntity<List<PedidoResponseDto>> listarPorData(
+    public ResponseEntity<Page<PedidoResponseDto>> listarPorData(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataInicio,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataFim){
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataFim,
+            @PageableDefault(
+                    size = 10,
+                    page = 0,
+                    direction = Sort.Direction.ASC,
+                    sort = "nome"
+            ) Pageable pageable){
         if (dataInicio.isAfter(dataFim)){
             return ResponseEntity.status(404).build();
         }
-        List<Pedido> pedidos = service.listarPorData(dataInicio, dataFim);
+        Page<Pedido> pedidos = service.listarPorData(dataInicio, dataFim, pageable);
         if (pedidos.isEmpty()){
             return ResponseEntity.status(204).build();
         }

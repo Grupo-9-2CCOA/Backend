@@ -9,6 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import school.sptech.projeto_extensao.model.*;
 import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
 import school.sptech.projeto_extensao.exception.StatusPedidoInvalidoException;
@@ -48,11 +51,11 @@ class PedidoServiceTest {
     @DisplayName("Testar função listar se retorna vazio")
     void testarFuncaoListarSeRetornaVazio(){
         var listaDevolvida = Collections.EMPTY_LIST;
-        Mockito.when(pedido.findAllByIsAtivoTrue()).thenReturn(listaDevolvida);
+        Mockito.when(pedido.findAllByIsAtivoTrue(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(listaDevolvida));
 
-        List<Pedido> lista = service.listar();
+        Page<Pedido> lista = service.listar(PageRequest.of(0, 10));
 
-        Assertions.assertTrue(lista.isEmpty());
+        Assertions.assertTrue(lista.getContent().isEmpty());
     }
 
     @Test
@@ -75,23 +78,25 @@ class PedidoServiceTest {
                         null
                         )
         );
+        Page listaPaginada = new PageImpl(listaTeste);
 
-        Mockito.when(pedido.findAllByIsAtivoTrue()).thenReturn(listaTeste);
+        Mockito.when(pedido.findAllByIsAtivoTrue(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(listaTeste));
 
-        List<Pedido> lista = service.listar();
+        Page<Pedido> lista = service.listar(PageRequest.of(0, 10));
 
-        Assertions.assertFalse(lista.isEmpty());
+        Assertions.assertFalse(lista.getContent().isEmpty());
     }
 
     @Test
     @DisplayName("Testar funcao ListarPorData se retorna vazio")
     void testarFuncaoListarPorDataSeRetornaVazio(){
         var listaDevolvida = Collections.EMPTY_LIST;
-        Mockito.when(pedido.findAllByIsAtivoTrueAndDataPedidoBetween(Mockito.any(), Mockito.any())).thenReturn(listaDevolvida);
+        LocalDateTime datetimeNow = LocalDateTime.now();
+        Mockito.when(pedido.findAllByIsAtivoTrueAndDataPedidoBetween(datetimeNow, datetimeNow.plusDays(3), PageRequest.of(0, 10))).thenReturn(new PageImpl<>(listaDevolvida));
 
-        List<Pedido> lista = service.listarPorData(LocalDateTime.now(), LocalDateTime.now().plusDays(3));
+        Page<Pedido> lista = service.listarPorData(datetimeNow, datetimeNow.plusDays(3), PageRequest.of(0, 10));
 
-        Assertions.assertTrue(lista.isEmpty());
+        Assertions.assertTrue(lista.getContent().isEmpty());
     }
 
     @Test
@@ -114,16 +119,17 @@ class PedidoServiceTest {
                         null
                 )
         );
+        Page listaPaginada = new PageImpl(listaTeste);
 
         LocalDateTime dataInicio = LocalDateTime.now();
 
         LocalDateTime dataFim = LocalDateTime.now().plusDays(3);
 
-        Mockito.when(pedido.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim)).thenReturn(listaTeste);
+        Mockito.when(pedido.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(listaTeste));
 
-        List<Pedido> lista = service.listarPorData(dataInicio, dataFim);
+        Page<Pedido> lista = service.listarPorData(dataInicio, dataFim, PageRequest.of(0, 10));
 
-        Assertions.assertFalse(lista.isEmpty());
+        Assertions.assertFalse(lista.getContent().isEmpty());
     }
 
     @Test
@@ -180,18 +186,19 @@ class PedidoServiceTest {
                         null
                 )
         );
+        Page listaPaginada = new PageImpl(listaTeste);
 
         LocalDateTime dataInicio = LocalDateTime.now();
 
         LocalDateTime dataFim = LocalDateTime.now().plusDays(7);
 
-        Mockito.when(pedido.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim)).thenReturn(listaTeste.stream().filter( l ->
+        Mockito.when(pedido.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(listaTeste.stream().filter( l ->
                 l.getDataPedido().isAfter(dataInicio) &&
-                        l.getDataPedido().isBefore(dataFim)).toList());
+                        l.getDataPedido().isBefore(dataFim)).toList()));
 
-        List<Pedido> lista = service.listarPorData(dataInicio, dataFim);
+        Page<Pedido> lista = service.listarPorData(dataInicio, dataFim, PageRequest.of(0, 10));
 
-        Assertions.assertEquals(2, lista.size());
+        Assertions.assertEquals(2, lista.getContent().size());
     }
 
     @Test

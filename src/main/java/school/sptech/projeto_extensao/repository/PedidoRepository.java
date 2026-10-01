@@ -1,6 +1,8 @@
 package school.sptech.projeto_extensao.repository;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -56,11 +58,11 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     @Query("UPDATE Pedido p SET p.isAtivo = false, p.dataModificacao = CURRENT_TIMESTAMP WHERE p.id = :id")
     int desativarPedido(@Param("id") Integer id);
 
-    List<Pedido> findAllByIsAtivoTrueAndDataPedidoBetween(LocalDateTime dataInicio, LocalDateTime dataFim);
+    Page<Pedido> findAllByIsAtivoTrueAndDataPedidoBetween(LocalDateTime dataInicio, LocalDateTime dataFim, Pageable pageable);
 
-    List<Pedido> findAllByIsAtivoTrue();
+    Page<Pedido> findAllByIsAtivoTrue(Pageable pageable);
 
-    List<Pedido> findByEnderecoId(Integer enderecoId);
+    Page<Pedido> findByEnderecoId(Integer enderecoId, Pageable pageable);
 
     @Query("""
         SELECT p.id
