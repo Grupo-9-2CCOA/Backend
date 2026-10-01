@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -50,11 +51,12 @@ public class PedidoController {
     })
     @GetMapping
     public ResponseEntity<Page<PedidoResponseDto>> listar(
+            @ParameterObject
             @PageableDefault(
                     size = 10,
                     page = 0,
                     direction = Sort.Direction.ASC,
-                    sort = "nome"
+                    sort = "dataPedido"
             ) Pageable pageable
     ){
         Page<Pedido> pedidos = service.listar(pageable);
@@ -78,11 +80,12 @@ public class PedidoController {
     public ResponseEntity<Page<PedidoResponseDto>> listarPorData(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dataFim,
+            @ParameterObject
             @PageableDefault(
                     size = 10,
                     page = 0,
                     direction = Sort.Direction.ASC,
-                    sort = "nome"
+                    sort = "dataPedido"
             ) Pageable pageable){
         if (dataInicio.isAfter(dataFim)){
             return ResponseEntity.status(404).build();

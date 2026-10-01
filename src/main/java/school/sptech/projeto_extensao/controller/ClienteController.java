@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -35,6 +36,7 @@ public class ClienteController {
     @GetMapping
     public ResponseEntity<Page<ClienteResponseDto>> listar(
             @RequestParam(required = false) String filtros,
+            @ParameterObject
             @PageableDefault(
                     size = 10,
                     page = 0,
@@ -56,6 +58,7 @@ public class ClienteController {
     })
     @GetMapping("/inativos")
     public ResponseEntity<Page<ClienteResponseDto>> listarInativos(
+            @ParameterObject
             @PageableDefault(
                     size = 10,
                     page = 0,
