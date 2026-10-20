@@ -21,19 +21,19 @@ public class ClienteService {
 
     public Page<Cliente> listar(String filtros, Pageable pageable) {
         if (filtros == null || filtros.isBlank()) {
-            return clienteRepository.findAllByAtivoTrue(pageable);
+            return clienteRepository.findAllByIsAtivoTrue(pageable);
         }
 
         String apenasNumeros = filtros.replaceAll("\\D", "");
         if (!apenasNumeros.isBlank() && apenasNumeros.matches("\\d+")) {
-            return clienteRepository.findByAtivoTrueAndTelefoneContaining(apenasNumeros, pageable);
+            return clienteRepository.findByIsAtivoTrueAndTelefoneContaining(apenasNumeros, pageable);
         } else {
-            return clienteRepository.findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining(filtros, filtros, pageable);
+            return clienteRepository.findByIsAtivoTrueAndNomeContainingIgnoreCaseOrIsAtivoTrueAndTelefoneContaining(filtros, filtros, pageable);
         }
     }
 
     public Page<Cliente> listarInativos(Pageable pageable) {
-        return clienteRepository.findAllByAtivoFalse(pageable);
+        return clienteRepository.findAllByIsAtivoFalse(pageable);
     }
 
     public Cliente findById(Integer id){
@@ -42,7 +42,7 @@ public class ClienteService {
     }
 
     public Cliente cadastrar(Cliente cliente){
-        cliente.setAtivo(true);
+        cliente.setIsAtivo(true);
         return clienteRepository.save(cliente);
     }
 
@@ -56,12 +56,12 @@ public class ClienteService {
 
     public Boolean ativarDesativarCliente(Integer id, Boolean ativado){
         Cliente cliente = findById(id);
-        if (ativado && !cliente.getAtivo()){
-            cliente.setAtivo(true);
+        if (ativado && !cliente.getIsAtivo()){
+            cliente.setIsAtivo(true);
             clienteRepository.save(cliente);
             return true;
-        } else if (!ativado && cliente.getAtivo()){
-            cliente.setAtivo(false);
+        } else if (!ativado && cliente.getIsAtivo()){
+            cliente.setIsAtivo(false);
             clienteRepository.save(cliente);
             return true;
         }

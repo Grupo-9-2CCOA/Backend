@@ -97,7 +97,7 @@ class PedidoRepositoryTest {
         cliente.setNome(nome);
         cliente.setCpf(nome);
         cliente.setTelefone(nome);
-        cliente.setAtivo(true);
+        cliente.setIsAtivo(true);
         return entityManager.persist(cliente);
     }
 
