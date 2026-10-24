@@ -43,6 +43,6 @@ public class ClienteMapper {
                 .map(ClienteMapper::toDto)
                 .toList();
 
-        return new PageImpl<>(listaEntidades);
+        return new PageImpl<>(listaEntidades, entities.getPageable(), entities.getTotalElements());
     }
 }

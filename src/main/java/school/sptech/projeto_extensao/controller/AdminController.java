@@ -37,6 +37,9 @@ public class AdminController {
     @Value("${jwt.validity}")
     private Long jwtValidity;
 
+    @Value("${COOKIE_SECURE:true}")
+    private boolean cookieSecure;
+
     @Autowired
     private AdminService adminService;
 
@@ -57,7 +60,7 @@ public class AdminController {
 
         ResponseCookie cookie = ResponseCookie.from(COOOKIE_NAME, autenticado.getToken())
                 .httpOnly(true)
-                .secure(false)
+                .secure(cookieSecure)
                 .sameSite("Strict")
                 .path("/")
                 .maxAge(Duration.ofSeconds(jwtValidity))
@@ -73,7 +76,7 @@ public class AdminController {
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         ResponseCookie cookie = ResponseCookie.from(COOOKIE_NAME, "")
                 .httpOnly(true)
-                .secure(false)
+                .secure(cookieSecure)
                 .sameSite("Strict")
                 .path("/")
                 .maxAge(0)
