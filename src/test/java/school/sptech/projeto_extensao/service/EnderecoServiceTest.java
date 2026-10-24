@@ -56,7 +56,8 @@ class EnderecoServiceTest {
         endereco.setCep("01001000");
         endereco.setCliente(cliente);
 
-        Mockito.when(enderecoRepository.findByClienteId(1, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of(endereco)));
+        Mockito.when(clienteRepository.existsById(1)).thenReturn(true);
+        Mockito.when(enderecoRepository.findByClienteIdAndIsAtivoTrue(1, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of(endereco)));
 
         Page<EnderecoResponseDto> resultado = service.listarPorCliente(1, PageRequest.of(0, 10));
 
@@ -69,9 +70,23 @@ class EnderecoServiceTest {
     }
 
     @Test
+    @DisplayName("Lança erro ao listar endereços de cliente inexistente")
+    void deveLancarExcecaoAoListarEnderecosDeClienteInexistente() {
+        Mockito.when(clienteRepository.existsById(404)).thenReturn(false);
+
+        Assertions.assertThrows(
+                EntidadeNaoEncontradaException.class,
+                () -> service.listarPorCliente(404, PageRequest.of(0, 10))
+        );
+
+        Mockito.verifyNoInteractions(enderecoRepository);
+    }
+
+    @Test
     @DisplayName("Retorna lista vazia quando não há endereços para o cliente")
     void deveRetornarListaVaziaQuandoNaoExistiremEnderecos() {
-        Mockito.when(enderecoRepository.findByClienteId(99, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of()));
+        Mockito.when(clienteRepository.existsById(99)).thenReturn(true);
+        Mockito.when(enderecoRepository.findByClienteIdAndIsAtivoTrue(99, PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of()));
 
         Page<EnderecoResponseDto> resultado = service.listarPorCliente(99, PageRequest.of(0, 10));
 
@@ -182,7 +197,10 @@ class EnderecoServiceTest {
         Mockito.when(pedidoConsultaService.buscarPedidosIncompletosPorEndereco(11)).thenReturn(List.of());
 
         Assertions.assertDoesNotThrow(() -> service.deletar(11));
-        Mockito.verify(enderecoRepository, Mockito.times(1)).delete(endereco);
+        Assertions.assertEquals(false, endereco.getIsAtivo());
+        Mockito.verify(enderecoRepository, Mockito.times(1)).save(endereco);
+        Mockito.verify(enderecoRepository, Mockito.times(1)).flush();
+        Mockito.verify(enderecoRepository, Mockito.never()).delete(Mockito.any(Endereco.class));
     }
 
     @Test

@@ -1,9 +1,7 @@
 package school.sptech.projeto_extensao.service;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,10 +11,8 @@ import school.sptech.projeto_extensao.exception.EnderecoPedidoNaoCompletoExcepti
 import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
 import school.sptech.projeto_extensao.model.Cliente;
 import school.sptech.projeto_extensao.model.Endereco;
-import school.sptech.projeto_extensao.model.Pedido;
 import school.sptech.projeto_extensao.repository.ClienteRepository;
 import school.sptech.projeto_extensao.repository.EnderecoRepository;
-import school.sptech.projeto_extensao.repository.PedidoRepository;
 
 import java.util.List;
 
@@ -25,21 +21,22 @@ public class EnderecoService {
 
     private final EnderecoRepository enderecoRepository;
     private final ClienteRepository clienteRepository;
-    private final PedidoRepository pedidoRepository;
     private final PedidoConsultaService pedidoConsultaService;
 
     public EnderecoService(EnderecoRepository enderecoRepository,
                           ClienteRepository clienteRepository,
-                          PedidoRepository pedidoRepository,
                           PedidoConsultaService pedidoConsultaService) {
         this.enderecoRepository = enderecoRepository;
         this.clienteRepository = clienteRepository;
-        this.pedidoRepository = pedidoRepository;
         this.pedidoConsultaService = pedidoConsultaService;
     }
 
     public Page<EnderecoResponseDto> listarPorCliente(Integer idCliente, Pageable pageable) {
-        Page<Endereco> enderecos = enderecoRepository.findByClienteId(idCliente, pageable);
+        if (!clienteRepository.existsById(idCliente)) {
+            throw new EntidadeNaoEncontradaException("Cliente %d não encontrado".formatted(idCliente));
+        }
+
+        Page<Endereco> enderecos = enderecoRepository.findByClienteIdAndIsAtivoTrue(idCliente, pageable);
 
         List<EnderecoResponseDto> enderecosResponse = enderecos.stream()
                 .map(endereco -> new EnderecoResponseDto(
@@ -51,7 +48,7 @@ public class EnderecoService {
                 ))
                 .toList();
 
-        return new PageImpl<EnderecoResponseDto>(enderecosResponse);
+        return new PageImpl<>(enderecosResponse, pageable, enderecos.getTotalElements());
     }
 
     public EnderecoResponseDto cadastrar(Integer idCliente, EnderecoRequestDto dto) {
@@ -101,35 +98,21 @@ public class EnderecoService {
         Endereco endereco = enderecoRepository.findById(id)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("Endereço não encontrado"));
 
-        final int ENTREGUE_STATUS_ID = 3;
+        if (Boolean.FALSE.equals(endereco.getIsAtivo())) {
+            return;
+        }
 
         List<Integer> pedidoIdsIncompletos = pedidoConsultaService.buscarPedidosIncompletosPorEndereco(id);
 
         if (pedidoIdsIncompletos != null && !pedidoIdsIncompletos.isEmpty()) {
             throw new EnderecoPedidoNaoCompletoException(
                     pedidoIdsIncompletos,
-                    "Não foi possível deletar o endereço porque existem pedidos ainda não completos para esse endereço. Pedidos: " + pedidoIdsIncompletos + "."
+                    "Não foi possível deletar o endereço porque existem pedidos ainda não completos para esse endereço. Pedidos: %s.".formatted(pedidoIdsIncompletos)
             );
         }
 
-        try {
-            enderecoRepository.delete(endereco);
-            enderecoRepository.flush();
-        } catch (DataIntegrityViolationException ex) {
-            List<Integer> pedidosVinculados = pedidoConsultaService.buscarPedidosIncompletosPorEndereco(id);
-
-            if (pedidosVinculados == null || pedidosVinculados.isEmpty()) {
-                pedidosVinculados = pedidoRepository.findByEnderecoId(id, PageRequest.of(0, 10)).stream()
-                        .filter(pedido -> pedido.getIsAtivo() == null || pedido.getIsAtivo())
-                        .filter(pedido -> pedido.getEntrega() == null || pedido.getEntrega().getId() == null || pedido.getEntrega().getId() != ENTREGUE_STATUS_ID)
-                        .map(Pedido::getId)
-                        .toList();
-            }
-
-            throw new EnderecoPedidoNaoCompletoException(
-                    pedidosVinculados,
-                    "Não foi possível deletar o endereço porque existem pedidos ainda não completos para esse endereço. Pedidos: " + pedidosVinculados + "."
-            );
-        }
+        endereco.setIsAtivo(false);
+        enderecoRepository.save(endereco);
+        enderecoRepository.flush();
     }
 }
