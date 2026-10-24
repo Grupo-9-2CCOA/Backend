@@ -13,10 +13,11 @@ import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
 import school.sptech.projeto_extensao.exception.RestExceptionHandler;
 import school.sptech.projeto_extensao.exception.StatusPedidoInvalidoException;
 import school.sptech.projeto_extensao.model.Pedido;
-import school.sptech.projeto_extensao.service.GoogleCalendarService;
 import school.sptech.projeto_extensao.service.PedidoService;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.standaloneSetup;
@@ -27,17 +28,60 @@ class PedidoControllerTest {
     @Mock
     private PedidoService pedidoService;
 
-    @Mock
-    private GoogleCalendarService googleCalendarService;
-
     private MockMvc mockMvc;
 
     @BeforeEach
     void configurar() {
-        PedidoController controller = new PedidoController(pedidoService, googleCalendarService);
+        PedidoController controller = new PedidoController(pedidoService);
         mockMvc = standaloneSetup(controller)
                 .setControllerAdvice(new RestExceptionHandler())
                 .build();
+    }
+
+    @Test
+    @DisplayName("Deve cadastrar o pedido sem linkEvento na resposta")
+    void deveCadastrarPedidoSemLinkEvento() throws Exception {
+        Mockito.when(pedidoService.cadastrar(Mockito.any(Pedido.class))).thenAnswer(invocacao -> {
+            Pedido salvo = invocacao.getArgument(0);
+            salvo.setId(1);
+            return salvo;
+        });
+
+        mockMvc.perform(post("/pedidos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "produto": "Bolo de Chocolate",
+                                  "descricao": "Bolo com cobertura",
+                                  "valor": 89.9,
+                                  "dataPedido": "2030-01-15T10:00:00",
+                                  "cliente": {"id": 1},
+                                  "endereco": {"id": 1},
+                                  "pagamento": {"id": 1},
+                                  "entrega": {"id": 1}
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.linkEvento").value(org.hamcrest.Matchers.nullValue()));
+    }
+
+    @Test
+    @DisplayName("Deve retornar 404 ao deletar pedido que não foi desativado")
+    void deveRetornar404AoDeletarPedidoNaoDesativado() throws Exception {
+        Mockito.when(pedidoService.deletar(99)).thenReturn(0);
+
+        mockMvc.perform(delete("/pedidos/99"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Deve retornar 204 ao deletar pedido desativado")
+    void deveRetornar204AoDeletarPedido() throws Exception {
+        Mockito.when(pedidoService.deletar(1)).thenReturn(1);
+
+        mockMvc.perform(delete("/pedidos/1"))
+                .andExpect(status().isNoContent());
     }
 
     @Test

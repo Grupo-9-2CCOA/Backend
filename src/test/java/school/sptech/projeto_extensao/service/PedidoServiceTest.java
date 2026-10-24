@@ -1,6 +1,5 @@
 package school.sptech.projeto_extensao.service;
 
-import com.google.api.services.calendar.model.Event;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +14,8 @@ import org.springframework.data.domain.PageRequest;
 import school.sptech.projeto_extensao.model.*;
 import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
 import school.sptech.projeto_extensao.exception.StatusPedidoInvalidoException;
+import school.sptech.projeto_extensao.repository.ClienteRepository;
+import school.sptech.projeto_extensao.repository.EnderecoRepository;
 import school.sptech.projeto_extensao.repository.EntregaRepository;
 import school.sptech.projeto_extensao.repository.HistoricoPedidoRepository;
 import school.sptech.projeto_extensao.repository.PagamentoRepository;
@@ -36,13 +37,19 @@ class PedidoServiceTest {
     private PedidoRepository pedido;
 
     @Mock
-    private GoogleCalendarService calendario;
+    private PedidoProducer producer;
 
     @Mock
     private PagamentoRepository pagamentoRepository;
 
     @Mock
     private EntregaRepository entregaRepository;
+
+    @Mock
+    private ClienteRepository clienteRepository;
+
+    @Mock
+    private EnderecoRepository enderecoRepository;
 
     @InjectMocks
     private PedidoService service;
@@ -263,13 +270,16 @@ class PedidoServiceTest {
 
         Mockito.when(pedido.save(Mockito.any(Pedido.class))).thenReturn(pedidoTeste);
 
-        Pedido retorno = service.cadastrar(pedidoTeste, new Event());
+        Pedido retorno = service.cadastrar(pedidoTeste);
 
         Assertions.assertNotNull(retorno);
         Assertions.assertEquals("Produto Cadastro", retorno.getProduto());
 
         Mockito.verify(pedido, Mockito.times(1))
                 .save(Mockito.any(Pedido.class));
+
+        Mockito.verify(producer, Mockito.times(1))
+                .publicarCriacao(pedidoTeste);
     }
 
     @Test
@@ -305,6 +315,9 @@ class PedidoServiceTest {
 
         Mockito.verify(pedido, Mockito.times(1))
                 .save(Mockito.any(Pedido.class));
+
+        Mockito.verify(producer, Mockito.times(1))
+                .publicarAtualizacao(pedidoTeste);
     }
 
     @Test
@@ -339,21 +352,99 @@ class PedidoServiceTest {
 
         Mockito.verify(pedido, Mockito.times(1))
                 .desativarPedido(1);
+
+        Mockito.verify(producer, Mockito.times(1))
+                .publicarExclusao(pedidoTeste);
     }
 
     @Test
-    @DisplayName("Testar função deletar se lança ErroException para pedido inexistente")
+    @DisplayName("Não deve publicar comando de exclusão quando nada é desativado")
+    void naoDevePublicarExclusaoQuandoNadaEDesativado() {
+        Pedido pedidoTeste = new Pedido(
+                1,
+                "Produto",
+                "Descricao",
+                50.0,
+                true,
+                false,
+                LocalDateTime.now(),
+                null,
+                new Entrega(),
+                new Pagamento(),
+                new Cliente(),
+                new Endereco(),
+                null
+        );
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1))
+                .thenReturn(pedidoTeste);
+
+        Mockito.when(pedido.desativarPedido(1))
+                .thenReturn(0);
+
+        Integer retorno = service.deletar(1);
+
+        Assertions.assertEquals(0, retorno);
+
+        Mockito.verify(producer, Mockito.never())
+                .publicarExclusao(Mockito.any(Pedido.class));
+    }
+
+    @Test
+    @DisplayName("Testar função deletar se lança EntidadeNaoEncontradaException para pedido inexistente")
     void testarFuncaoDeletarSeRetornaZeroParaPedidoInexistente() {
 
-        RuntimeException excecao = Assertions.assertThrows(
-                RuntimeException.class,
+        EntidadeNaoEncontradaException excecao = Assertions.assertThrows(
+                EntidadeNaoEncontradaException.class,
                 () -> service.deletar(999)
         );
 
-        Assertions.assertEquals("Houve um erro durante a deleção do Pedido.", excecao.getMessage());
+        Assertions.assertEquals("Entidade não encontrada.", excecao.getMessage());
 
         Mockito.verify(pedido, Mockito.never())
                 .desativarPedido(Mockito.anyInt());
+    }
+
+    @Test
+    @DisplayName("Não deve alterar status de pedido com entrega já entregue")
+    void naoDeveAlterarStatusDePedidoComEntregaEntregue() {
+        Pedido pedidoTeste = new Pedido();
+        pedidoTeste.setId(1);
+        pedidoTeste.setEntrega(new Entrega(3, "Entregue", null, null));
+        pedidoTeste.setPagamento(new Pagamento(2, "Pago", null, null));
+
+        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pagamentoRepository.findById(2))
+                .thenReturn(Optional.of(new Pagamento(2, "Pago", null, null)));
+        Mockito.when(entregaRepository.findById(2))
+                .thenReturn(Optional.of(new Entrega(2, "Em trânsito", null, null)));
+
+        Assertions.assertThrows(
+                StatusPedidoInvalidoException.class,
+                () -> service.atualizarStatus(1, 2, 2)
+        );
+
+        Mockito.verify(pedido, Mockito.never()).save(Mockito.any());
+    }
+
+    @Test
+    @DisplayName("Não deve cadastrar pedido para endereço inativo")
+    void naoDeveCadastrarPedidoComEnderecoInativo() {
+        Endereco enderecoInativo = new Endereco();
+        enderecoInativo.setId(10);
+        enderecoInativo.setIsAtivo(false);
+
+        Pedido pedidoTeste = new Pedido();
+        pedidoTeste.setEndereco(enderecoInativo);
+
+        Mockito.when(enderecoRepository.findById(10)).thenReturn(Optional.of(enderecoInativo));
+
+        Assertions.assertThrows(
+                StatusPedidoInvalidoException.class,
+                () -> service.cadastrar(pedidoTeste)
+        );
+
+        Mockito.verify(pedido, Mockito.never()).save(Mockito.any());
     }
 
     @Test
@@ -550,7 +641,7 @@ class PedidoServiceTest {
         Assertions.assertFalse(resultado.getIsReagendado());
         Mockito.verify(historico).save(Mockito.any(HistoricoPedido.class));
         Mockito.verify(pedido).save(pedidoTeste);
-        Mockito.verifyNoInteractions(calendario);
+        Mockito.verifyNoInteractions(producer);
     }
 
     @Test

@@ -1,6 +1,5 @@
 package school.sptech.projeto_extensao.service;
 
-import com.google.api.services.calendar.model.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,9 +8,13 @@ import school.sptech.projeto_extensao.Exception.ErroException;
 import school.sptech.projeto_extensao.exception.EntidadeNaoEncontradaException;
 import school.sptech.projeto_extensao.exception.StatusPedidoInvalidoException;
 import school.sptech.projeto_extensao.mapper.PedidoMapper;
+import school.sptech.projeto_extensao.model.Cliente;
+import school.sptech.projeto_extensao.model.Endereco;
 import school.sptech.projeto_extensao.model.Entrega;
 import school.sptech.projeto_extensao.model.Pagamento;
 import school.sptech.projeto_extensao.model.Pedido;
+import school.sptech.projeto_extensao.repository.ClienteRepository;
+import school.sptech.projeto_extensao.repository.EnderecoRepository;
 import school.sptech.projeto_extensao.repository.EntregaRepository;
 import school.sptech.projeto_extensao.repository.HistoricoPedidoRepository;
 import school.sptech.projeto_extensao.repository.PagamentoRepository;
@@ -26,19 +29,26 @@ public class PedidoService {
 
     private final HistoricoPedidoRepository historico;
 
-    private final GoogleCalendarService calendario;
+    private final PedidoProducer producer;
 
     private final PagamentoRepository pagamentoRepository;
 
     private final EntregaRepository entregaRepository;
 
-    public PedidoService(PedidoRepository service, HistoricoPedidoRepository historico, GoogleCalendarService calendario,
-                         PagamentoRepository pagamentoRepository, EntregaRepository entregaRepository) {
+    private final ClienteRepository clienteRepository;
+
+    private final EnderecoRepository enderecoRepository;
+
+    public PedidoService(PedidoRepository service, HistoricoPedidoRepository historico, PedidoProducer producer,
+                         PagamentoRepository pagamentoRepository, EntregaRepository entregaRepository,
+                         ClienteRepository clienteRepository, EnderecoRepository enderecoRepository) {
         this.service = service;
         this.historico = historico;
-        this.calendario = calendario;
+        this.producer = producer;
         this.pagamentoRepository = pagamentoRepository;
         this.entregaRepository = entregaRepository;
+        this.clienteRepository = clienteRepository;
+        this.enderecoRepository = enderecoRepository;
     }
 
     public Page<Pedido> listar(Pageable pageable){
@@ -78,6 +88,10 @@ public class PedidoService {
             return pedido;
         }
 
+        if (statusTerminal(pedido.getEntrega()) || statusTerminal(pedido.getPagamento())) {
+            throw new StatusPedidoInvalidoException("Pedido com status final não pode ser alterado.");
+        }
+
         historico.save(PedidoMapper.toHistorico(pedido));
         pedido.setPagamento(pagamento);
         pedido.setEntrega(entrega);
@@ -89,11 +103,28 @@ public class PedidoService {
         return estado != null && estado.equalsIgnoreCase("Cancelado");
     }
 
-    public Pedido cadastrar(Pedido pedido, Event evento){
-        try {
-            pedido.setEventoGoogleCalendarId(evento.getId());
+    private boolean statusTerminal(Entrega entrega) {
+        return entrega != null && statusTerminal(entrega.getEstado());
+    }
 
-            return service.save(pedido);
+    private boolean statusTerminal(Pagamento pagamento) {
+        return pagamento != null && statusTerminal(pagamento.getEstado());
+    }
+
+    private boolean statusTerminal(String estado) {
+        return estado != null
+                && (estado.equalsIgnoreCase("Entregue") || estado.equalsIgnoreCase("Cancelado"));
+    }
+
+    @Transactional
+    public Pedido cadastrar(Pedido pedido){
+        try {
+            validarEntidadesAtivas(pedido);
+            Pedido salvo = service.save(pedido);
+            producer.publicarCriacao(salvo);
+            return salvo;
+        } catch (EntidadeNaoEncontradaException | StatusPedidoInvalidoException e){
+            throw e;
         } catch (Exception e){
             throw new ErroException(
                     "Houve um erro durante a criação do Pedido."
@@ -101,6 +132,7 @@ public class PedidoService {
         }
     }
 
+    @Transactional
     public Pedido editar(Pedido pedido){
         try{
             Pedido pedidoExistente = encontrarPorId(pedido.getId());
@@ -108,14 +140,13 @@ public class PedidoService {
                     "Entidade não encontrada."
             );
 
+            validarEntidadesAtivas(pedido);
+
             boolean dataPedidoAlterada = !Objects.equals(
                     pedidoExistente.getDataPedido(),
                     pedido.getDataPedido()
             );
             boolean pedidoJaReagendado = Boolean.TRUE.equals(pedidoExistente.getIsReagendado());
-
-            String eventoId = pedidoExistente.getEventoGoogleCalendarId();
-            if (eventoId != null) calendario.atualizarEvento(eventoId, PedidoMapper.toGoogleApi(pedido));
 
             historico.save(PedidoMapper.toHistorico(pedidoExistente));
 
@@ -125,10 +156,15 @@ public class PedidoService {
             pedidoExistente.setDescricao(pedido.getDescricao());
             pedidoExistente.setEndereco(pedido.getEndereco());
             pedidoExistente.setValor(pedido.getValor());
+            pedidoExistente.setEventoGoogleCalendarId(pedido.getEventoGoogleCalendarId());
 
             pedidoExistente.setDataModificacao(LocalDateTime.now());
             pedidoExistente.setIsReagendado(pedidoJaReagendado || dataPedidoAlterada);
-            return service.save(pedidoExistente);
+            Pedido salvo = service.save(pedidoExistente);
+            producer.publicarAtualizacao(salvo);
+            return salvo;
+        } catch (EntidadeNaoEncontradaException | StatusPedidoInvalidoException e){
+            throw e;
         } catch (Exception e){
             throw new ErroException(
                     "Houve um erro durante a edição do Pedido."
@@ -136,6 +172,7 @@ public class PedidoService {
         }
     }
 
+    @Transactional
     public Integer deletar(Integer id){
         try {
             Pedido pedido = encontrarPorId(id);
@@ -143,14 +180,39 @@ public class PedidoService {
                     "Entidade não encontrada."
             );
 
-            String eventoId = pedido.getEventoGoogleCalendarId();
-            if (pedido.getEventoGoogleCalendarId() != null) calendario.deletarEvento(eventoId);
-
-            return service.desativarPedido(id);
+            int resultado = service.desativarPedido(id);
+            if (resultado > 0) producer.publicarExclusao(pedido);
+            return resultado;
+        } catch (EntidadeNaoEncontradaException e){
+            throw e;
         } catch (Exception e){
             throw new ErroException(
                     "Houve um erro durante a deleção do Pedido."
             );
+        }
+    }
+
+    private void validarEntidadesAtivas(Pedido pedido) {
+        if (pedido.getCliente() != null && pedido.getCliente().getId() != null) {
+            Cliente cliente = clienteRepository.findById(pedido.getCliente().getId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Cliente não encontrado."));
+
+            if (!Boolean.TRUE.equals(cliente.getIsAtivo())) {
+                throw new StatusPedidoInvalidoException("Cliente inativo não pode receber pedidos.");
+            }
+
+            pedido.setCliente(cliente);
+        }
+
+        if (pedido.getEndereco() != null && pedido.getEndereco().getId() != null) {
+            Endereco endereco = enderecoRepository.findById(pedido.getEndereco().getId())
+                    .orElseThrow(() -> new EntidadeNaoEncontradaException("Endereço não encontrado."));
+
+            if (!Boolean.TRUE.equals(endereco.getIsAtivo())) {
+                throw new StatusPedidoInvalidoException("Endereço inativo não pode receber pedidos.");
+            }
+
+            pedido.setEndereco(endereco);
         }
     }
 }

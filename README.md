@@ -10,7 +10,7 @@ API REST do sistema de gerenciamento da doceria **Doces com Amor**, desenvolvida
 - Spring Data JPA
 - MySQL
 - Swagger/OpenAPI
-- Google Calendar API
+- RabbitMQ
 
 ## Requisitos
 
@@ -38,7 +38,14 @@ JWT_SECRET
 JWT_VALIDITY
 ```
 
-A integração com Google Calendar requer o arquivo `google-calendar-key.json` em `src/main/resources`. Esse arquivo contém credenciais e não deve ser versionado.
+A publicação de comandos de calendário no RabbitMQ pode ser configurada pelas variáveis:
+
+```text
+SPRING_RABBITMQ_HOST
+SPRING_RABBITMQ_PORT
+SPRING_RABBITMQ_USERNAME
+SPRING_RABBITMQ_PASSWORD
+```
 
 ## Executando o projeto
 
@@ -71,7 +78,7 @@ http://localhost:8080/swagger-ui/index.html
 - Autenticação administrativa com JWT em cookie HttpOnly
 - Gestão de clientes e endereços
 - Cadastro, edição, status, cancelamento e reagendamento de pedidos
-- Integração de pedidos com o Google Calendar
+- Publicação de comandos de calendário no RabbitMQ
 - Relatórios para a Dashboard
 
 ## Testes

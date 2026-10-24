@@ -1,6 +1,5 @@
 package school.sptech.projeto_extensao.controller;
 
-import com.google.api.services.calendar.model.Event;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,7 +20,6 @@ import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoStatusRequestDto;
 import school.sptech.projeto_extensao.model.Pedido;
-import school.sptech.projeto_extensao.service.GoogleCalendarService;
 import school.sptech.projeto_extensao.service.PedidoService;
 
 import java.time.LocalDateTime;
@@ -33,11 +31,8 @@ public class PedidoController {
 
     public final PedidoService service;
 
-    public final GoogleCalendarService googleService;
-
-    public PedidoController(PedidoService service, GoogleCalendarService googleService) {
+    public PedidoController(PedidoService service) {
         this.service = service;
-        this.googleService = googleService;
     }
 
     @Operation(
@@ -125,17 +120,13 @@ public class PedidoController {
             @ApiResponse(responseCode = "400", description = "Informações de Pedido inválidas", content = @Content)
     })
     @PostMapping
-    public ResponseEntity<PedidoResponseDto> cadastrar(@RequestBody PedidoRequestDto dto) throws Exception {
+    public ResponseEntity<PedidoResponseDto> cadastrar(@RequestBody @Valid PedidoRequestDto dto){
         Pedido pedido = PedidoMapper.toEntity(dto);
         if (!validarPedido(pedido)) return ResponseEntity.status(400).build();
-        Event eventoCriado = googleService.criarEventoNaAgenda(PedidoMapper.toGoogleApi(pedido));
 
-        var pedidoCadastrado = service.cadastrar(pedido, eventoCriado);
+        var pedidoCadastrado = service.cadastrar(pedido);
 
-        PedidoResponseDto pedidoFeito = PedidoMapper.toDto(pedidoCadastrado);
-        pedidoFeito.setLinkEvento(eventoCriado.getHtmlLink());
-
-        return ResponseEntity.status(201).body(pedidoFeito);
+        return ResponseEntity.status(201).body(PedidoMapper.toDto(pedidoCadastrado));
     }
 
     @Operation(
@@ -148,7 +139,7 @@ public class PedidoController {
             @ApiResponse(responseCode = "404", description = "Informações de atualização do Pedido inválidas", content = @Content)
     })
     @PutMapping("/{id}")
-    public ResponseEntity<PedidoResponseDto> atualizar(@PathVariable Integer id, @RequestBody PedidoRequestDto dto){
+    public ResponseEntity<PedidoResponseDto> atualizar(@PathVariable Integer id, @RequestBody @Valid PedidoRequestDto dto){
         Pedido pedido = PedidoMapper.toEntity(id, dto);
         if (pedido == null || !validarPedido(pedido)) return ResponseEntity.status(404).build();
 
@@ -184,12 +175,11 @@ public class PedidoController {
             @ApiResponse(responseCode = "404", description = "Pedido com id informado não encontrado", content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Pedido> deletar(@PathVariable Integer id){
+    public ResponseEntity<Void> deletar(@PathVariable Integer id){
         int deletar = service.deletar(id);
         if (deletar > 0) return ResponseEntity.status(204).build();
-        if (deletar < 0) return ResponseEntity.status(404).build();
 
-        return ResponseEntity.status(502).build();
+        return ResponseEntity.status(404).build();
     }
 
     @Operation(
@@ -199,10 +189,10 @@ public class PedidoController {
     public Boolean validarPedido(Pedido pedido){
         return pedido.getDataPedido() != null &&
                 pedido.getDataPedido().isAfter(LocalDateTime.now()) &&
-                pedido.getCliente() != null &&
-                pedido.getEndereco() != null &&
-                pedido.getPagamento() != null &&
-                pedido.getEntrega() != null &&
+                pedido.getCliente() != null && pedido.getCliente().getId() != null &&
+                pedido.getEndereco() != null && pedido.getEndereco().getId() != null &&
+                pedido.getPagamento() != null && pedido.getPagamento().getId() != null &&
+                pedido.getEntrega() != null && pedido.getEntrega().getId() != null &&
                 pedido.getValor() != null &&
                 pedido.getValor() > 0 &&
                 pedido.getProduto() != null;
