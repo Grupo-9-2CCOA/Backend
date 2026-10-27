@@ -1,6 +1,5 @@
 package school.sptech.projeto_extensao.service;
 
-import com.google.api.services.calendar.model.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -102,21 +101,6 @@ public class PedidoService {
         return estado != null && estado.equalsIgnoreCase("Cancelado");
     }
 
-    public Pedido cadastrar(Pedido pedido, Event evento) {
-        try {
-            if (evento != null) {
-                pedido.setEventoGoogleCalendarId(evento.getId());
-            }
-
-            validarEntidadesAtivas(pedido);
-            return service.save(pedido);
-        } catch (EntidadeNaoEncontradaException | StatusPedidoInvalidoException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ErroException("Houve um erro durante a criação do Pedido.");
-        }
-    }
-
     private boolean statusTerminal(Entrega entrega) {
         return entrega != null && statusTerminal(entrega.getEstado());
     }
@@ -165,7 +149,9 @@ public class PedidoService {
             pedidoExistente.setDescricao(pedido.getDescricao());
             pedidoExistente.setEndereco(pedido.getEndereco());
             pedidoExistente.setValor(pedido.getValor());
-            pedidoExistente.setEventoGoogleCalendarId(pedido.getEventoGoogleCalendarId());
+            if (pedido.getEventoGoogleCalendarId() != null) {
+                pedidoExistente.setEventoGoogleCalendarId(pedido.getEventoGoogleCalendarId());
+            }
 
             pedidoExistente.setDataModificacao(LocalDateTime.now());
             pedidoExistente.setIsReagendado(pedidoJaReagendado || dataPedidoAlterada);

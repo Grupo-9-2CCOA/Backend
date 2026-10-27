@@ -85,7 +85,7 @@ class PedidoRepositoryTest {
         Cliente cliente = criarCliente(nome);
 
         for (int indice = 0; indice < quantidadePedidos; indice++) {
-            LocalDateTime dataCriacao = possuiPedidoNoPeriodo && indice == 0
+            LocalDateTime dataCriacao = possuiPedidoNoPeriodo
                     ? INICIO_PERIODO.plusDays(1)
                     : FORA_DO_PERIODO;
             criarPedido(cliente, dataCriacao);

@@ -56,7 +56,7 @@ public class SecurityConfiguracao {
             "/admin/login/**",
             "/admin/logout/**",
             "/error/**",
-            "/calendar-event/**"
+            "/pedidos/calendar-event/**"
     };
 
     @Bean
