@@ -228,7 +228,7 @@ class PedidoServiceTest {
                 null
         );
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoTeste));
 
         Pedido retorno = service.encontrarPorId(1);
 
@@ -241,7 +241,7 @@ class PedidoServiceTest {
     @DisplayName("Testar função encontrarPorId se retorna null")
     void testarFuncaoEncontrarPorIdSeRetornaNull() {
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(999)).thenReturn(null);
+        Mockito.when(pedido.findById(999)).thenReturn(Optional.empty());
 
         Pedido retorno = service.encontrarPorId(999);
 
@@ -302,7 +302,7 @@ class PedidoServiceTest {
                 null
         );
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(Mockito.any())).thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(Mockito.any())).thenReturn(Optional.ofNullable(pedidoTeste));
         Mockito.when(pedido.save(Mockito.any(Pedido.class))).thenReturn(pedidoTeste);
 
         Pedido retorno = service.editar(pedidoTeste);
@@ -340,8 +340,8 @@ class PedidoServiceTest {
                 null
         );
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1))
-                .thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(1))
+                .thenReturn(Optional.ofNullable(pedidoTeste));
 
         Mockito.when(pedido.desativarPedido(1))
                 .thenReturn(1);
@@ -376,8 +376,8 @@ class PedidoServiceTest {
                 null
         );
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1))
-                .thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(1))
+                .thenReturn(Optional.ofNullable(pedidoTeste));
 
         Mockito.when(pedido.desativarPedido(1))
                 .thenReturn(0);
@@ -413,7 +413,7 @@ class PedidoServiceTest {
         pedidoTeste.setEntrega(new Entrega(3, "Entregue", null, null));
         pedidoTeste.setPagamento(new Pagamento(2, "Pago", null, null));
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoTeste));
         Mockito.when(pagamentoRepository.findById(2))
                 .thenReturn(Optional.of(new Pagamento(2, "Pago", null, null)));
         Mockito.when(entregaRepository.findById(2))
@@ -467,8 +467,8 @@ class PedidoServiceTest {
                 null
         );
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(Mockito.any()))
-                .thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(Mockito.any()))
+                .thenReturn(Optional.ofNullable(pedidoTeste));
         Mockito.when(pedido.save(Mockito.any(Pedido.class)))
                 .thenReturn(pedidoTeste);
 
@@ -491,8 +491,8 @@ class PedidoServiceTest {
 
         pedidoTeste.setDataModificacao(dataAntiga);
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(Mockito.any()))
-                .thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(Mockito.any()))
+                .thenReturn(Optional.ofNullable(pedidoTeste));
         Mockito.when(pedido.save(Mockito.any(Pedido.class)))
                 .thenReturn(pedidoTeste);
 
@@ -511,8 +511,8 @@ class PedidoServiceTest {
         Pedido pedidoTeste = new Pedido();
         pedidoTeste.setProduto("Produto Teste");
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(Mockito.any()))
-                .thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(Mockito.any()))
+                .thenReturn(Optional.ofNullable(pedidoTeste));
         Mockito.when(pedido.save(Mockito.any(Pedido.class)))
                 .thenReturn(pedidoTeste);
 
@@ -535,7 +535,7 @@ class PedidoServiceTest {
         alteracoes.setId(1);
         alteracoes.setDataPedido(dataPedido);
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoExistente);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoExistente));
         Mockito.when(pedido.save(pedidoExistente)).thenReturn(pedidoExistente);
 
         Pedido resultado = service.editar(alteracoes);
@@ -556,7 +556,7 @@ class PedidoServiceTest {
         alteracoes.setId(1);
         alteracoes.setDataPedido(dataOriginal.plusHours(1));
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoExistente);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoExistente));
         Mockito.when(pedido.save(pedidoExistente)).thenReturn(pedidoExistente);
 
         Pedido resultado = service.editar(alteracoes);
@@ -577,7 +577,7 @@ class PedidoServiceTest {
         alteracoes.setId(1);
         alteracoes.setDataPedido(dataPedido);
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoExistente);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoExistente));
         Mockito.when(pedido.save(pedidoExistente)).thenReturn(pedidoExistente);
 
         Pedido resultado = service.editar(alteracoes);
@@ -605,7 +605,7 @@ class PedidoServiceTest {
         alteracoes.setPagamento(new Pagamento(1, "Pendente", null, null));
         alteracoes.setEntrega(new Entrega(1, "Pendente", null, null));
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoExistente);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoExistente));
         Mockito.when(pedido.save(pedidoExistente)).thenReturn(pedidoExistente);
 
         Pedido resultado = service.editar(alteracoes);
@@ -628,7 +628,7 @@ class PedidoServiceTest {
         Pagamento pagamentoPago = new Pagamento(2, "Pago", null, null);
         Entrega entregaEmTransito = new Entrega(2, "Em trânsito", null, null);
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoTeste));
         Mockito.when(pagamentoRepository.findById(2)).thenReturn(Optional.of(pagamentoPago));
         Mockito.when(entregaRepository.findById(2)).thenReturn(Optional.of(entregaEmTransito));
         Mockito.when(pedido.save(pedidoTeste)).thenReturn(pedidoTeste);
@@ -654,7 +654,7 @@ class PedidoServiceTest {
         pedidoTeste.setPagamento(pagamentoPendente);
         pedidoTeste.setEntrega(entregaPendente);
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoTeste));
         Mockito.when(pagamentoRepository.findById(1)).thenReturn(Optional.of(pagamentoPendente));
         Mockito.when(entregaRepository.findById(1)).thenReturn(Optional.of(entregaPendente));
 
@@ -671,7 +671,7 @@ class PedidoServiceTest {
         Pedido pedidoTeste = new Pedido();
         pedidoTeste.setId(1);
 
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(1)).thenReturn(pedidoTeste);
+        Mockito.when(pedido.findById(1)).thenReturn(Optional.ofNullable(pedidoTeste));
         Mockito.when(pagamentoRepository.findById(3))
                 .thenReturn(Optional.of(new Pagamento(3, "Cancelado", null, null)));
         Mockito.when(entregaRepository.findById(1))
@@ -688,7 +688,7 @@ class PedidoServiceTest {
     @Test
     @DisplayName("Deve rejeitar atualização de status de pedido inativo ou inexistente")
     void deveRejeitarStatusDePedidoInexistente() {
-        Mockito.when(pedido.findByIdAndIsAtivoTrue(99)).thenReturn(null);
+        Mockito.when(pedido.findById(99)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(
                 EntidadeNaoEncontradaException.class,
