@@ -1,6 +1,5 @@
 package school.sptech.projeto_extensao.dto.pedido;
 
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -27,7 +26,6 @@ public class PedidoRequestDto {
     private Double valor;
     private Boolean isAtivo;
     private Boolean isReagendado;
-    @FutureOrPresent
     private LocalDateTime dataPedido;
     private Entrega entrega;
     private Pagamento pagamento;

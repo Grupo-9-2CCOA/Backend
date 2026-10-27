@@ -20,6 +20,12 @@ public class PedidosCanceladosDto {
     @Schema(description = "Nome do produto", example = "Cupcake Red Velvet")
     private String produto;
 
+    @Schema(description = "Nome do cliente que cancelou o pedido", example = "Maria Silva")
+    private String nomeCliente;
+
+    @Schema(description = "Telefone do cliente que cancelou o pedido", example = "(11) 99999-1234")
+    private String telefoneCliente;
+
     @Schema(description = "Data em que o pedido foi cancelado", example = "2026-04-06T19:41:58")
     private LocalDateTime dataCancelamento;
 }

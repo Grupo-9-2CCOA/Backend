@@ -51,7 +51,7 @@ public class EnderecoService {
                 ))
                 .toList();
 
-        return new PageImpl<EnderecoResponseDto>(enderecosResponse);
+        return new PageImpl<>(enderecosResponse, enderecos.getPageable(), enderecos.getTotalElements());
     }
 
     public EnderecoResponseDto cadastrar(Integer idCliente, EnderecoRequestDto dto) {

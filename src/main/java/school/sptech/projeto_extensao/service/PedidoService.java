@@ -46,7 +46,7 @@ public class PedidoService {
     }
 
     public Pedido encontrarPorId(Integer id){
-        return service.findByIdAndIsAtivoTrue(id);
+        return service.findById(id).orElse(null);
     }
 
     public Page<Pedido> listarPorData(LocalDateTime dataInicio, LocalDateTime dataFim, Pageable pageable){
@@ -91,7 +91,9 @@ public class PedidoService {
 
     public Pedido cadastrar(Pedido pedido, Event evento){
         try {
-            pedido.setEventoGoogleCalendarId(evento.getId());
+            if (evento != null) {
+                pedido.setEventoGoogleCalendarId(evento.getId());
+            }
 
             return service.save(pedido);
         } catch (Exception e){

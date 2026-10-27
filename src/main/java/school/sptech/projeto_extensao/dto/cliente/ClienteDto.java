@@ -1,5 +1,6 @@
 package school.sptech.projeto_extensao.dto.cliente;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +24,12 @@ public class ClienteDto {
 
     @Schema(description = "CPF do cliente", example = "11111111111")
     private String cpf;
+
+    @JsonProperty("fidelizado")
+    @Schema(description = "Indica se o cliente está acima do mínimo de fidelização para o período selecionado", example = "true")
+    private Boolean fidelizado;
+
+    public boolean isFidelizado() {
+        return Boolean.TRUE.equals(this.fidelizado);
+    }
 }

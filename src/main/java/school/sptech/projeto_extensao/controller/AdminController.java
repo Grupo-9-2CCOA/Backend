@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import school.sptech.projeto_extensao.dto.admin.AdminCriacaoDto;
 import school.sptech.projeto_extensao.dto.admin.AdminListarDto;
 import school.sptech.projeto_extensao.dto.admin.AdminLoginDto;
@@ -93,6 +95,10 @@ public class AdminController {
     @PostMapping("/trocar-senha")
     @SecurityRequirement(name = "Bearer")
     public ResponseEntity<Void> trocarSenha(@RequestBody @Valid AdminTrocarSenhaDto dto) {
+        if (!dto.isSenhasIguais()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "As senhas devem ser iguais.");
+        }
+
         this.adminService.trocarSenha(dto.getSenha());
         return ResponseEntity.noContent().build();
     }

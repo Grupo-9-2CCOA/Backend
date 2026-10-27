@@ -31,12 +31,12 @@ class ClienteServiceTest {
     @Test
     @DisplayName("Retorna lista vazia quando não há clientes")
     void testaListarRetornaVazia() {
-        Mockito.when(repository.findAll(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of()));
+        Mockito.when(repository.findAllByAtivoTrue(PageRequest.of(0, 10))).thenReturn(new PageImpl<>(List.of()));
 
         Page<Cliente> lista = service.listar(PageRequest.of(0, 10));
 
         Assertions.assertTrue(lista.getContent().isEmpty());
-        Mockito.verify(repository, Mockito.times(1)).findAll(PageRequest.of(0, 10));
+        Mockito.verify(repository, Mockito.times(1)).findAllByAtivoTrue(PageRequest.of(0, 10));
     }
 
     @Test
@@ -45,14 +45,14 @@ class ClienteServiceTest {
         List<Cliente> listaMock = new ArrayList<>();
         listaMock.add(new Cliente(1, "Sabrina", "29458394801", "11994827483", true));
         Page pageMock = new PageImpl<>(listaMock);
-        Mockito.when(repository.findAll(PageRequest.of(0, 10))).thenReturn(pageMock);
+        Mockito.when(repository.findAllByAtivoTrue(PageRequest.of(0, 10))).thenReturn(pageMock);
 
         Page<Cliente> lista = service.listar(PageRequest.of(0, 10));
 
         Assertions.assertFalse(lista.isEmpty());
         Assertions.assertEquals(1, lista.getContent().size());
         Assertions.assertEquals("Sabrina", lista.getContent().get(0).getNome());
-        Mockito.verify(repository, Mockito.times(1)).findAll(PageRequest.of(0, 10));
+        Mockito.verify(repository, Mockito.times(1)).findAllByAtivoTrue(PageRequest.of(0, 10));
     }
 
     @Test
@@ -64,12 +64,12 @@ class ClienteServiceTest {
         listaMock.add(new Cliente(3, "Mariana", "98765432100", "11911223344", true));
         Page pageMock = new PageImpl<>(listaMock);
 
-        Mockito.when(repository.findAll(PageRequest.of(0, 10))).thenReturn(pageMock);
+        Mockito.when(repository.findAllByAtivoTrue(PageRequest.of(0, 10))).thenReturn(pageMock);
 
         Page<Cliente> lista = service.listar(PageRequest.of(0, 10));
 
         Assertions.assertEquals(3, lista.getContent().size());
-        Mockito.verify(repository, Mockito.times(1)).findAll(PageRequest.of(0, 10));
+        Mockito.verify(repository, Mockito.times(1)).findAllByAtivoTrue(PageRequest.of(0, 10));
     }
 
     @Test

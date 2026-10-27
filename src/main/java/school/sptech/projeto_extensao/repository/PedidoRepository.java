@@ -29,13 +29,13 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
     Integer countPedidosReagendadosByDataCriacaoBetween(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
 
     @Query("SELECT COUNT(DISTINCT p.cliente.id) FROM Pedido p WHERE p.dataCriacao BETWEEN :dataInicio AND :dataFim " +
-            "AND (SELECT COUNT(p2) FROM Pedido p2 WHERE p2.cliente.id = p.cliente.id) >= :minimoPedidos")
+            "AND (SELECT COUNT(p2) FROM Pedido p2 WHERE p2.cliente.id = p.cliente.id AND p2.dataCriacao BETWEEN :dataInicio AND :dataFim) >= :minimoPedidos")
     Integer countClientesFidelizadosComPedidoNoPeriodo(@Param("dataInicio") LocalDateTime dataInicio,
                                                        @Param("dataFim") LocalDateTime dataFim,
                                                        @Param("minimoPedidos") Integer minimoPedidos);
 
     @Query("SELECT COUNT(DISTINCT p.cliente.id) FROM Pedido p WHERE p.dataCriacao BETWEEN :dataInicio AND :dataFim " +
-            "AND (SELECT COUNT(p2) FROM Pedido p2 WHERE p2.cliente.id = p.cliente.id) < :minimoPedidos")
+            "AND (SELECT COUNT(p2) FROM Pedido p2 WHERE p2.cliente.id = p.cliente.id AND p2.dataCriacao BETWEEN :dataInicio AND :dataFim) < :minimoPedidos")
     Integer countClientesNaoFidelizadosComPedidoNoPeriodo(@Param("dataInicio") LocalDateTime dataInicio,
                                                           @Param("dataFim") LocalDateTime dataFim,
                                                           @Param("minimoPedidos") Integer minimoPedidos);
@@ -52,6 +52,11 @@ public interface PedidoRepository extends JpaRepository<Pedido, Integer> {
 
     @Query("SELECT DISTINCT p.cliente FROM Pedido p WHERE p.dataCriacao BETWEEN :dataInicio AND :dataFim")
     List<Cliente> findTop15ClientesComPedidoNoPeriodo(@Param("dataInicio") LocalDateTime dataInicio, @Param("dataFim") LocalDateTime dataFim);
+
+    @Query("SELECT COUNT(p) FROM Pedido p WHERE p.cliente.id = :clienteId AND p.dataCriacao BETWEEN :dataInicio AND :dataFim")
+    Integer countPedidosByClienteIdNoPeriodo(@Param("clienteId") Integer clienteId,
+                                            @Param("dataInicio") LocalDateTime dataInicio,
+                                            @Param("dataFim") LocalDateTime dataFim);
 
     @Modifying
     @Transactional

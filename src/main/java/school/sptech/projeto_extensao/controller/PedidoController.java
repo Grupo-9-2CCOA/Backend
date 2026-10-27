@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,6 +35,9 @@ public class PedidoController {
     public final PedidoService service;
 
     public final GoogleCalendarService googleService;
+
+    @Value("${app.google-calendar.enabled:false}")
+    private boolean googleCalendarEnabled;
 
     public PedidoController(PedidoService service, GoogleCalendarService googleService) {
         this.service = service;
@@ -128,12 +132,22 @@ public class PedidoController {
     public ResponseEntity<PedidoResponseDto> cadastrar(@RequestBody PedidoRequestDto dto) throws Exception {
         Pedido pedido = PedidoMapper.toEntity(dto);
         if (!validarPedido(pedido)) return ResponseEntity.status(400).build();
-        Event eventoCriado = googleService.criarEventoNaAgenda(PedidoMapper.toGoogleApi(pedido));
+
+        Event eventoCriado = null;
+        if (googleCalendarEnabled) {
+            try {
+                eventoCriado = googleService.criarEventoNaAgenda(PedidoMapper.toGoogleApi(pedido));
+            } catch (Exception e) {
+                eventoCriado = null;
+            }
+        }
 
         var pedidoCadastrado = service.cadastrar(pedido, eventoCriado);
 
         PedidoResponseDto pedidoFeito = PedidoMapper.toDto(pedidoCadastrado);
-        pedidoFeito.setLinkEvento(eventoCriado.getHtmlLink());
+        if (eventoCriado != null && eventoCriado.getHtmlLink() != null) {
+            pedidoFeito.setLinkEvento(eventoCriado.getHtmlLink());
+        }
 
         return ResponseEntity.status(201).body(pedidoFeito);
     }
@@ -149,8 +163,20 @@ public class PedidoController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<PedidoResponseDto> atualizar(@PathVariable Integer id, @RequestBody PedidoRequestDto dto){
+        if (dto == null) {
+            return ResponseEntity.status(400).build();
+        }
+
+        Pedido pedidoExistente = service.encontrarPorId(id);
+        if (pedidoExistente == null) {
+            return ResponseEntity.status(404).build();
+        }
+
         Pedido pedido = PedidoMapper.toEntity(id, dto);
-        if (pedido == null || !validarPedido(pedido)) return ResponseEntity.status(404).build();
+        pedido.setIsAtivo(pedidoExistente.getIsAtivo());
+        pedido.setEventoGoogleCalendarId(pedidoExistente.getEventoGoogleCalendarId());
+
+        if (!validarPedido(pedido)) return ResponseEntity.status(400).build();
 
         var pedidoResultado = service.editar(pedido);
         return ResponseEntity.status(200).body(PedidoMapper.toDto(pedidoResultado));
@@ -198,13 +224,13 @@ public class PedidoController {
     )
     public Boolean validarPedido(Pedido pedido){
         return pedido.getDataPedido() != null &&
-                pedido.getDataPedido().isAfter(LocalDateTime.now()) &&
                 pedido.getCliente() != null &&
                 pedido.getEndereco() != null &&
                 pedido.getPagamento() != null &&
                 pedido.getEntrega() != null &&
                 pedido.getValor() != null &&
                 pedido.getValor() > 0 &&
-                pedido.getProduto() != null;
+                pedido.getProduto() != null &&
+                pedido.getProduto().isBlank() == false;
     }
 }

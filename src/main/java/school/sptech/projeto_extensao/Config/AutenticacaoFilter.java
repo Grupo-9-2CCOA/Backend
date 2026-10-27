@@ -48,6 +48,12 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
             } catch (ExpiredJwtException e) {
                 LOGGER.warn("[AUTENTICACAO] Token expirado para o usuário '{}': {}",
                         e.getClaims().getSubject(), e.getMessage());
+                removerCookieDeAutenticacao(response);
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"mensagem\":\"Sessão expirada. Faça login novamente.\"}");
+                return;
 
             } catch (MalformedJwtException e) {
                 LOGGER.warn("[AUTENTICACAO] Token com formato inválido: {}", e.getMessage());
@@ -112,6 +118,15 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
         }
 
         return true;
+    }
+
+    private void removerCookieDeAutenticacao(HttpServletResponse response) {
+        Cookie cookie = new Cookie(AdminController.COOOKIE_NAME, "");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
     }
 
     private boolean isRotaPermitidaNoPrimeiroAcesso(HttpServletRequest request) {

@@ -73,7 +73,15 @@ public class RelatorioService {
         ArrayList<PedidosCanceladosDto> pedidosCancelados = new ArrayList<>();
 
         for (Pedido p : pedidosCanceladosPreMapper) {
-            pedidosCancelados.add(new PedidosCanceladosDto(p.getId(), p.getProduto(), p.getDataModificacao()));
+            String nomeCliente = p.getCliente() != null ? p.getCliente().getNome() : null;
+            String telefoneCliente = p.getCliente() != null ? p.getCliente().getTelefone() : null;
+            pedidosCancelados.add(new PedidosCanceladosDto(
+                    p.getId(),
+                    p.getProduto(),
+                    nomeCliente,
+                    telefoneCliente,
+                    p.getDataModificacao()
+            ));
         }
 
         return pedidosCancelados;
@@ -97,6 +105,7 @@ public class RelatorioService {
     public List<ClienteDto> relatorioClientes(PeriodoFiltroDto periodoFiltro) {
         LocalDateTime inicioPeriodo = periodoFiltro.getDataInicio();
         LocalDateTime fimPeriodo = periodoFiltro.getDataFim();
+        Integer minimoPedidosFidelizacao = periodoFiltro.getMinimoPedidosFidelizacao();
 
         List<Cliente> clientesPreMapper = pedidoRepository.findTop15ClientesComPedidoNoPeriodo(inicioPeriodo, fimPeriodo);
 
@@ -104,7 +113,9 @@ public class RelatorioService {
         ArrayList<ClienteDto> clientes = new ArrayList<>();
 
         for (Cliente c : clientesLimitados) {
-            clientes.add(new ClienteDto(c.getId(), c.getNome(), c.getTelefone(), c.getCpf()));
+            Integer totalPedidosCliente = pedidoRepository.countPedidosByClienteIdNoPeriodo(c.getId(), inicioPeriodo, fimPeriodo);
+            boolean fidelizado = totalPedidosCliente != null && totalPedidosCliente >= minimoPedidosFidelizacao;
+            clientes.add(new ClienteDto(c.getId(), c.getNome(), c.getTelefone(), c.getCpf(), fidelizado));
         }
 
         return clientes;

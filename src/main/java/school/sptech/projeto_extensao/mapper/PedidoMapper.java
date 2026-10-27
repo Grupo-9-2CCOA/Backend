@@ -1,7 +1,6 @@
 package school.sptech.projeto_extensao.mapper;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import school.sptech.projeto_extensao.dto.EventoCalendarDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
@@ -20,8 +19,8 @@ public class PedidoMapper {
                 dto.getProduto(),
                 dto.getDescricao(),
                 dto.getValor(),
-                dto.getIsAtivo(),
-                dto.getIsReagendado(),
+                dto.getIsAtivo() != null ? dto.getIsAtivo() : true,
+                dto.getIsReagendado() != null ? dto.getIsReagendado() : false,
                 dto.getDataPedido(),
                 LocalDateTime.now(),
                 dto.getEntrega(),
@@ -70,9 +69,11 @@ public class PedidoMapper {
     }
 
     public static Page<PedidoResponseDto> toDto(Page<Pedido> pedidos){
-        List<PedidoResponseDto> pedidosLista = pedidos.stream().map(PedidoMapper::toDto).toList();
+        if (pedidos == null){
+            return null;
+        }
 
-        return new PageImpl<>(pedidosLista);
+        return pedidos.map(PedidoMapper::toDto);
     }
 
     public static HistoricoPedido toHistorico(Pedido pedido){

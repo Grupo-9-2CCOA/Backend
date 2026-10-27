@@ -1,7 +1,6 @@
 package school.sptech.projeto_extensao.mapper;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import school.sptech.projeto_extensao.dto.cliente.ClienteRequestDto;
 import school.sptech.projeto_extensao.dto.cliente.ClienteResponseDto;
 import school.sptech.projeto_extensao.model.Cliente;
@@ -39,10 +38,10 @@ public class ClienteMapper {
     }
 
     public static Page<ClienteResponseDto> toDto(Page<Cliente> entities){
-        List<ClienteResponseDto> listaEntidades = entities.stream()
-                .map(ClienteMapper::toDto)
-                .toList();
+        if (entities == null){
+            return null;
+        }
 
-        return new PageImpl<>(listaEntidades);
+        return entities.map(ClienteMapper::toDto);
     }
 }
