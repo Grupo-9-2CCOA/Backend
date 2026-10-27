@@ -15,6 +15,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import school.sptech.projeto_extensao.dto.pedido.VincularEventoGoogleDto;
 import school.sptech.projeto_extensao.mapper.PedidoMapper;
 import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
@@ -178,8 +179,13 @@ public class PedidoController {
     public ResponseEntity<Void> deletar(@PathVariable Integer id){
         int deletar = service.deletar(id);
         if (deletar > 0) return ResponseEntity.status(204).build();
+        else return ResponseEntity.status(404).build();
+    }
 
-        return ResponseEntity.status(404).build();
+    @PatchMapping("/calendar-event/{id}")
+    public ResponseEntity<Void> vincularEventoGoogle(@PathVariable Integer id, @RequestBody VincularEventoGoogleDto dto) {
+        service.vincularEventoGoogle(id, dto.getEventoGoogleCalendarId());
+        return ResponseEntity.ok().build();
     }
 
     @Operation(

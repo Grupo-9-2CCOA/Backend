@@ -55,7 +55,8 @@ public class SecurityConfiguracao {
             "/actuator/health",
             "/admin/login/**",
             "/admin/logout/**",
-            "/error/**"
+            "/error/**",
+            "/calendar-event/**"
     };
 
     @Bean
