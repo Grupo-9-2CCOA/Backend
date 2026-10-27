@@ -39,5 +39,5 @@ public class Endereco {
 
     @Column(name = "is_ativo")
     @Schema(description = "Indica se o endeereço do cliente está ativo no sistema", example = "true")
-    private Boolean ativo = true;
+    private Boolean isAtivo = true;
 }

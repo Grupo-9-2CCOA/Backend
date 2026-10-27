@@ -7,7 +7,6 @@ import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
 import school.sptech.projeto_extensao.model.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class PedidoMapper {
     public static Pedido toEntity(Integer id, PedidoRequestDto dto){

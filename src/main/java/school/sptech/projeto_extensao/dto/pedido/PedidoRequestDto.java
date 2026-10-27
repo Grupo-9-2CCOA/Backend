@@ -1,6 +1,7 @@
 package school.sptech.projeto_extensao.dto.pedido;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,21 +21,36 @@ import java.time.LocalDateTime;
 public class PedidoRequestDto {
     @NotBlank
     private String produto;
+
     @NotBlank
     private String descricao;
+
     @Positive
     private Double valor;
+
     private Boolean isAtivo;
     private Boolean isReagendado;
+
+    @NotNull
     private LocalDateTime dataPedido;
+
+    @NotNull
     private Entrega entrega;
+
+    @NotNull
     private Pagamento pagamento;
+
+    @NotNull
     private Cliente cliente;
+
+    @NotNull
     private Endereco endereco;
+
     private String eventoGoogleCalendarId;
 
     public PedidoRequestDto(String produto, String descricao, Double valor,
-                            LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento, Cliente cliente, Endereco endereco, String eventoGoogleCalendarId) {
+                            LocalDateTime dataPedido, Entrega entrega, Pagamento pagamento,
+                            Cliente cliente, Endereco endereco, String eventoGoogleCalendarId) {
         this.produto = produto;
         this.descricao = descricao;
         this.valor = valor;

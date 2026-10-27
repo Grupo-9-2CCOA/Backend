@@ -47,12 +47,8 @@ public class RelatorioController {
     public ResponseEntity<?> pegarRelatorio(
             @Parameter(description = "Período do relatório com data de início e fim", required = true)
             @ModelAttribute @Valid PeriodoFiltroDto periodo) {
-        try {
-            RelatorioDto relatorio = service.relatorioVendas(periodo);
-            return ResponseEntity.status(HttpStatus.OK).body(relatorio);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
+        RelatorioDto relatorio = service.relatorioVendas(periodo);
+        return ResponseEntity.status(HttpStatus.OK).body(relatorio);
     }
 
     @Operation(
@@ -68,12 +64,8 @@ public class RelatorioController {
     public ResponseEntity<?> pegarRelatorioCancelados(
             @Parameter(description = "Período do relatório com data de início e fim", required = true)
             @ModelAttribute @Valid PeriodoFiltroDto periodo) {
-        try {
-            List<PedidosCanceladosDto> pedidosCanceladosList = service.relatorioCancelados(periodo);
-            return ResponseEntity.status(HttpStatus.OK).body(pedidosCanceladosList);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
+        List<PedidosCanceladosDto> pedidosCanceladosList = service.relatorioCancelados(periodo);
+        return ResponseEntity.status(HttpStatus.OK).body(pedidosCanceladosList);
     }
 
     @Operation(
@@ -89,12 +81,8 @@ public class RelatorioController {
     public ResponseEntity<?> pegarRelatorioReagendados(
             @Parameter(description = "Período do relatório com data de início e fim", required = true)
             @ModelAttribute @Valid PeriodoFiltroDto periodo) {
-        try {
-            List<PedidosReagendadosDto> pedidosReagendadosList = service.relatorioReagendados(periodo);
-            return ResponseEntity.status(HttpStatus.OK).body(pedidosReagendadosList);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
+        List<PedidosReagendadosDto> pedidosReagendadosList = service.relatorioReagendados(periodo);
+        return ResponseEntity.status(HttpStatus.OK).body(pedidosReagendadosList);
     }
 
     @Operation(
@@ -110,11 +98,7 @@ public class RelatorioController {
     public ResponseEntity<?> pegarRelatorioClientes(
             @Parameter(description = "Período do relatório com data de início e fim", required = true)
             @ModelAttribute @Valid PeriodoFiltroDto periodo) {
-        try {
-            List<ClienteDto> clientesList = service.relatorioClientes(periodo);
-            return ResponseEntity.status(HttpStatus.OK).body(clientesList);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
-        }
+        List<ClienteDto> clientesList = service.relatorioClientes(periodo);
+        return ResponseEntity.status(HttpStatus.OK).body(clientesList);
     }
 }

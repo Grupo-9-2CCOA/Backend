@@ -5,8 +5,6 @@ import school.sptech.projeto_extensao.dto.cliente.ClienteRequestDto;
 import school.sptech.projeto_extensao.dto.cliente.ClienteResponseDto;
 import school.sptech.projeto_extensao.model.Cliente;
 
-import java.util.List;
-
 public class ClienteMapper {
     public static Cliente toEntity(ClienteRequestDto dto){
         if(dto == null){
@@ -26,15 +24,13 @@ public class ClienteMapper {
             return null;
         }
 
-        ClienteResponseDto dto = new ClienteResponseDto(
+        return new ClienteResponseDto(
                 model.getId(),
                 model.getNome(),
                 model.getCpf(),
                 model.getTelefone(),
-                model.getAtivo() != null ? model.getAtivo() : true
+                model.getIsAtivo() != null ? model.getIsAtivo() : true
         );
-
-        return dto;
     }
 
     public static Page<ClienteResponseDto> toDto(Page<Cliente> entities){

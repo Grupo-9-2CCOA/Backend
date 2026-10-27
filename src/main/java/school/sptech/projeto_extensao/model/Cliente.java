@@ -35,5 +35,5 @@ public class Cliente {
 
     @Column(name = "is_ativo")
     @Schema(description = "Indica se o cliente está ativo no sistema", example = "true")
-    private Boolean ativo = true;
+    private Boolean isAtivo = true;
 }

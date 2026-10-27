@@ -49,5 +49,6 @@ class PedidoMapperTest {
         assertEquals(2, paginaConvertida.getPageable().getPageSize());
         assertFalse(paginaConvertida.getPageable().isUnpaged());
         assertEquals(2, paginaConvertida.getContent().size());
+        assertEquals(1, paginaConvertida.getContent().get(0).getId());
     }
 }

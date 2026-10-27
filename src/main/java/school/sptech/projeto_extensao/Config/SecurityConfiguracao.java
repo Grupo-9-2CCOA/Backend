@@ -1,6 +1,7 @@
 package school.sptech.projeto_extensao.Config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -37,6 +38,9 @@ public class SecurityConfiguracao {
     @Autowired
     private AutenticacaoEntryPoint autenticacaoJwtEntryPoint;
 
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}")
+    private String allowedOrigins;
+
     private static final String[] URLS_PERMITIDAS = {
             "/swagger-ui/**",
             "/swagger-ui.html",
@@ -48,11 +52,9 @@ public class SecurityConfiguracao {
             "/api/public/authenticate",
             "/webjars/**",
             "/v3/api-docs/**",
-            "/actuator/*",
+            "/actuator/health",
             "/admin/login/**",
             "/admin/logout/**",
-            "/h2-console/**",
-            "/h2-console/*/**",
             "/error/**"
     };
 
@@ -109,10 +111,10 @@ public class SecurityConfiguracao {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuracao = new CorsConfiguration();
 
-        configuracao.setAllowedOrigins(List.of(
-                "http://localhost:5173",
-                "http://localhost:3000"
-        ));
+        configuracao.setAllowedOrigins(Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origem -> !origem.isEmpty())
+                .toList());
 
         configuracao.setAllowCredentials(true);
 

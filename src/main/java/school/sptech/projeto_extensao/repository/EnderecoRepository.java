@@ -7,4 +7,6 @@ import school.sptech.projeto_extensao.model.Endereco;
 
 public interface EnderecoRepository extends JpaRepository<Endereco, Integer> {
     Page<Endereco> findByClienteId(Integer idCliente, Pageable pageable);
+
+    Page<Endereco> findByClienteIdAndIsAtivoTrue(Integer idCliente, Pageable pageable);
 }

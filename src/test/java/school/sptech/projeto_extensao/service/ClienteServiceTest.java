@@ -128,7 +128,7 @@ class ClienteServiceTest {
         Assertions.assertEquals("Ana",         resultado.getNome());
         Assertions.assertEquals("55566677788", resultado.getCpf());
         Assertions.assertEquals("11933334444", resultado.getTelefone());
-        Assertions.assertTrue(resultado.getAtivo());
+        Assertions.assertTrue(resultado.getIsAtivo());
     }
 
     @Test
@@ -141,7 +141,7 @@ class ClienteServiceTest {
         Boolean resultado = service.deletar(1);
 
         Assertions.assertTrue(resultado);
-        Assertions.assertFalse(clienteMock.getAtivo());
+        Assertions.assertFalse(clienteMock.getIsAtivo());
     }
 
     @Test
@@ -162,12 +162,12 @@ class ClienteServiceTest {
     void testaListarClientesInativos() {
         List<Cliente> inativos = List.of(new Cliente(1, "Sabrina", "29458394801", "11994827483", false));
         Page inativosPage = new PageImpl<>(inativos);
-        Mockito.when(repository.findAllByAtivoFalse(PageRequest.of(0, 10))).thenReturn(inativosPage);
+        Mockito.when(repository.findAllByIsAtivoFalse(PageRequest.of(0, 10))).thenReturn(inativosPage);
 
         Page<Cliente> resultado = service.listarInativos(PageRequest.of(0, 10));
 
         Assertions.assertEquals(inativosPage.getContent(), resultado.getContent());
-        Mockito.verify(repository).findAllByAtivoFalse(PageRequest.of(0, 10));
+        Mockito.verify(repository).findAllByIsAtivoFalse(PageRequest.of(0, 10));
     }
 
     @Test
@@ -179,7 +179,7 @@ class ClienteServiceTest {
         Boolean resultado = service.reativar(1);
 
         Assertions.assertTrue(resultado);
-        Assertions.assertTrue(cliente.getAtivo());
+        Assertions.assertTrue(cliente.getIsAtivo());
         Mockito.verify(repository).save(cliente);
     }
 
@@ -241,7 +241,7 @@ class ClienteServiceTest {
         Assertions.assertEquals("Nome Novo",   resultado.getNome());
         Assertions.assertEquals("22222222222", resultado.getCpf());
         Assertions.assertEquals("11911111111", resultado.getTelefone());
-        Assertions.assertTrue(resultado.getAtivo());
+        Assertions.assertTrue(resultado.getIsAtivo());
     }
 
     @Test
@@ -256,7 +256,7 @@ class ClienteServiceTest {
 
         Cliente resultado = service.atualizar(1, dadosNovos);
 
-        Assertions.assertFalse(resultado.getAtivo());
+        Assertions.assertFalse(resultado.getIsAtivo());
         Mockito.verify(repository).save(clienteExistente);
     }
 
@@ -267,12 +267,12 @@ class ClienteServiceTest {
         listaMock.add(new Cliente(1, "Sabrina", "29458394801", "11994827483", true));
         Page pageMock = new PageImpl<>(listaMock);
 
-        Mockito.when(repository.findByAtivoTrueAndTelefoneContaining("11994827483", PageRequest.of(0, 10))).thenReturn(pageMock);
+        Mockito.when(repository.findByIsAtivoTrueAndTelefoneContaining("11994827483", PageRequest.of(0, 10))).thenReturn(pageMock);
 
         Page<Cliente> lista = service.listar("11994827483", PageRequest.of(0, 10));
 
         Assertions.assertEquals(1, lista.getContent().size());
-        Mockito.verify(repository, Mockito.times(1)).findByAtivoTrueAndTelefoneContaining("11994827483", PageRequest.of(0, 10));
+        Mockito.verify(repository, Mockito.times(1)).findByIsAtivoTrueAndTelefoneContaining("11994827483", PageRequest.of(0, 10));
     }
 
     @Test
@@ -282,11 +282,11 @@ class ClienteServiceTest {
         listaMock.add(new Cliente(2, "Carlos", "12345678900", "11987654321", true));
         Page pageMock = new PageImpl<>(listaMock);
 
-        Mockito.when(repository.findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining("Carlos", "Carlos", PageRequest.of(0, 10))).thenReturn(pageMock);
+        Mockito.when(repository.findByIsAtivoTrueAndNomeContainingIgnoreCaseOrIsAtivoTrueAndTelefoneContaining("Carlos", "Carlos", PageRequest.of(0, 10))).thenReturn(pageMock);
 
         Page<Cliente> lista = service.listar("Carlos", PageRequest.of(0, 10));
 
         Assertions.assertEquals(1, lista.getContent().size());
-        Mockito.verify(repository, Mockito.times(1)).findByAtivoTrueAndNomeContainingIgnoreCaseOrAtivoTrueAndTelefoneContaining("Carlos", "Carlos", PageRequest.of(0, 10));
+        Mockito.verify(repository, Mockito.times(1)).findByIsAtivoTrueAndNomeContainingIgnoreCaseOrIsAtivoTrueAndTelefoneContaining("Carlos", "Carlos", PageRequest.of(0, 10));
     }
 }
