@@ -75,10 +75,6 @@ public class AdminService {
         Admin admin = adminRepository.findFirstByUsuarioOrderByIdDesc(autenticacao.getName())
                 .orElseThrow(() -> new ResponseStatusException(404, "Usuário do admin não cadastrado", null));
 
-        if (Boolean.FALSE.equals(admin.getPrecisaTrocarSenha())) {
-            throw new ResponseStatusException(400, "A senha já foi alterada", null);
-        }
-
         admin.setSenha(passwordEncoder.encode(novaSenha));
         admin.setPrecisaTrocarSenha(false);
         adminRepository.save(admin);

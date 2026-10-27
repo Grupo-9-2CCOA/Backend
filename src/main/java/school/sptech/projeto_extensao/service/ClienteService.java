@@ -16,7 +16,7 @@ public class ClienteService {
     }
 
     public Page<Cliente> listar(Pageable pageable){
-        return clienteRepository.findAll(pageable);
+        return clienteRepository.findAllByAtivoTrue(pageable);
     }
 
     public Page<Cliente> listar(String filtros, Pageable pageable) {

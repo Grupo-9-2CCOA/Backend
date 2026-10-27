@@ -1,5 +1,9 @@
 package school.sptech.projeto_extensao.service;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -20,15 +24,19 @@ import org.springframework.web.server.ResponseStatusException;
 import school.sptech.projeto_extensao.Config.GerenciadorTokenJwt;
 import school.sptech.projeto_extensao.dto.admin.AdminListarDto;
 import school.sptech.projeto_extensao.dto.admin.AdminTokenDto;
+import school.sptech.projeto_extensao.dto.admin.AdminTrocarSenhaDto;
 import school.sptech.projeto_extensao.model.Admin;
 import school.sptech.projeto_extensao.repository.AdminRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -180,6 +188,24 @@ class AdminServiceTest {
     }
 
     @Test
+    @DisplayName("Deve validar que as senhas informadas na troca precisam ser iguais")
+    void validarTrocaSenhaComConfirmacaoDiferente() {
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        AdminTrocarSenhaDto dto = new AdminTrocarSenhaDto();
+        dto.setSenha("123456");
+        dto.setConfirmarSenha("654321");
+
+        Set<ConstraintViolation<AdminTrocarSenhaDto>> violacoes = validator.validate(dto);
+
+        assertFalse(violacoes.isEmpty());
+        assertTrue(violacoes.stream().anyMatch(violacao ->
+                violacao.getMessage().contains("As senhas devem ser iguais."))
+        );
+    }
+
+    @Test
     @DisplayName("Testar função trocarSenha se lança 401 sem autenticação")
     void testarFuncaoTrocarSenhaSeLanca401SemAutenticacao() {
         ResponseStatusException exception = assertThrows(
@@ -213,8 +239,8 @@ class AdminServiceTest {
     }
 
     @Test
-    @DisplayName("Testar função trocarSenha se lança 400 quando a senha já foi alterada")
-    void testarFuncaoTrocarSenhaSeLanca400QuandoSenhaJaFoiAlterada() {
+    @DisplayName("Testar função trocarSenha permite alterar a senha mesmo após a primeira troca")
+    void testarFuncaoTrocarSenhaPermiteAlteracaoPosterior() {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("admin123", null)
         );
@@ -224,16 +250,19 @@ class AdminServiceTest {
 
         when(adminRepository.findFirstByUsuarioOrderByIdDesc("admin123"))
                 .thenReturn(Optional.of(admin));
+        when(passwordEncoder.encode("654321"))
+                .thenReturn("senha-nova-criptografada");
+        when(adminRepository.save(any(Admin.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> adminService.trocarSenha("654321")
-        );
+        adminService.trocarSenha("654321");
 
-        assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
-        assertEquals("A senha já foi alterada", exception.getReason());
-        verify(passwordEncoder, never()).encode(anyString());
-        verify(adminRepository, never()).save(any(Admin.class));
+        ArgumentCaptor<Admin> adminCaptor = ArgumentCaptor.forClass(Admin.class);
+        verify(adminRepository).save(adminCaptor.capture());
+
+        Admin adminSalvo = adminCaptor.getValue();
+        assertEquals("senha-nova-criptografada", adminSalvo.getSenha());
+        assertFalse(adminSalvo.getPrecisaTrocarSenha());
+        verify(passwordEncoder).encode("654321");
     }
 
     @Test

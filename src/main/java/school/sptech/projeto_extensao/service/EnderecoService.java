@@ -32,24 +32,24 @@ public class EnderecoService {
     }
 
     public Page<EnderecoResponseDto> listarPorCliente(Integer idCliente, Pageable pageable) {
-        if (!clienteRepository.existsById(idCliente)) {
-            throw new EntidadeNaoEncontradaException("Cliente %d não encontrado".formatted(idCliente));
-        }
-
-        Page<Endereco> enderecos = enderecoRepository.findByClienteIdAndIsAtivoTrue(idCliente, pageable);
-
-        List<EnderecoResponseDto> enderecosResponse = enderecos.stream()
-                .map(endereco -> new EnderecoResponseDto(
-                        endereco.getId(),
-                        endereco.getLogradouro(),
-                        endereco.getNumero(),
-                        endereco.getComplemento(),
-                        endereco.getCep()
-                ))
-                .toList();
-
-        return new PageImpl<>(enderecosResponse, pageable, enderecos.getTotalElements());
+    if (!clienteRepository.existsById(idCliente)) {
+        throw new EntidadeNaoEncontradaException("Cliente %d não encontrado".formatted(idCliente));
     }
+
+    Page<Endereco> enderecos = enderecoRepository.findByClienteIdAndIsAtivoTrue(idCliente, pageable);
+
+    List<EnderecoResponseDto> enderecosResponse = enderecos.stream()
+            .map(endereco -> new EnderecoResponseDto(
+                    endereco.getId(),
+                    endereco.getLogradouro(),
+                    endereco.getNumero(),
+                    endereco.getComplemento(),
+                    endereco.getCep()
+            ))
+            .toList();
+
+    return new PageImpl<>(enderecosResponse, enderecos.getPageable(), enderecos.getTotalElements());
+}
 
     public EnderecoResponseDto cadastrar(Integer idCliente, EnderecoRequestDto dto) {
         Cliente cliente = clienteRepository.findById(idCliente)

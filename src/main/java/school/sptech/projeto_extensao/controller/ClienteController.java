@@ -35,7 +35,6 @@ public class ClienteController {
     })
     @GetMapping
     public ResponseEntity<Page<ClienteResponseDto>> listar(
-            @RequestParam(required = false) String filtros,
             @ParameterObject
             @PageableDefault(
                     size = 10,
@@ -43,7 +42,7 @@ public class ClienteController {
                     direction = Sort.Direction.ASC,
                     sort = "nome"
             ) Pageable pageable){
-        Page<Cliente> clientes = clienteService.listar(filtros, pageable);
+        Page<Cliente> clientes = clienteService.listar(pageable);
         if(clientes.isEmpty()){
             return ResponseEntity.status(204).build();
         }

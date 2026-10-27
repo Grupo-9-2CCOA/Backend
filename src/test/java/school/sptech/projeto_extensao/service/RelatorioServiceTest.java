@@ -183,8 +183,20 @@ class RelatorioServiceTest {
     @Test
     void deveRetornarListaPedidosCanceladosPeriodoSemana() {
         ArrayList<Pedido> pedidosCancelados = new ArrayList<>();
-        pedidosCancelados.add(new Pedido(1, "Bolo Cancelado", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
-        pedidosCancelados.add(new Pedido(2, "Bolo 2 Cancelado", "Descrição 2", 60.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, null, null, null));
+
+        Cliente cliente1 = new Cliente();
+        cliente1.setNome("Maria Silva");
+        cliente1.setTelefone("11999991234");
+
+        Cliente cliente2 = new Cliente();
+        cliente2.setNome("João Souza");
+        cliente2.setTelefone("11888881234");
+
+        Pedido pedido1 = new Pedido(1, "Bolo Cancelado", "Descrição", 50.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, cliente1, null, null);
+        Pedido pedido2 = new Pedido(2, "Bolo 2 Cancelado", "Descrição 2", 60.0, false, false, LocalDateTime.now(), LocalDateTime.now(), null, null, cliente2, null, null);
+
+        pedidosCancelados.add(pedido1);
+        pedidosCancelados.add(pedido2);
 
         when(pedidoRepository.findTop15CanceladosByDataModificacaoBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(pedidosCancelados);
@@ -193,6 +205,8 @@ class RelatorioServiceTest {
 
         assertNotNull(pedidos);
         assertEquals(2, pedidos.size());
+        assertEquals("Maria Silva", pedidos.get(0).getNomeCliente());
+        assertEquals("11999991234", pedidos.get(0).getTelefoneCliente());
     }
 
     @Test

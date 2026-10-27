@@ -1,12 +1,9 @@
 package school.sptech.projeto_extensao.mapper;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import school.sptech.projeto_extensao.dto.cliente.ClienteRequestDto;
 import school.sptech.projeto_extensao.dto.cliente.ClienteResponseDto;
 import school.sptech.projeto_extensao.model.Cliente;
-
-import java.util.List;
 
 public class ClienteMapper {
     public static Cliente toEntity(ClienteRequestDto dto){
@@ -27,22 +24,20 @@ public class ClienteMapper {
             return null;
         }
 
-        ClienteResponseDto dto = new ClienteResponseDto(
+        return new ClienteResponseDto(
                 model.getId(),
                 model.getNome(),
                 model.getCpf(),
                 model.getTelefone(),
                 model.getIsAtivo() != null ? model.getIsAtivo() : true
         );
-
-        return dto;
     }
 
     public static Page<ClienteResponseDto> toDto(Page<Cliente> entities){
-        List<ClienteResponseDto> listaEntidades = entities.stream()
-                .map(ClienteMapper::toDto)
-                .toList();
+        if (entities == null){
+            return null;
+        }
 
-        return new PageImpl<>(listaEntidades, entities.getPageable(), entities.getTotalElements());
+        return entities.map(ClienteMapper::toDto);
     }
 }

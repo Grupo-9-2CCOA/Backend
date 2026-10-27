@@ -1,5 +1,6 @@
 package school.sptech.projeto_extensao.service;
 
+import com.google.api.services.calendar.model.Event;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,22 +27,20 @@ import java.util.Objects;
 @Service
 public class PedidoService {
     private final PedidoRepository service;
-
     private final HistoricoPedidoRepository historico;
-
     private final PedidoProducer producer;
-
     private final PagamentoRepository pagamentoRepository;
-
     private final EntregaRepository entregaRepository;
-
     private final ClienteRepository clienteRepository;
-
     private final EnderecoRepository enderecoRepository;
 
-    public PedidoService(PedidoRepository service, HistoricoPedidoRepository historico, PedidoProducer producer,
-                         PagamentoRepository pagamentoRepository, EntregaRepository entregaRepository,
-                         ClienteRepository clienteRepository, EnderecoRepository enderecoRepository) {
+    public PedidoService(PedidoRepository service,
+                         HistoricoPedidoRepository historico,
+                         PedidoProducer producer,
+                         PagamentoRepository pagamentoRepository,
+                         EntregaRepository entregaRepository,
+                         ClienteRepository clienteRepository,
+                         EnderecoRepository enderecoRepository) {
         this.service = service;
         this.historico = historico;
         this.producer = producer;
@@ -51,15 +50,15 @@ public class PedidoService {
         this.enderecoRepository = enderecoRepository;
     }
 
-    public Page<Pedido> listar(Pageable pageable){
+    public Page<Pedido> listar(Pageable pageable) {
         return service.findAllByIsAtivoTrue(pageable);
     }
 
-    public Pedido encontrarPorId(Integer id){
-        return service.findByIdAndIsAtivoTrue(id);
+    public Pedido encontrarPorId(Integer id) {
+        return service.findById(id).orElse(null);
     }
 
-    public Page<Pedido> listarPorData(LocalDateTime dataInicio, LocalDateTime dataFim, Pageable pageable){
+    public Page<Pedido> listarPorData(LocalDateTime dataInicio, LocalDateTime dataFim, Pageable pageable) {
         return service.findAllByIsAtivoTrueAndDataPedidoBetween(dataInicio, dataFim, pageable);
     }
 
@@ -103,6 +102,21 @@ public class PedidoService {
         return estado != null && estado.equalsIgnoreCase("Cancelado");
     }
 
+    public Pedido cadastrar(Pedido pedido, Event evento) {
+        try {
+            if (evento != null) {
+                pedido.setEventoGoogleCalendarId(evento.getId());
+            }
+
+            validarEntidadesAtivas(pedido);
+            return service.save(pedido);
+        } catch (EntidadeNaoEncontradaException | StatusPedidoInvalidoException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ErroException("Houve um erro durante a criação do Pedido.");
+        }
+    }
+
     private boolean statusTerminal(Entrega entrega) {
         return entrega != null && statusTerminal(entrega.getEstado());
     }
@@ -117,35 +131,30 @@ public class PedidoService {
     }
 
     @Transactional
-    public Pedido cadastrar(Pedido pedido){
+    public Pedido cadastrar(Pedido pedido) {
         try {
             validarEntidadesAtivas(pedido);
             Pedido salvo = service.save(pedido);
             producer.publicarCriacao(salvo);
             return salvo;
-        } catch (EntidadeNaoEncontradaException | StatusPedidoInvalidoException e){
+        } catch (EntidadeNaoEncontradaException | StatusPedidoInvalidoException e) {
             throw e;
-        } catch (Exception e){
-            throw new ErroException(
-                    "Houve um erro durante a criação do Pedido."
-            );
+        } catch (Exception e) {
+            throw new ErroException("Houve um erro durante a criação do Pedido.");
         }
     }
 
     @Transactional
-    public Pedido editar(Pedido pedido){
-        try{
+    public Pedido editar(Pedido pedido) {
+        try {
             Pedido pedidoExistente = encontrarPorId(pedido.getId());
-            if (pedidoExistente == null) throw new EntidadeNaoEncontradaException(
-                    "Entidade não encontrada."
-            );
+            if (pedidoExistente == null) {
+                throw new EntidadeNaoEncontradaException("Entidade não encontrada.");
+            }
 
             validarEntidadesAtivas(pedido);
 
-            boolean dataPedidoAlterada = !Objects.equals(
-                    pedidoExistente.getDataPedido(),
-                    pedido.getDataPedido()
-            );
+            boolean dataPedidoAlterada = !Objects.equals(pedidoExistente.getDataPedido(), pedido.getDataPedido());
             boolean pedidoJaReagendado = Boolean.TRUE.equals(pedidoExistente.getIsReagendado());
 
             historico.save(PedidoMapper.toHistorico(pedidoExistente));
@@ -160,35 +169,34 @@ public class PedidoService {
 
             pedidoExistente.setDataModificacao(LocalDateTime.now());
             pedidoExistente.setIsReagendado(pedidoJaReagendado || dataPedidoAlterada);
+
             Pedido salvo = service.save(pedidoExistente);
             producer.publicarAtualizacao(salvo);
             return salvo;
-        } catch (EntidadeNaoEncontradaException | StatusPedidoInvalidoException e){
+        } catch (EntidadeNaoEncontradaException | StatusPedidoInvalidoException e) {
             throw e;
-        } catch (Exception e){
-            throw new ErroException(
-                    "Houve um erro durante a edição do Pedido."
-            );
+        } catch (Exception e) {
+            throw new ErroException("Houve um erro durante a edição do Pedido.");
         }
     }
 
     @Transactional
-    public Integer deletar(Integer id){
+    public Integer deletar(Integer id) {
         try {
             Pedido pedido = encontrarPorId(id);
-            if (pedido == null) throw new EntidadeNaoEncontradaException(
-                    "Entidade não encontrada."
-            );
+            if (pedido == null) {
+                throw new EntidadeNaoEncontradaException("Entidade não encontrada.");
+            }
 
             int resultado = service.desativarPedido(id);
-            if (resultado > 0) producer.publicarExclusao(pedido);
+            if (resultado > 0) {
+                producer.publicarExclusao(pedido);
+            }
             return resultado;
-        } catch (EntidadeNaoEncontradaException e){
+        } catch (EntidadeNaoEncontradaException e) {
             throw e;
-        } catch (Exception e){
-            throw new ErroException(
-                    "Houve um erro durante a deleção do Pedido."
-            );
+        } catch (Exception e) {
+            throw new ErroException("Houve um erro durante a deleção do Pedido.");
         }
     }
 
