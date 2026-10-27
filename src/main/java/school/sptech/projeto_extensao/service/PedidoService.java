@@ -200,6 +200,22 @@ public class PedidoService {
         }
     }
 
+    @Transactional
+    public void vincularEventoGoogle(Integer pedidoId, String eventoGoogleCalendarId) {
+        if (pedidoId == null || eventoGoogleCalendarId == null || eventoGoogleCalendarId.isBlank()) {
+            return;
+        }
+        Pedido pedido = service.findById(pedidoId).get();
+        if (pedido == null) {
+            return;
+        }
+        if (eventoGoogleCalendarId.equals(pedido.getEventoGoogleCalendarId())) {
+            return;
+        }
+        pedido.setEventoGoogleCalendarId(eventoGoogleCalendarId);
+        service.save(pedido);
+    }
+
     private void validarEntidadesAtivas(Pedido pedido) {
         if (pedido.getCliente() != null && pedido.getCliente().getId() != null) {
             Cliente cliente = clienteRepository.findById(pedido.getCliente().getId())

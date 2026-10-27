@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,12 +15,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import school.sptech.projeto_extensao.dto.pedido.VincularEventoGoogleDto;
+import school.sptech.projeto_extensao.mapper.PedidoMapper;
 import school.sptech.projeto_extensao.dto.pedido.PedidoRequestDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoResponseDto;
 import school.sptech.projeto_extensao.dto.pedido.PedidoStatusRequestDto;
-import school.sptech.projeto_extensao.mapper.PedidoMapper;
 import school.sptech.projeto_extensao.model.Pedido;
-import school.sptech.projeto_extensao.service.GoogleCalendarService;
 import school.sptech.projeto_extensao.service.PedidoService;
 
 import java.time.LocalDateTime;
@@ -32,14 +31,9 @@ import java.time.LocalDateTime;
 public class PedidoController {
 
     public final PedidoService service;
-    public final GoogleCalendarService googleService;
 
-    @Value("${app.google-calendar.enabled:false}")
-    private boolean googleCalendarEnabled;
-
-    public PedidoController(PedidoService service, GoogleCalendarService googleService) {
+    public PedidoController(PedidoService service) {
         this.service = service;
-        this.googleService = googleService;
     }
 
     @Operation(
@@ -60,9 +54,9 @@ public class PedidoController {
                     direction = Sort.Direction.ASC,
                     sort = "dataPedido"
             ) Pageable pageable
-    ) {
+    ){
         Page<Pedido> pedidos = service.listar(pageable);
-        if (pedidos.isEmpty()) {
+        if (pedidos.isEmpty()){
             return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(200).body(PedidoMapper.toDto(pedidos));
@@ -88,54 +82,82 @@ public class PedidoController {
                     page = 0,
                     direction = Sort.Direction.ASC,
                     sort = "dataPedido"
-            ) Pageable pageable
-    ) {
-        if (dataInicio.isAfter(dataFim)) {
+            ) Pageable pageable){
+        if (dataInicio.isAfter(dataFim)){
             return ResponseEntity.status(404).build();
         }
-
         Page<Pedido> pedidos = service.listarPorData(dataInicio, dataFim, pageable);
-        if (pedidos.isEmpty()) {
+        if (pedidos.isEmpty()){
             return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(200).body(PedidoMapper.toDto(pedidos));
     }
 
+    @Operation(
+            summary = "Pedido retornado por ID",
+            description = "Retorna um pedido através do próprio ID"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pedido encontrado com sucesso",
+                    content = @Content(schema = @Schema(implementation = Pedido.class))),
+            @ApiResponse(responseCode = "404", description = "ID Inválido, Pedido não encontrado", content = @Content)
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<PedidoResponseDto> encontrarPorId(@PathVariable Integer id) {
-        if (service.encontrarPorId(id) == null) {
+    public ResponseEntity<PedidoResponseDto> encontrarPorId(@PathVariable Integer id){
+        if (service.encontrarPorId(id) == null){
             return ResponseEntity.status(404).build();
         }
         Pedido pedido = service.encontrarPorId(id);
         return ResponseEntity.status(200).body(PedidoMapper.toDto(pedido));
     }
 
+    @Operation(
+            summary = "Cadastro de Pedido",
+            description = "Cadastra um Pedido no banco de dados conforme Dto e retorna o pedido"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Pedido cadastrado com sucesso",
+                    content = @Content(schema = @Schema(implementation = Pedido.class))),
+            @ApiResponse(responseCode = "400", description = "Informações de Pedido inválidas", content = @Content)
+    })
     @PostMapping
-    public ResponseEntity<PedidoResponseDto> cadastrar(@RequestBody @Valid PedidoRequestDto dto) {
+    public ResponseEntity<PedidoResponseDto> cadastrar(@RequestBody @Valid PedidoRequestDto dto){
         Pedido pedido = PedidoMapper.toEntity(dto);
         if (!validarPedido(pedido)) return ResponseEntity.status(400).build();
 
         var pedidoCadastrado = service.cadastrar(pedido);
+
         return ResponseEntity.status(201).body(PedidoMapper.toDto(pedidoCadastrado));
     }
 
+    @Operation(
+            summary = "Atualização de Pedido",
+            description = "Atualiza um Pedido no banco de dados conforme Dto e retorna o pedido, além de cadastrar na tabela de Histórico de Pedido uma nova instância com as informações antigas do Pedido"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Pedido atualizado com sucesso",
+                    content = @Content(schema = @Schema(implementation = Pedido.class))),
+            @ApiResponse(responseCode = "404", description = "Informações de atualização do Pedido inválidas", content = @Content)
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<PedidoResponseDto> atualizar(@PathVariable Integer id, @RequestBody @Valid PedidoRequestDto dto) {
-        Pedido pedidoExistente = service.encontrarPorId(id);
-        if (pedidoExistente == null) {
-            return ResponseEntity.status(404).build();
-        }
-
+    public ResponseEntity<PedidoResponseDto> atualizar(@PathVariable Integer id, @RequestBody @Valid PedidoRequestDto dto){
         Pedido pedido = PedidoMapper.toEntity(id, dto);
-        pedido.setIsAtivo(pedidoExistente.getIsAtivo());
-        pedido.setEventoGoogleCalendarId(pedidoExistente.getEventoGoogleCalendarId());
-
-        if (!validarPedido(pedido)) return ResponseEntity.status(400).build();
+        if (pedido == null || !validarPedido(pedido)) return ResponseEntity.status(404).build();
 
         var pedidoResultado = service.editar(pedido);
         return ResponseEntity.status(200).body(PedidoMapper.toDto(pedidoResultado));
     }
 
+    @Operation(
+            summary = "Atualização dos status do Pedido",
+            description = "Atualiza somente os status de pagamento e entrega de um Pedido ativo"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status atualizados com sucesso",
+                    content = @Content(schema = @Schema(implementation = PedidoResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "Status inválidos", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Pedido ou status não encontrado", content = @Content)
+    })
     @PatchMapping("/{id}/status")
     public ResponseEntity<PedidoResponseDto> atualizarStatus(
             @PathVariable Integer id,
@@ -144,22 +166,41 @@ public class PedidoController {
         return ResponseEntity.ok(PedidoMapper.toDto(pedido));
     }
 
+    @Operation(
+            summary = "Deleção de Pedido",
+            description = "Realiza um Delete Lógico do Pedido"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Pedido deletado logicamente com sucesso",
+                    content = @Content(schema = @Schema(implementation = Pedido.class))),
+            @ApiResponse(responseCode = "404", description = "Pedido com id informado não encontrado", content = @Content)
+    })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
+    public ResponseEntity<Void> deletar(@PathVariable Integer id){
         int deletar = service.deletar(id);
         if (deletar > 0) return ResponseEntity.status(204).build();
-        return ResponseEntity.status(404).build();
+        else return ResponseEntity.status(404).build();
     }
 
-    public Boolean validarPedido(Pedido pedido) {
+    @PatchMapping("/calendar-event/{id}")
+    public ResponseEntity<Void> vincularEventoGoogle(@PathVariable Integer id, @RequestBody VincularEventoGoogleDto dto) {
+        service.vincularEventoGoogle(id, dto.getEventoGoogleCalendarId());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(
+            summary = "Validação de Pedido",
+            description = "Realiza uma validação das informações recebidas no Dto do Pedido"
+    )
+    public Boolean validarPedido(Pedido pedido){
         return pedido.getDataPedido() != null &&
-                pedido.getCliente() != null &&
-                pedido.getEndereco() != null &&
-                pedido.getPagamento() != null &&
-                pedido.getEntrega() != null &&
+                pedido.getDataPedido().isAfter(LocalDateTime.now()) &&
+                pedido.getCliente() != null && pedido.getCliente().getId() != null &&
+                pedido.getEndereco() != null && pedido.getEndereco().getId() != null &&
+                pedido.getPagamento() != null && pedido.getPagamento().getId() != null &&
+                pedido.getEntrega() != null && pedido.getEntrega().getId() != null &&
                 pedido.getValor() != null &&
                 pedido.getValor() > 0 &&
-                pedido.getProduto() != null &&
-                !pedido.getProduto().isBlank();
+                pedido.getProduto() != null;
     }
 }
